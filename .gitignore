@@ -21,6 +21,8 @@ credentials/
 *.docx
 *.pdf
 
+*.png
+
 # Markdown except README.md
 *.md
 !README.md
