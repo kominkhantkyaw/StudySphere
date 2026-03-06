@@ -1,0 +1,680 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}StudySphere — {% if user.is_authenticated %}Dashboard{% else %}Home{% endif %}{% endblock %}
+
+{% block content %}
+{% if user.is_authenticated %}
+
+  {% if user.is_teacher %}
+  {# —— Teacher Dashboard (prototype: Teacher's dashboard) —— #}
+  <div class="dashboard-teacher">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-4">
+      <div>
+        <h2 class="fw-bold mb-1">
+          Good {% if greeting == 'morning' %}Morning{% elif greeting == 'afternoon' %}Afternoon{% else %}Evening{% endif %}, {{ user.first_name|default:user.username }}.
+        </h2>
+        <p class="text-muted mb-0">Here's an overview of your class performance.</p>
+      </div>
+    </div>
+
+    <div class="row g-3 mb-4">
+      <div class="col-6 col-md-3">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-body">
+            <p class="text-muted small text-uppercase mb-1">Total Students</p>
+            <div class="d-flex justify-content-between align-items-baseline mb-1">
+              <h3 class="fw-bold mb-0">{{ total_students|default:0 }}</h3>
+              <span class="badge bg-primary bg-opacity-25 text-primary fw-semibold">{{ stat_students_pct|default:0 }}%</span>
+            </div>
+            <div class="progress progress-stat rounded" style="height: 8px;">
+              <div class="progress-bar bg-primary" role="progressbar" style="width: {{ stat_students_pct|default:0 }}%;" aria-valuenow="{{ stat_students_pct|default:0 }}" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-body">
+            <p class="text-muted small text-uppercase mb-1">Active Courses</p>
+            <div class="d-flex justify-content-between align-items-baseline mb-1">
+              <h3 class="fw-bold mb-0">{{ active_courses_count|default:0 }}</h3>
+              <span class="badge bg-success bg-opacity-25 text-success fw-semibold">{{ stat_active_pct|default:0 }}%</span>
+            </div>
+            <div class="progress progress-stat rounded" style="height: 8px;">
+              <div class="progress-bar bg-success" role="progressbar" style="width: {{ stat_active_pct|default:0 }}%;" aria-valuenow="{{ stat_active_pct|default:0 }}" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="card border-0 shadow-sm h-100 teacher-card-completions">
+          <div class="card-body">
+            <p class="text-muted small text-uppercase mb-1"><i class="bi bi-trophy-fill me-1"></i>Completions This Week</p>
+            <div class="d-flex justify-content-between align-items-baseline mb-1">
+              <h3 class="fw-bold mb-0">{{ completions_this_week|default:0 }}</h3>
+              <span class="badge fw-semibold">{{ stat_completions_pct|default:0 }}%</span>
+            </div>
+            <div class="progress progress-stat rounded" style="height: 8px;">
+              <div class="progress-bar" role="progressbar" style="width: {{ stat_completions_pct|default:0 }}%;" aria-valuenow="{{ stat_completions_pct|default:0 }}" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="card border-0 shadow-sm h-100 teacher-card-pending">
+          <div class="card-body">
+            <p class="text-muted small text-uppercase mb-1"><i class="bi bi-hourglass-split me-1"></i>Pending Approval</p>
+            <div class="d-flex justify-content-between align-items-baseline mb-1">
+              <h3 class="fw-bold mb-0">{{ pending_approval_count|default:0 }}</h3>
+              <span class="badge fw-semibold">{{ stat_pending_pct|default:0 }}%</span>
+            </div>
+            <div class="progress progress-stat rounded" style="height: 8px;">
+              <div class="progress-bar" role="progressbar" style="width: {{ stat_pending_pct|default:0 }}%;" aria-valuenow="{{ stat_pending_pct|default:0 }}" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {# Chart data for Engagement (line) and Completions (pie) — only for teachers #}
+    {% if weekly_engagement %}{{ weekly_engagement.data|json_script:"weeklyEngagementData" }}{% endif %}
+    {% if completions_by_course_this_week %}{{ completions_by_course_this_week|json_script:"completionsPieData" }}{% endif %}
+
+    <div class="row g-3">
+      <div class="col-lg-6">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-header teacher-header-activity border-0 pt-3 pb-2 fw-semibold">
+            <i class="bi bi-activity me-2"></i>Recent Student Activity
+          </div>
+          <div class="card-body pt-0">
+            {% if recent_activity %}
+              <ul class="list-group list-group-flush list-group-flush">
+                {% for item in recent_activity %}
+                <li class="list-group-item border-0 px-0 d-flex align-items-center justify-content-between">
+                  <div class="d-flex align-items-center">
+                    <div class="rounded-circle bg-light d-flex align-items-center justify-content-center me-2" style="width: 36px; height: 36px;">
+                      <i class="bi bi-person text-muted"></i>
+                    </div>
+                    <div>
+                      <span class="fw-semibold">{{ item.student.get_full_name|default:item.student.username }}</span>: {{ item.label }}
+                      <br><small class="text-muted">{{ item.date|timesince }} ago</small>
+                    </div>
+                  </div>
+                  <a href="{% url 'courses:course_detail' item.course.id %}" class="btn btn-link btn-sm text-decoration-none p-0"><i class="bi bi-chevron-right"></i></a>
+                </li>
+                {% endfor %}
+              </ul>
+            {% else %}
+              <p class="text-muted mb-0">No recent activity yet.</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-header teacher-header-engagement border-0 pt-3 pb-2 fw-semibold">
+            <i class="bi bi-graph-up me-2"></i>Engagement Stats
+          </div>
+          <div class="card-body">
+            <p class="text-muted small text-uppercase mb-2">Weekly overview — time series</p>
+            <div class="mb-3" style="height: 200px;">
+              <canvas id="engagementLineChart" width="400" height="200"></canvas>
+            </div>
+            <div class="row g-2 pt-2 border-top">
+              <div class="col-4 text-center">
+                <p class="text-muted small mb-0">Avg. rating</p>
+                <h4 class="fw-bold text-primary mb-0">{% if avg_feedback_rating %}{{ avg_feedback_rating }}/5{% else %}—{% endif %}</h4>
+                <small class="text-muted">from feedback</small>
+              </div>
+              <div class="col-4 text-center">
+                <p class="text-muted small mb-0">Certificates issued</p>
+                <h4 class="fw-bold text-success mb-0">{{ certificates_issued_total|default:0 }}</h4>
+                <small class="text-muted">all time</small>
+              </div>
+              <div class="col-4 text-center">
+                <p class="text-muted small mb-0">Messages waiting</p>
+                <h4 class="fw-bold text-info mb-0">{{ messages_waiting|default:0 }}</h4>
+                <small class="text-muted"><a href="{% url 'notifications:notification_list' %}">View</a></small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-3 mt-1">
+      <div class="col-lg-6">
+        <div class="card border-0 shadow-sm h-100 teacher-card-pending-list">
+          <div class="card-header teacher-card-pending-header border-0 pt-3 pb-2 fw-semibold">
+            <i class="bi bi-hourglass-split me-2"></i>Pending Approvals
+          </div>
+          <div class="card-body pt-0">
+            {% if pending_approvals %}
+              <ul class="list-group list-group-flush">
+                {% for enr in pending_approvals %}
+                <li class="list-group-item border-0 px-0 d-flex align-items-center justify-content-between flex-wrap gap-2 teacher-pending-item">
+                  <div>
+                    <span class="fw-semibold">{{ enr.student.get_full_name|default:enr.student.username }}</span> — enrolment in <em>{{ enr.course.title }}</em>
+                  </div>
+                  <div class="d-flex gap-1">
+                    <a href="{% url 'courses:course_detail' enr.course.id %}" class="btn btn-sm teacher-pending-view-btn">View</a>
+                  </div>
+                </li>
+                {% endfor %}
+              </ul>
+            {% else %}
+              <p class="text-muted mb-0">No pending approvals.</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-header teacher-header-courses border-0 pt-3 pb-2 fw-semibold">
+            <i class="bi bi-journal-bookmark me-2"></i>Courses Overview
+          </div>
+          <div class="card-body pt-0">
+            {% if courses_overview %}
+              <ul class="list-group list-group-flush">
+                {% for course in courses_overview %}
+                <li class="list-group-item border-0 px-0 d-flex align-items-center justify-content-between">
+                  <div class="flex-grow-1 me-2">
+                    <span class="fw-semibold">{{ course.title }}</span>
+                    <div class="progress rounded mt-1" style="height: 6px;">
+                      <div class="progress-bar bg-primary" role="progressbar" style="width: 70%;" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                  </div>
+                  <span class="text-muted small">{{ course.student_count }} student{{ course.student_count|pluralize }}</span>
+                  <a href="{% url 'courses:course_detail' course.id %}" class="btn btn-link btn-sm text-decoration-none ms-1">Open</a>
+                </li>
+                {% endfor %}
+              </ul>
+            {% else %}
+              <p class="text-muted mb-0">No courses yet. <a href="{% url 'courses:course_create' %}">Create a course</a>.</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-3 mt-1">
+      <div class="col-lg-6">
+        <div class="card border-0 shadow-sm h-100 teacher-card-completions-chart">
+          <div class="card-header teacher-card-completions-header border-0 pt-3 pb-2 fw-semibold">
+            <i class="bi bi-trophy-fill me-2"></i>Students Completed This Week
+          </div>
+          <div class="card-body pt-0">
+            <p class="text-muted small mb-2">Certificates issued by course (last 7 days)</p>
+            <div class="d-flex flex-wrap align-items-start gap-3">
+              <div class="position-relative flex-shrink-0 teacher-chart-3d-wrapper" style="width: 220px; height: 220px;">
+                <canvas id="completionsPieChart" width="220" height="220"></canvas>
+              </div>
+              <div class="flex-grow-1 min-w-0 pt-1" id="completionsPieLegend">
+                {% if completions_by_course_this_week %}
+                  <ul class="list-unstyled mb-0 small">
+                    {% for item in completions_by_course_this_week %}
+                    <li class="d-flex align-items-center mb-2">
+                      <span class="rounded-circle me-2 d-inline-block flex-shrink-0" style="width: 12px; height: 12px; background: {{ item.color }}; border: 1px solid rgba(0,0,0,0.1);"></span>
+                      <span class="text-secondary">{{ item.course_title|default:"Unknown course" }} — <strong>{{ item.count }}</strong> student{{ item.count|pluralize }}</span>
+                      {% if item.course_id %}<a href="{% url 'courses:course_detail' item.course_id %}" class="btn btn-link btn-sm text-decoration-none py-0 ms-1">View</a>{% endif %}
+                    </li>
+                    {% endfor %}
+                  </ul>
+                  <p class="small text-muted mt-2 mb-0">Total: <strong>{{ completions_this_week|default:0 }}</strong> certificate{{ completions_this_week|pluralize }} this week.</p>
+                {% else %}
+                  <p class="text-muted mb-0">No certificates issued in the past 7 days.</p>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-header bg-white border-0 pt-3 pb-2 fw-semibold">
+            <i class="bi bi-chat-dots me-2"></i>Messages Waiting
+          </div>
+          <div class="card-body pt-0">
+            <p class="mb-2">You have <strong>{{ messages_waiting|default:0 }}</strong> unread notification{{ messages_waiting|pluralize }}.</p>
+            <a href="{% url 'notifications:notification_list' %}" class="btn btn-outline-primary btn-sm">View notifications</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-3 mt-1 mb-4">
+      <div class="col-md-6">
+        <div class="card border-0 shadow-sm">
+          <div class="card-header bg-white border-0 pt-3 pb-2 fw-semibold">
+            <i class="bi bi-pencil-square me-2"></i>Share an Update
+          </div>
+          <div class="card-body">
+            <form method="post" action="{% url 'social:post_status' %}">
+              {% csrf_token %}
+              <textarea name="content" class="form-control" rows="2" placeholder="What's on your mind?"></textarea>
+              <button type="submit" class="btn btn-primary mt-2 btn-sm"><i class="bi bi-send me-1"></i>Post</button>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card border-0 shadow-sm">
+          <div class="card-header bg-white border-0 pt-3 pb-2 fw-semibold">
+            <i class="bi bi-chat-dots me-2"></i>Quick Links
+          </div>
+          <div class="card-body d-flex flex-wrap gap-2">
+            <a href="{% url 'courses:course_list' %}" class="btn btn-outline-primary btn-sm">Courses</a>
+            <a href="{% url 'courses:course_create' %}" class="btn btn-outline-success btn-sm">Create Course</a>
+            <a href="{% url 'chat:chat_lobby' %}" class="btn btn-outline-info btn-sm">Chat</a>
+            <a href="{% url 'accounts:search_users' %}" class="btn btn-outline-secondary btn-sm">My Students</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% else %}
+  {# —— Student Dashboard —— #}
+  <div class="dashboard-student">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-4">
+      <div>
+        <h2 class="fw-bold mb-1">
+          Good {% if greeting == 'morning' %}Morning{% elif greeting == 'afternoon' %}Afternoon{% else %}Evening{% endif %}, {{ user.first_name|default:user.username }}.
+        </h2>
+        <p class="text-muted mb-0">Here's an overview of your learning journey.</p>
+      </div>
+    </div>
+
+    {# —— Gamification: Streak + Certificates (Memrise-style) —— #}
+    <div class="row g-3 mb-4">
+      <div class="col-md-6 col-lg-4">
+        <div class="card border-0 shadow-sm h-100 gamification-card streak-card">
+          <div class="card-body d-flex align-items-center gap-3 py-3">
+            <div class="gamification-icon streak-icon rounded-3 d-flex align-items-center justify-content-center">
+              <i class="bi bi-fire fs-1 text-white"></i>
+            </div>
+            <div class="flex-grow-1">
+              <p class="text-muted small text-uppercase mb-0">Study streak</p>
+              <h3 class="fw-bold mb-0 mt-1">{{ study_streak.current_streak|default:0 }} <span class="fs-6 fw-normal text-muted">day{{ study_streak.current_streak|default:0|pluralize }}</span></h3>
+              <small class="text-muted">{% if study_streak.studied_today %}You studied today — keep it up!{% elif study_streak.current_streak %}Longest: {{ study_streak.longest_streak }} day{{ study_streak.longest_streak|pluralize }}{% else %}Study today to start a streak{% endif %}</small>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4">
+        <div class="card border-0 shadow-sm h-100 gamification-card certs-card">
+          <div class="card-body d-flex align-items-center gap-3 py-3">
+            <div class="gamification-icon certs-icon rounded-3 d-flex align-items-center justify-content-center">
+              <i class="bi bi-award fs-1 text-white"></i>
+            </div>
+            <div class="flex-grow-1">
+              <p class="text-muted small text-uppercase mb-0">Certificates earned</p>
+              <h3 class="fw-bold mb-0 mt-1">{{ certificates_earned|default:0 }}</h3>
+              <small class="text-muted">{{ completed_courses_count|default:0 }} course{{ completed_courses_count|default:0|pluralize }} completed</small>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-12 col-lg-4">
+        <div class="card border-0 shadow-sm h-100 gamification-card progress-card">
+          <div class="card-body d-flex align-items-center gap-3 py-3">
+            <div class="gamification-icon progress-icon rounded-3 d-flex align-items-center justify-content-center">
+              <i class="bi bi-graph-up-arrow fs-1 text-white"></i>
+            </div>
+            <div class="flex-grow-1">
+              <p class="text-muted small text-uppercase mb-0">Progress</p>
+              <h3 class="fw-bold mb-0 mt-1">{{ student_active_courses|default:0 }} <span class="fs-6 fw-normal text-muted">active</span></h3>
+              <small class="text-muted">{{ completed_courses_count|default:0 }} completed · Keep going!</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-3 mb-4">
+      <div class="col-6 col-md-3">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-body">
+            <p class="text-muted small text-uppercase mb-1">Active Courses</p>
+            <div class="d-flex justify-content-between align-items-baseline mb-1">
+              <h3 class="fw-bold mb-0">{{ student_active_courses|default:0 }}</h3>
+              <span class="badge bg-primary bg-opacity-25 text-primary fw-semibold">{{ stat_active_pct|default:0 }}%</span>
+            </div>
+            <div class="progress progress-stat rounded" style="height: 8px;">
+              <div class="progress-bar bg-primary" role="progressbar" style="width: {{ stat_active_pct|default:0 }}%;" aria-valuenow="{{ stat_active_pct|default:0 }}" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-body">
+            <p class="text-muted small text-uppercase mb-1">Completed Courses</p>
+            <div class="d-flex justify-content-between align-items-baseline mb-1">
+              <h3 class="fw-bold mb-0">{{ completed_courses_count|default:0 }}</h3>
+              <span class="badge bg-success bg-opacity-25 text-success fw-semibold">{{ stat_completed_pct|default:0 }}%</span>
+            </div>
+            <div class="progress progress-stat rounded" style="height: 8px;">
+              <div class="progress-bar bg-success" role="progressbar" style="width: {{ stat_completed_pct|default:0 }}%;" aria-valuenow="{{ stat_completed_pct|default:0 }}" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-body">
+            <p class="text-muted small text-uppercase mb-1">Certificates Earned</p>
+            <div class="d-flex justify-content-between align-items-baseline mb-1">
+              <h3 class="fw-bold mb-0">{{ certificates_earned|default:0 }}</h3>
+              <span class="badge bg-info bg-opacity-25 text-info fw-semibold">{{ stat_certs_pct|default:0 }}%</span>
+            </div>
+            <div class="progress progress-stat rounded" style="height: 8px;">
+              <div class="progress-bar bg-info" role="progressbar" style="width: {{ stat_certs_pct|default:0 }}%;" aria-valuenow="{{ stat_certs_pct|default:0 }}" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-body">
+            <p class="text-muted small text-uppercase mb-1">Unread Notifications</p>
+            <div class="d-flex justify-content-between align-items-baseline mb-1">
+              <h3 class="fw-bold mb-0">{{ unread_count|default:0 }}</h3>
+              <span class="badge bg-warning bg-opacity-25 text-warning fw-semibold">{{ stat_unread_pct|default:0 }}%</span>
+            </div>
+            <div class="progress progress-stat rounded" style="height: 8px;">
+              <div class="progress-bar bg-warning" role="progressbar" style="width: {{ stat_unread_pct|default:0 }}%;" aria-valuenow="{{ stat_unread_pct|default:0 }}" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-3 mb-3">
+      <div class="col-lg-8">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-header student-header-progress border-0 pt-3 pb-2 fw-semibold">
+            <i class="bi bi-bar-chart-steps me-2"></i>Progress Overview
+          </div>
+          <div class="card-body pt-0">
+            {% if progress_overview %}
+              <ul class="list-group list-group-flush">
+                {% for item in progress_overview %}
+                <li class="list-group-item border-0 px-0 d-flex align-items-center justify-content-between">
+                  <div class="me-3 flex-grow-1">
+                    <div class="d-flex justify-content-between">
+                      <span class="fw-semibold">{{ item.course.title }}</span>
+                      <span class="small text-muted">{{ item.percent }}%</span>
+                    </div>
+                    <div class="progress rounded mt-1" style="height: 6px;">
+                      <div class="progress-bar bg-primary" role="progressbar" style="width: {{ item.percent }}%;" aria-valuenow="{{ item.percent }}" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                    <small class="text-muted">Instructor: {{ item.course.teacher.get_full_name|default:item.course.teacher.username }}</small>
+                  </div>
+                  <a href="{% url 'courses:course_detail' item.course.id %}" class="btn btn-outline-primary btn-sm">Continue</a>
+                </li>
+                {% endfor %}
+              </ul>
+            {% else %}
+              <p class="text-muted mb-0">No courses in progress yet. <a href="{% url 'courses:course_list' %}">Browse courses</a> to get started.</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="card border-0 shadow-sm mb-3">
+          <div class="card-header student-header-deadlines border-0 pt-3 pb-2 fw-semibold">
+            <i class="bi bi-calendar-event me-2"></i>Upcoming Deadlines
+          </div>
+          <div class="card-body pt-0">
+            {% if upcoming_deadlines %}
+              <ul class="list-group list-group-flush">
+                {% for enr in upcoming_deadlines %}
+                <li class="list-group-item border-0 px-0 d-flex justify-content-between">
+                  <div>
+                    <span class="fw-semibold">{{ enr.course.title }}</span>
+                    <br><small class="text-muted">Ends {{ enr.course.end_datetime|date:'M j' }}</small>
+                  </div>
+                  <a href="{% url 'courses:course_detail' enr.course.id %}" class="btn btn-link btn-sm text-decoration-none">View</a>
+                </li>
+                {% endfor %}
+              </ul>
+            {% else %}
+              <p class="text-muted mb-0">No upcoming deadlines.</p>
+            {% endif %}
+          </div>
+        </div>
+        <div class="card border-0 shadow-sm">
+          <div class="card-header student-header-notifications border-0 pt-3 pb-2 fw-semibold">
+            <i class="bi bi-bell me-2"></i>Notifications
+          </div>
+          <div class="card-body pt-0">
+            {% if student_notifications %}
+              <ul class="list-group list-group-flush">
+                {% for n in student_notifications %}
+                <li class="list-group-item border-0 px-0 d-flex justify-content-between">
+                  <span class="small">{{ n.message }}</span>
+                  <small class="text-muted ms-2">{{ n.created_at|timesince }} ago</small>
+                </li>
+                {% endfor %}
+              </ul>
+              <a href="{% url 'notifications:notification_list' %}" class="btn btn-link btn-sm px-0 mt-2">View all notifications</a>
+            {% else %}
+              <p class="text-muted mb-0">You're all caught up.</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-3 mb-4">
+      <div class="col-lg-6">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-header student-header-achievement border-0 pt-3 pb-2 fw-semibold">
+            <i class="bi bi-award me-2"></i>Latest Achievement
+          </div>
+          <div class="card-body">
+            {% if latest_certificate %}
+              {% url 'courses:download_certificate' latest_certificate.enrolment.id as latest_cert_download_url %}
+              <p class="mb-1">Completed: <strong>{{ latest_certificate.enrolment.course.title }}</strong></p>
+              <p class="text-muted mb-3 small">Finished: {{ latest_certificate.issued_at|date:'M j, Y' }}</p>
+              <div class="d-flex flex-wrap gap-2 align-items-center">
+                <a href="{{ latest_cert_download_url }}" class="btn btn-primary btn-sm">
+                  <i class="bi bi-download me-1"></i>Download to PC
+                </a>
+                {% include "includes/certificate_share_dropdown.html" with cert_url=latest_cert_download_url btn_class="btn-outline-primary" %}
+              </div>
+            {% else %}
+              <p class="text-muted mb-0">Once you complete a course, your latest certificate will appear here.</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-header student-header-heatmap border-0 pt-3 pb-2 fw-semibold d-flex justify-content-between align-items-center">
+            <span><i class="bi bi-grid-3x3-gap me-2"></i>Activity Heatmap</span>
+            <small class="text-muted">Monthly activity</small>
+          </div>
+          <div class="card-body pt-2">
+            {% if activity_heatmap_weeks %}
+            <p class="small text-muted mb-2">
+              <i class="bi bi-calendar3 me-1"></i>Showing activity from <strong>{{ activity_heatmap_start_date|date:"d M Y" }}</strong> to <strong>{{ activity_heatmap_end_date|date:"d M Y" }}</strong>
+              <span class="text-muted">(left = past, right = today)</span>
+            </p>
+            <div class="activity-heatmap-wrapper overflow-auto">
+              <div class="activity-heatmap-months-row position-relative mb-1" style="height: 18px; min-width: calc({{ activity_heatmap_num_weeks }} * 14px - 4px);">
+                {% for m in activity_heatmap_months %}
+                <span class="activity-heatmap-month-label text-muted position-absolute small" style="left: calc({{ m.col }} * 14px); white-space: nowrap;">{{ m.name }}</span>
+                {% endfor %}
+              </div>
+              <div class="d-flex gap-1" style="min-width: fit-content;">
+                {% for week in activity_heatmap_weeks %}
+                <div class="d-flex flex-column gap-1">
+                  {% for cell in week %}
+                  <div class="activity-heatmap-cell rounded-1" title="{{ cell.date_display }} — {{ cell.count }} contribution{{ cell.count|pluralize }}"
+                       style="width: 10px; height: 10px;
+                              background-color:
+                                {% if cell.level == 0 %}#ebedf0
+                                {% elif cell.level == 1 %}#cfe2ff
+                                {% elif cell.level == 2 %}#9ec5fe
+                                {% elif cell.level == 3 %}#6ea8fe
+                                {% else %}#3d8bfd{% endif %};">
+                  </div>
+                  {% endfor %}
+                </div>
+                {% endfor %}
+              </div>
+              <div class="d-flex align-items-center justify-content-between mt-2 flex-wrap gap-2">
+                <p class="small text-muted mb-0">{{ activity_heatmap_total|default:0 }} contribution{{ activity_heatmap_total|default:0|pluralize }} in the last year</p>
+                <div class="d-flex align-items-center gap-2 small text-muted">
+                  <span>Less</span>
+                  <div class="d-flex gap-1">
+                    <div class="rounded-1" style="width: 10px; height: 10px; background: #ebedf0;"></div>
+                    <div class="rounded-1" style="width: 10px; height: 10px; background: #cfe2ff;"></div>
+                    <div class="rounded-1" style="width: 10px; height: 10px; background: #9ec5fe;"></div>
+                    <div class="rounded-1" style="width: 10px; height: 10px; background: #6ea8fe;"></div>
+                    <div class="rounded-1" style="width: 10px; height: 10px; background: #3d8bfd;"></div>
+                  </div>
+                  <span>More</span>
+                </div>
+              </div>
+            </div>
+            <p class="small text-muted mt-2 mb-0">Blue-filled squares show effective activity and completed courses over the past year.</p>
+            {% else %}
+              <p class="text-muted mb-0">Start learning and your monthly activity will appear here.</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  {# Time-based greeting for JS (optional: can be done in view) #}
+  <script>
+    (function() {
+      var hour = new Date().getHours();
+      var greeting = hour < 12 ? 'morning' : hour < 18 ? 'afternoon' : 'evening';
+      document.querySelectorAll('[data-greeting]').forEach(function(el) { el.textContent = greeting; });
+    })();
+  </script>
+
+{% else %}
+{# —— Landing (unauthenticated) —— #}
+<section class="py-5 text-center">
+  <div class="py-lg-5">
+    <h1 class="display-4 fw-bold">Welcome to <span class="text-primary">StudySphere</span></h1>
+    <p class="lead text-muted mx-auto" style="max-width: 600px;">
+      A modern eLearning platform where students and teachers connect, learn, and grow together.
+    </p>
+    <a href="{% url 'accounts:register' %}" class="btn btn-primary btn-lg mt-3 px-5">
+      Get Started <i class="bi bi-arrow-right ms-1"></i>
+    </a>
+  </div>
+</section>
+
+<div class="row g-4 mt-4">
+  <div class="col-md-4">
+    <div class="card border-0 shadow-sm text-center h-100 p-4">
+      <div class="card-body">
+        <i class="bi bi-book fs-1 text-primary mb-3 d-block"></i>
+        <h4 class="fw-bold">Learn</h4>
+        <p class="text-muted">Enrol in courses, access materials, and track your progress at your own pace.</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card border-0 shadow-sm text-center h-100 p-4">
+      <div class="card-body">
+        <i class="bi bi-easel fs-1 text-success mb-3 d-block"></i>
+        <h4 class="fw-bold">Teach</h4>
+        <p class="text-muted">Create and manage courses, upload materials, and engage with your students.</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card border-0 shadow-sm text-center h-100 p-4">
+      <div class="card-body">
+        <i class="bi bi-people fs-1 text-info mb-3 d-block"></i>
+        <h4 class="fw-bold">Connect</h4>
+        <p class="text-muted">Chat in real time, share status updates, and build a learning community.</p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+{% if user.is_authenticated and user.is_teacher %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+(function() {
+  if (typeof Chart === 'undefined') return;
+
+  // —— Engagement Stats: time-series line chart (weekly overview) ——
+  var weEl = document.getElementById('weeklyEngagementData');
+  var lineCtx = document.getElementById('engagementLineChart');
+  if (lineCtx) {
+    var weData = weEl ? JSON.parse(weEl.textContent) : [];
+    var dayLabels = weData.map(function(r) { return r.day_label; });
+    new Chart(lineCtx.getContext('2d'), {
+      type: 'line',
+      data: {
+        labels: dayLabels.length ? dayLabels : ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+        datasets: [
+          { label: 'Active students', data: weData.map(function(r) { return r.active_students; }), borderColor: '#0d6efd', backgroundColor: 'rgba(13, 110, 253, 0.08)', fill: true, tension: 0.35, pointRadius: 4 },
+          { label: 'Submissions', data: weData.map(function(r) { return r.submissions; }), borderColor: '#198754', backgroundColor: 'rgba(25, 135, 84, 0.08)', fill: true, tension: 0.35, pointRadius: 4 }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { intersect: false, mode: 'index' },
+        plugins: { legend: { position: 'bottom' } },
+        scales: {
+          y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.06)' } },
+          x: { grid: { display: false } }
+        }
+      }
+    });
+  }
+
+  // —— Students Completed This Week: 2D/3D-style pie (doughnut) chart ——
+  var pieEl = document.getElementById('completionsPieData');
+  var pieCtx = document.getElementById('completionsPieChart');
+  if (pieCtx) {
+    var pieData = pieEl ? JSON.parse(pieEl.textContent) : [];
+    if (pieData.length > 0) {
+      new Chart(pieCtx.getContext('2d'), {
+        type: 'doughnut',
+        data: {
+          labels: pieData.map(function(i) { return (i.course_title || 'Unknown').substring(0, 25); }),
+          datasets: [{
+            data: pieData.map(function(i) { return i.count; }),
+            backgroundColor: pieData.map(function(i) { return i.color || '#0d9488'; }),
+            borderWidth: 3,
+            borderColor: '#fff',
+            hoverOffset: 12,
+            shadowOffsetX: 3,
+            shadowOffsetY: 4,
+            shadowBlur: 8,
+            shadowColor: 'rgba(13, 148, 136, 0.35)'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '55%',
+          plugins: { legend: { display: false } },
+          animation: { animateRotate: true, animateScale: true }
+        }
+      });
+    }
+  }
+})();
+</script>
+{% endif %}
+{% endblock %}

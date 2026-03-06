@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block title %}Contact — StudySphere{% endblock %}
+
+{% block content %}
+<div class="row g-4 mt-2">
+  <div class="col-md-6">
+    <div class="card shadow-sm border-0">
+      <div class="card-header bg-white fw-semibold">
+        <i class="bi bi-geo-alt me-2"></i>Location
+      </div>
+      <div class="card-body p-0">
+        <div style="height: 260px;">
+          <!-- Real-time Google Map embed; replace src with your organisation's embed URL -->
+          <iframe
+            src="https://www.google.com/maps/embed?pb="
+            width="100%" height="260" style="border:0;" allowfullscreen=""
+            loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+          </iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="card shadow-sm border-0 mb-3">
+      <div class="card-header bg-white fw-semibold">
+        <i class="bi bi-envelope me-2"></i>Send us a message
+      </div>
+      <div class="card-body">
+        <form method="post" action="{% url 'calendar_app:contact_support' %}">
+          {% csrf_token %}
+          <div class="mb-2">
+            <label class="form-label small mb-1" for="contact-name-main">Your Name</label>
+            <input type="text" id="contact-name-main" name="name" class="form-control form-control-sm"
+                   value="{{ user.get_full_name|default:user.username }}">
+          </div>
+          <div class="mb-2">
+            <label class="form-label small mb-1" for="contact-email-main">Your Email</label>
+            <input type="email" id="contact-email-main" name="email" class="form-control form-control-sm"
+                   value="{{ user.email }}">
+          </div>
+          <div class="mb-3">
+            <label class="form-label small mb-1" for="contact-message-main">Message</label>
+            <textarea id="contact-message-main" name="message" rows="4"
+                      class="form-control form-control-sm"
+                      placeholder="How can we help?"></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary btn-sm w-100">Send Message</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3 mt-2">
+  <div class="col-md-6">
+    <div class="card shadow-sm border-0">
+      <div class="card-header bg-white fw-semibold">
+        <i class="bi bi-info-circle me-2"></i>Support info
+      </div>
+      <div class="card-body small">
+        <p class="mb-1"><strong>Email:</strong> <a href="mailto:support@studysphere.app">support@studysphere.app</a></p>
+        <p class="mb-1"><strong>Hours:</strong> Mon–Fri, 9:00–17:00</p>
+        <p class="mb-0 text-muted">We aim to respond to all messages within 24 hours.</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card shadow-sm border-0 h-100">
+      <div class="card-header bg-white fw-semibold">
+        <i class="bi bi-question-circle me-2"></i>Help &amp; live support
+      </div>
+      <div class="card-body small">
+        <ul class="list-unstyled mb-3">
+          <li class="mb-1"><a href="#" class="text-decoration-none">FAQ / Help centre</a></li>
+          <li class="mb-1"><a href="#" class="text-decoration-none">API Documentation</a></li>
+        </ul>
+        <a href="{% url 'chat:chat_lobby' %}" class="btn btn-outline-primary btn-sm w-100">
+          <i class="bi bi-chat-dots me-1"></i>Open live support chat
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+

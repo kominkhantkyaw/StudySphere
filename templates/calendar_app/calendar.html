@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+
+{% block title %}Calendar — StudySphere{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2 class="fw-bold mb-0"><i class="bi bi-calendar3 me-2"></i>My Calendar</h2>
+  <a href="{% url 'calendar_app:event_create' %}" class="btn btn-primary btn-sm">
+    <i class="bi bi-plus-lg me-1"></i>New Event
+  </a>
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-8">
+    <div class="card shadow-sm border-0 h-100">
+      <div class="card-body">
+        <div class="d-flex flex-wrap gap-3 mb-3 small">
+          <span><i class="bi bi-circle-fill text-primary me-1"></i>Course Session</span>
+          <span><i class="bi bi-circle-fill text-success me-1"></i>Appointment</span>
+          <span><i class="bi bi-circle-fill" style="color:#fd7e14"></i> Office Hours</span>
+          <span><i class="bi bi-circle-fill text-danger me-1"></i>Deadline</span>
+        </div>
+        <div id="calendar"></div>
+        {% if upcoming_events %}
+        <hr class="mt-4 mb-3" />
+        <h6 class="fw-semibold mb-2">Upcoming events</h6>
+        <ul class="list-unstyled small mb-0">
+          {% for e in upcoming_events %}
+          <li class="mb-1">
+            <strong>{{ e.start|date:'M j' }}</strong>
+            — {{ e.title }}
+            {% if e.course %}<span class="text-muted">({{ e.course.title }})</span>{% endif %}
+            <span class="text-muted">at {{ e.start|time:'H:i' }}</span>
+          </li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-4">
+    <div class="card shadow-sm border-0 mb-3">
+      <div class="card-header bg-white border-0 pt-3 pb-2 fw-semibold">
+        <i class="bi bi-info-circle me-2"></i>Calendar
+      </div>
+      <div class="card-body">
+        <p class="small text-muted mb-1">Keep track of your sessions, deadlines, and appointments in one place.</p>
+        <p class="small mb-0">Click on a day to view details, or on an event to open it.</p>
+      </div>
+    </div>
+
+    <div class="card shadow-sm border-0">
+      <div class="card-header bg-white border-0 pt-3 pb-2 fw-semibold">
+        <i class="bi bi-envelope me-2"></i>Send us a message
+      </div>
+      <div class="card-body">
+        <form method="post" action="{% url 'calendar_app:contact_support' %}">
+          {% csrf_token %}
+          <div class="mb-2">
+            <label class="form-label small mb-1" for="contact-name">Your Name</label>
+            <input type="text" id="contact-name" name="name" class="form-control form-control-sm" value="{{ user.get_full_name|default:user.username }}">
+          </div>
+          <div class="mb-2">
+            <label class="form-label small mb-1" for="contact-email">Your Email</label>
+            <input type="email" id="contact-email" name="email" class="form-control form-control-sm" value="{{ user.email }}">
+          </div>
+          <div class="mb-3">
+            <label class="form-label small mb-1" for="contact-message">Message</label>
+            <textarea id="contact-message" name="message" rows="3" class="form-control form-control-sm" placeholder="How can we help?"></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary btn-sm w-100">Send Message</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const calendarEl = document.getElementById('calendar');
+    const calendar = new FullCalendar.Calendar(calendarEl, {
+      initialView: 'dayGridMonth',
+      headerToolbar: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+      },
+      events: '{% url "calendar_app:event_list_json" %}',
+      navLinks: true,
+      editable: false,
+      dayMaxEvents: true,
+      height: 'auto',
+      eventClick: function (info) {
+        info.jsEvent.preventDefault();
+        if (info.event.url) {
+          window.location.href = info.event.url;
+        }
+      },
+    });
+    calendar.render();
+  });
+</script>
+{% endblock %}

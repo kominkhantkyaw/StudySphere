@@ -1,0 +1,17 @@
+Django
+djangorestframework
+djangorestframework-simplejwt
+django-cors-headers
+channels
+channels-redis
+daphne
+redis
+psycopg2-binary
+pillow
+qrcode[pil]
+reportlab
+supabase
+gunicorn
+drf-yasg
+python-dotenv
+certifi

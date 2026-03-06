@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block title %}Issue certificate — {{ course.title }} — StudySphere{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center py-4">
+  <div class="col-12 col-md-8 col-lg-7">
+    <nav aria-label="Breadcrumb" class="mb-3">
+      <a href="{% url 'courses:course_detail' course.id %}" class="auth-back-link text-muted text-decoration-none small">
+        <i class="bi bi-arrow-left me-1" aria-hidden="true"></i>Back to course
+      </a>
+    </nav>
+
+    <div class="card shadow-sm border-0">
+      <div class="card-header bg-primary text-white py-3">
+        <h1 class="h5 mb-0 fw-semibold"><i class="bi bi-award me-2"></i>Issue certificate</h1>
+        <p class="small mb-0 mt-1 opacity-90">Choose how to issue a certificate for {{ enrolment.student.get_full_name|default:enrolment.student.username }}</p>
+      </div>
+      <div class="card-body p-4">
+        <ul class="nav nav-tabs mb-4" id="issueCertTabs" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="upload-tab" data-bs-toggle="tab" data-bs-target="#upload-pane" type="button" role="tab">Upload certificate</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="generate-tab" data-bs-toggle="tab" data-bs-target="#generate-pane" type="button" role="tab">Generate certificate</button>
+          </li>
+        </ul>
+
+        <div class="tab-content" id="issueCertTabContent">
+          <div class="tab-pane fade show active" id="upload-pane" role="tabpanel">
+            <p class="text-muted small mb-3">Upload a PDF or image file. The student will be able to view and download it from their course page.</p>
+            <form method="post" enctype="multipart/form-data" action="">
+              {% csrf_token %}
+              <input type="hidden" name="issue_method" value="upload">
+              <div class="mb-3">
+                <label for="id_certificate_file" class="form-label fw-semibold">Certificate file (PDF or image)</label>
+                <input type="file" name="certificate_file" id="id_certificate_file" class="form-control" accept=".pdf,.jpg,.jpeg,.png" required>
+                <div class="form-text">Accepted: PDF, JPG, PNG.</div>
+              </div>
+              <div class="d-flex gap-2">
+                <a href="{% url 'courses:course_detail' course.id %}" class="btn btn-outline-secondary">Cancel</a>
+                <button type="submit" class="btn btn-primary">
+                  <i class="bi bi-upload me-1"></i>Upload & issue certificate
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <div class="tab-pane fade" id="generate-pane" role="tabpanel">
+            <p class="text-muted small mb-3">Generate a professional PDF certificate with QR code. It will be saved and the student will see it in their completed courses. You can then download it from the course page.</p>
+            <form method="post" action="{% url 'courses:generate_certificate' course.id enrolment.student.id %}" id="generate-cert-form">
+              {% csrf_token %}
+              <div class="d-flex gap-2">
+                <a href="{% url 'courses:course_detail' course.id %}" class="btn btn-outline-secondary">Cancel</a>
+                <button type="submit" class="btn btn-success">
+                  <i class="bi bi-award me-1"></i>Generate certificate
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

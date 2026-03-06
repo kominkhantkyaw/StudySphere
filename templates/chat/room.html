@@ -1,0 +1,1063 @@
+{% extends 'base.html' %}
+
+{% block title %}Chat — {{ room_title }} — StudySphere{% endblock %}
+
+{% block content %}
+<div class="{% if embed|default:False %}p-2{% else %}mt-3{% endif %}">
+  {% if embed|default:False %}
+  <div class="d-flex align-items-center mb-2 py-1">
+    <h5 class="fw-bold mb-0">
+      <i class="bi bi-chat-dots me-2"></i>{{ room_title }}
+    </h5>
+  </div>
+  {% else %}
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="fw-bold mb-0">
+      <i class="bi bi-chat-dots me-2"></i>{{ room_title }}
+    </h3>
+    <a href="{% url 'chat:chat_lobby' %}" class="btn btn-outline-secondary btn-sm">
+      <i class="bi bi-arrow-left me-1"></i>Back to Lobby
+    </a>
+  </div>
+  {% endif %}
+
+  <div class="row g-3">
+    <div class="col-md-9">
+  <div class="card shadow-sm border-0">
+    <div class="card-body p-0">
+      <div id="chat-messages" class="p-3" style="height: 400px; overflow-y: auto; background-color: #f8f9fa;">
+        <div class="text-center text-muted py-5">
+          <i class="bi bi-chat-square-dots fs-1"></i>
+          <p class="mt-2">Connecting to chat...</p>
+        </div>
+      </div>
+    </div>
+    <div class="card-footer bg-white p-3">
+      <div id="reply-pill" class="small text-muted mb-2 d-none">
+        Replying to <span id="reply-pill-user"></span>:
+        <span id="reply-pill-text"></span>
+        <button type="button" class="btn btn-link btn-sm p-0 ms-1" id="reply-pill-cancel">Cancel</button>
+      </div>
+      <div class="d-flex align-items-center gap-2 flex-wrap position-relative">
+        <div class="d-flex align-items-center gap-1 flex-wrap">
+          <div class="position-relative">
+            <button type="button" id="chat-emoji" class="btn btn-light btn-sm" title="Insert emoji">
+              <i class="bi bi-emoji-smile"></i>
+            </button>
+            <div id="chat-input-emoji-picker" class="chat-input-emoji-picker d-none"></div>
+          </div>
+          {% if upload_url %}
+          <button type="button" id="chat-attach" class="btn btn-light btn-sm" title="Attach file">
+            <i class="bi bi-paperclip"></i>
+          </button>
+          <div class="dropdown">
+            <button type="button" id="chat-more" class="btn btn-light btn-sm dropdown-toggle" title="More" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-plus-lg"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-start" aria-labelledby="chat-more">
+              <li><button type="button" class="dropdown-item" data-more-action="camera"><i class="bi bi-camera me-2"></i>Camera</button></li>
+              <li><button type="button" class="dropdown-item" data-more-action="photo"><i class="bi bi-image me-2"></i>Photo</button></li>
+              <li><button type="button" class="dropdown-item" data-more-action="video"><i class="bi bi-camera-video me-2"></i>Video</button></li>
+              {% if upload_url %}
+              <li><button type="button" class="dropdown-item" data-more-action="screenshare"><i class="bi bi-display me-2"></i>Screen share</button></li>
+              {% endif %}
+              <li><hr class="dropdown-divider"></li>
+              <li><button type="button" class="dropdown-item" data-more-action="location"><i class="bi bi-geo-alt me-2"></i>Location</button></li>
+            </ul>
+          </div>
+          <input type="file" id="chat-file-input" class="d-none" aria-label="Attach file">
+          <input type="file" id="chat-photo-input" class="d-none" accept="image/*" aria-label="Upload photo">
+          <input type="file" id="chat-video-input" class="d-none" accept="video/*" aria-label="Upload video">
+          <input type="file" id="chat-camera-input" class="d-none" accept="image/*" capture="environment" aria-label="Take photo with camera">
+          {% endif %}
+        </div>
+        <div class="flex-grow-1">
+          <div class="input-group">
+            <input type="text" id="chat-input" class="form-control" placeholder="Type your message..." autocomplete="off">
+            <button id="chat-send" class="btn btn-primary" type="button">
+              <i class="bi bi-send me-1"></i>Send
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card shadow-sm border-0">
+        <div class="card-header bg-white py-2">
+          <span class="fw-bold"><i class="bi bi-people-fill me-1"></i>Online</span>
+          <span class="badge bg-success rounded-pill ms-1" id="online-count">0</span>
+        </div>
+        <div class="card-body p-2" style="max-height: 400px; overflow-y: auto;">
+          <ul class="list-group list-group-flush" id="online-list"></ul>
+          <p class="small text-muted mb-0 mt-2" id="online-empty">No one else in this room yet.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm before sending file -->
+<div class="modal fade" id="send-file-confirm-modal" tabindex="-1" aria-labelledby="send-file-confirm-label" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header py-2">
+        <h5 class="modal-title" id="send-file-confirm-label"><i class="bi bi-paperclip me-2"></i>Send file</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body py-3">
+        <p class="mb-1">Do you want to send this file?</p>
+        <p class="fw-semibold text-break mb-2" id="send-file-confirm-name">—</p>
+        <p class="small text-muted mb-0">It will be sent to the group chat. Everyone in this room will see it.</p>
+      </div>
+      <div class="modal-footer py-2">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" id="send-file-confirm-yes">
+          <i class="bi bi-send me-1"></i>Yes, send
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Forward to (recipient in this room) -->
+<div class="modal fade" id="forward-to-modal" tabindex="-1" aria-labelledby="forward-to-modal-label" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header py-2">
+        <h5 class="modal-title" id="forward-to-modal-label"><i class="bi bi-share me-2"></i>Forward to</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body py-2">
+        <p class="small text-muted mb-2">Choose who in this room should receive this message, image or file.</p>
+        <ul class="list-group list-group-flush" id="forward-to-list"></ul>
+        <p class="small text-muted mt-2 mb-0 d-none" id="forward-to-empty">No other participants in this room right now.</p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  const currentUser = '{{ user.username }}';
+  const wsPath = '{{ ws_path|default:"/ws/chat/0/" }}';
+  const uploadUrl = '{{ upload_url|default:"" }}';
+  const chatMessages = document.getElementById('chat-messages');
+  const chatInput = document.getElementById('chat-input');
+  const chatSend = document.getElementById('chat-send');
+  const reactionEmojis = ['😊', '😂', '❤️', '👍', '🎉', '😮', '😢', '🙏', '👏', '😡', '⭐', '🔥', '✨', '💯', '🙂', '😎', '🥳', '😇', '🤔', '👋'];
+  /* Emojis for inserting into message text (near file upload) */
+  const inputEmojis = ['😊', '😂', '❤️', '👍', '🎉', '😮', '😢', '🙏', '👏', '😡', '⭐', '🔥', '✨', '💯', '🙂', '😎', '🥳', '😇', '🤔', '👋'];
+
+  const wsProtocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
+  const ws = new WebSocket(wsProtocol + window.location.host + wsPath);
+
+  ws.onopen = function () {
+    console.log('WebSocket connected');
+    chatMessages.innerHTML = '';
+  };
+
+  const presenceLabels = {
+    'AVAILABLE': 'Available',
+    'ONLINE': 'Online',
+    'BUSY': 'Busy',
+    'AWAY': 'Away',
+    'OFFLINE': 'Offline',
+  };
+  const onlineUsers = {};
+
+  function renderOnlineList() {
+    const list = document.getElementById('online-list');
+    const countEl = document.getElementById('online-count');
+    const emptyEl = document.getElementById('online-empty');
+    list.innerHTML = '';
+    const users = Object.keys(onlineUsers).sort();
+    countEl.textContent = users.length;
+    emptyEl.style.display = users.length ? 'none' : 'block';
+    users.forEach(function (username) {
+      const info = onlineUsers[username] || {};
+      const presence = info.presence || 'AVAILABLE';
+      const statusText = info.status_text || '';
+      const li = document.createElement('li');
+      li.className = 'list-group-item d-flex align-items-start py-2 px-2 border-0';
+      li.innerHTML = '<span class="presence-dot presence-present me-2 mt-1" title="In this room"></span>' +
+        '<span class="presence-dot presence-' + presence.toLowerCase() + ' me-2 mt-1" title="' + (presenceLabels[presence] || presence) + '"></span>' +
+        '<div class="flex-grow-1 min-w-0"><span class="small text-truncate d-block">' + escapeHtml(username) + (username === currentUser ? ' (you)' : '') + '</span>' +
+        (statusText ? '<span class="small text-muted text-truncate d-block" title="' + escapeHtml(statusText) + '">' + escapeHtml(statusText) + '</span>' : '') + '</div>';
+      list.appendChild(li);
+    });
+  }
+  function escapeHtml(s) {
+    const div = document.createElement('div');
+    div.textContent = s;
+    return div.innerHTML;
+  }
+
+  ws.onmessage = function (e) {
+    const data = JSON.parse(e.data);
+
+    if (data.type === 'history') {
+      chatMessages.innerHTML = '';
+      data.messages.forEach(function (msg) {
+        appendMessage(msg);
+      });
+      scrollToBottom();
+    } else if (data.type === 'message') {
+      appendMessage(data);
+      scrollToBottom();
+    } else if (data.type === 'user_list') {
+      Object.keys(onlineUsers).forEach(function (k) { delete onlineUsers[k]; });
+      (data.users || []).forEach(function (u) {
+        onlineUsers[u.username] = { presence: u.presence || 'AVAILABLE', status_text: u.status_text || '' };
+      });
+      renderOnlineList();
+    } else if (data.type === 'user_joined') {
+      onlineUsers[data.username] = { presence: data.presence || 'AVAILABLE', status_text: data.status_text || '' };
+      renderOnlineList();
+    } else if (data.type === 'user_left') {
+      delete onlineUsers[data.username];
+      renderOnlineList();
+    } else if (data.type === 'delete') {
+      const selector = '[data-message-id=\"' + data.id + '\"]';
+      const bubble = chatMessages.querySelector(selector);
+      if (bubble && bubble.parentElement) {
+        bubble.parentElement.remove();
+      }
+    } else if (data.type === 'reaction') {
+      const selector = '[data-message-id=\"' + data.id + '\"]';
+      const bubble = chatMessages.querySelector(selector);
+      if (!bubble) return;
+      const reactionsDiv = bubble.querySelector('.chat-message-reactions');
+      if (!reactionsDiv) return;
+      const username = data.username || '';
+      const chips = reactionsDiv.querySelectorAll('.chat-emoji-chip[data-username="' + username + '"]');
+      chips.forEach(function (c) { c.remove(); });
+      const chip = document.createElement('span');
+      chip.className = 'badge chat-emoji-chip';
+      chip.setAttribute('data-username', username);
+      chip.title = username ? username + ' reacted' : 'reacted';
+      chip.textContent = data.emoji || '';
+      reactionsDiv.appendChild(chip);
+    } else if (data.type === 'edit') {
+      const selector = '[data-message-id=\"' + data.id + '\"]';
+      const bubble = chatMessages.querySelector(selector);
+      if (!bubble) return;
+      const textEl = bubble.querySelector('[data-message-text]');
+      if (textEl) {
+        const newText = (data.message || data.attachment_name || '').trim();
+        if (newText) {
+          textEl.textContent = newText;
+        }
+      }
+    }
+  };
+
+  ws.onclose = function () {
+    console.log('WebSocket disconnected');
+    const notice = document.createElement('div');
+    notice.className = 'text-center text-danger py-2';
+    notice.textContent = 'Disconnected from chat. Please refresh the page.';
+    chatMessages.appendChild(notice);
+  };
+
+  let currentReplyTo = null;
+
+  function appendMessage(msg) {
+    const wrapper = document.createElement('div');
+    const isOwn = msg.username === currentUser;
+
+    wrapper.className = 'd-flex mb-2 ' + (isOwn ? 'justify-content-end' : 'justify-content-start');
+
+    const bubble = document.createElement('div');
+    bubble.className = 'chat-message-bubble px-3 py-2 rounded-3 ' + (isOwn ? 'chat-bubble-own' : 'chat-bubble-other');
+    bubble.style.maxWidth = '70%';
+
+    if (msg.reply_to && msg.reply_to_username) {
+      const quoted = document.createElement('div');
+      quoted.className = 'small mb-1 text-muted';
+      quoted.textContent = 'Replying to ' + msg.reply_to_username + ': ' + (msg.reply_to_excerpt || '');
+      bubble.appendChild(quoted);
+    }
+
+    if (!isOwn) {
+      const username = document.createElement('small');
+      username.className = 'fw-bold d-block mb-1';
+      username.textContent = msg.username;
+      bubble.appendChild(username);
+    }
+
+    if (msg.attachment_url) {
+      const link = document.createElement('a');
+      link.href = msg.attachment_url;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      link.className = 'd-block mb-1';
+      link.textContent = msg.attachment_name || 'Download attachment';
+      bubble.appendChild(link);
+    }
+
+    let textSpan = null;
+
+    if (msg.message) {
+      textSpan = document.createElement('span');
+      textSpan.setAttribute('data-message-text', '1');
+      textSpan.textContent = msg.message;
+      bubble.appendChild(textSpan);
+    } else if (msg.attachment_name) {
+      // For pure file messages, allow editing the displayed filename text.
+      textSpan = document.createElement('span');
+      textSpan.className = 'd-block';
+      textSpan.setAttribute('data-message-text', '1');
+      textSpan.textContent = msg.message || msg.attachment_name;
+      bubble.appendChild(textSpan);
+    }
+
+    const time = document.createElement('small');
+    time.className = 'd-block mt-1 text-muted';
+    time.style.fontSize = '0.75rem';
+    if (msg.timestamp) {
+      const date = new Date(msg.timestamp);
+      time.textContent = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+    bubble.appendChild(time);
+
+    bubble.dataset.messageId = msg.id || '';
+
+    const reactionsDiv = document.createElement('div');
+    reactionsDiv.className = 'chat-message-reactions mt-1 d-flex flex-wrap gap-1 align-items-center';
+    reactionsDiv.setAttribute('data-message-id', msg.id || '');
+    (msg.reactions || []).forEach(function (r) {
+      const chip = document.createElement('span');
+      chip.className = 'badge chat-emoji-chip';
+      chip.setAttribute('data-username', r.username || '');
+      chip.title = (r.username || '') + ' reacted';
+      chip.textContent = r.emoji || '';
+      reactionsDiv.appendChild(chip);
+    });
+    bubble.appendChild(reactionsDiv);
+
+    const actions = document.createElement('div');
+    actions.className = 'chat-message-actions mt-1 d-flex justify-content-end gap-2 align-items-center';
+
+    // Emoji reaction picker (broadcast to all participants)
+    const emojiBtn = document.createElement('button');
+    emojiBtn.type = 'button';
+    emojiBtn.className = 'btn btn-link btn-sm p-0 small text-decoration-none';
+    emojiBtn.title = 'React';
+    emojiBtn.innerHTML = '<i class=\"bi bi-emoji-smile\"></i>';
+    emojiBtn.addEventListener('click', function () {
+      let picker = actions.querySelector('.chat-emoji-picker');
+      if (picker) {
+        picker.remove();
+        return;
+      }
+      picker = document.createElement('div');
+      picker.className = 'chat-emoji-picker';
+      reactionEmojis.forEach(function (emoji) {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'btn btn-sm btn-link p-1';
+        btn.textContent = emoji;
+        btn.addEventListener('click', function () {
+          const id = bubble.dataset.messageId;
+          if (!id) {
+            picker.remove();
+            return;
+          }
+          sendReaction(id, emoji);
+          picker.remove();
+        });
+        picker.appendChild(btn);
+      });
+      actions.appendChild(picker);
+    });
+    actions.appendChild(emojiBtn);
+
+    // Edit: allow updating own message text (no duplicate delete)
+    if (isOwn && bubble.dataset.messageId) {
+      const editBtn = document.createElement('button');
+      editBtn.type = 'button';
+      editBtn.className = 'btn btn-link btn-sm p-0 small text-decoration-none';
+      editBtn.title = 'Edit';
+      editBtn.innerHTML = '<i class=\"bi bi-pencil\"></i>';
+      editBtn.addEventListener('click', function () {
+        const id = bubble.dataset.messageId;
+        if (!id) return;
+        if (!textSpan) {
+          console.warn('No text content to edit for this message.');
+          return;
+        }
+        const currentText = textSpan.textContent || '';
+        const newText = window.prompt('Edit your message:', currentText);
+        if (newText === null) {
+          // User pressed cancel
+          return;
+        }
+        const trimmed = newText.trim();
+        if (!trimmed || trimmed === currentText.trim()) {
+          // Empty or unchanged: nothing to do
+          return;
+        }
+        editMessage(id, trimmed).then(function (ok) {
+          if (ok) {
+            textSpan.textContent = trimmed;
+          } else {
+            alert('Sorry, we could not update this message. Please try again.');
+          }
+        });
+      });
+      actions.appendChild(editBtn);
+    }
+
+    // More options dropdown: Reply, Copy link, Delete, Pin, Mark as unread
+    const dropdownWrap = document.createElement('div');
+    dropdownWrap.className = 'dropdown';
+    const dropdownBtn = document.createElement('button');
+    dropdownBtn.type = 'button';
+    dropdownBtn.className = 'btn btn-link btn-sm p-0 small text-decoration-none';
+    dropdownBtn.title = 'More options';
+    dropdownBtn.setAttribute('data-bs-toggle', 'dropdown');
+    dropdownBtn.innerHTML = '<i class=\"bi bi-three-dots\"></i>';
+    const menu = document.createElement('ul');
+    menu.className = 'dropdown-menu dropdown-menu-end';
+
+    const replyItem = document.createElement('li');
+    replyItem.innerHTML = '<button class=\"dropdown-item\" type=\"button\">Reply</button>';
+    replyItem.querySelector('button').addEventListener('click', function () {
+      startReply({
+        id: msg.id,
+        username: msg.username,
+        excerpt: (msg.message || msg.attachment_name || '').slice(0, 100)
+      });
+    });
+    menu.appendChild(replyItem);
+
+    const copyItem = document.createElement('li');
+    copyItem.innerHTML = '<button class=\"dropdown-item\" type=\"button\">Copy link</button>';
+    copyItem.querySelector('button').addEventListener('click', function () {
+      if (!msg.attachment_url) return;
+      const url = msg.attachment_url;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).catch(function (err) {
+          console.error(err);
+        });
+      } else {
+        window.prompt('Copy link', url);
+      }
+    });
+    menu.appendChild(copyItem);
+
+    const forwardItem = document.createElement('li');
+    forwardItem.innerHTML = '<button class=\"dropdown-item\" type=\"button\"><i class=\"bi bi-share me-2\"></i>Forward</button>';
+    forwardItem.querySelector('button').addEventListener('click', function () {
+      const parts = [];
+      if (msg.message && msg.message.trim()) {
+        parts.push(msg.message.trim());
+      }
+      if (msg.attachment_url) {
+        const label = msg.attachment_name || 'Attachment';
+        parts.push(label + ': ' + msg.attachment_url);
+      }
+      const forwardContent = parts.length ? parts.join(' ') : '';
+      if (forwardContent) {
+        openForwardModal(forwardContent);
+      }
+    });
+    menu.appendChild(forwardItem);
+
+    if (isOwn && bubble.dataset.messageId) {
+      const deleteItem = document.createElement('li');
+      deleteItem.innerHTML = '<button class=\"dropdown-item text-danger\" type=\"button\">Delete</button>';
+      deleteItem.querySelector('button').addEventListener('click', function () {
+        const id = bubble.dataset.messageId;
+        if (!id) return;
+        if (!confirm('Delete this message for everyone?')) return;
+        deleteMessage(id);
+      });
+      menu.appendChild(deleteItem);
+    }
+
+    const pinItem = document.createElement('li');
+    pinItem.innerHTML = '<button class=\"dropdown-item\" type=\"button\">Pin for everyone</button>';
+    pinItem.querySelector('button').addEventListener('click', function () {
+      bubble.classList.toggle('chat-message-pinned');
+    });
+    menu.appendChild(pinItem);
+
+    const unreadItem = document.createElement('li');
+    unreadItem.innerHTML = '<button class=\"dropdown-item\" type=\"button\">Mark as unread</button>';
+    unreadItem.querySelector('button').addEventListener('click', function () {
+      bubble.classList.toggle('chat-message-unread');
+    });
+    menu.appendChild(unreadItem);
+
+    dropdownWrap.appendChild(dropdownBtn);
+    dropdownWrap.appendChild(menu);
+    actions.appendChild(dropdownWrap);
+
+    bubble.appendChild(actions);
+
+    wrapper.appendChild(bubble);
+    chatMessages.appendChild(wrapper);
+  }
+
+  function scrollToBottom() {
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
+  function sendMessage() {
+    const message = chatInput.value.trim();
+    if (message && ws.readyState === WebSocket.OPEN) {
+      const payload = { message: message };
+      if (currentReplyTo && currentReplyTo.id) {
+        payload.reply_to = currentReplyTo.id;
+      }
+      ws.send(JSON.stringify(payload));
+      chatInput.value = '';
+      chatInput.focus();
+      clearReply();
+    }
+  }
+  function deleteMessage(id) {
+    fetch('/chat/messages/' + id + '/delete/', {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+    }).then(function (r) {
+      if (!r.ok) {
+        console.error('Failed to delete message');
+      }
+    }).catch(function (err) {
+      console.error(err);
+    });
+  }
+
+  function editMessage(id, message) {
+    return fetch('/chat/messages/' + id + '/edit/', {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': '{{ csrf_token }}',
+      },
+      body: JSON.stringify({ message: message }),
+    }).then(function (r) {
+      if (!r.ok) {
+        console.error('Failed to edit message');
+        return false;
+      }
+      return true;
+    }).catch(function (err) {
+      console.error(err);
+      return false;
+    });
+  }
+
+  function sendReaction(messageId, emoji) {
+    if (!emoji || !messageId || ws.readyState !== WebSocket.OPEN) {
+      return;
+    }
+    ws.send(JSON.stringify({
+      message_id: messageId,
+      reaction: emoji,
+    }));
+  }
+
+  function openForwardModal(forwardContent) {
+    const listEl = document.getElementById('forward-to-list');
+    const emptyEl = document.getElementById('forward-to-empty');
+    const modalEl = document.getElementById('forward-to-modal');
+    if (!listEl || !emptyEl || !modalEl) return;
+    listEl.innerHTML = '';
+    const others = Object.keys(onlineUsers).filter(function (u) { return u !== currentUser; }).sort();
+    if (others.length === 0) {
+      emptyEl.classList.remove('d-none');
+    } else {
+      emptyEl.classList.add('d-none');
+      others.forEach(function (username) {
+        const li = document.createElement('li');
+        li.className = 'list-group-item list-group-item-action d-flex align-items-center py-2';
+        li.innerHTML = '<i class="bi bi-person-circle me-2 text-secondary"></i><span>' + escapeHtml(username) + '</span>';
+        li.addEventListener('click', function () {
+          chatInput.value = (chatInput.value ? chatInput.value + ' ' : '') + 'Forwarded to @' + username + ': ' + forwardContent;
+          chatInput.focus();
+          var inst = window.bootstrap && window.bootstrap.Modal && window.bootstrap.Modal.getInstance(modalEl);
+          if (inst) inst.hide();
+        });
+        listEl.appendChild(li);
+      });
+    }
+    var modal = window.bootstrap && window.bootstrap.Modal && window.bootstrap.Modal.getInstance(modalEl);
+    if (!modal) modal = new window.bootstrap.Modal(modalEl);
+    if (modal) modal.show();
+  }
+
+  function startReply(info) {
+    currentReplyTo = info;
+    const pill = document.getElementById('reply-pill');
+    const userSpan = document.getElementById('reply-pill-user');
+    const textSpan = document.getElementById('reply-pill-text');
+    if (pill && userSpan && textSpan) {
+      pill.classList.remove('d-none');
+      userSpan.textContent = info.username;
+      textSpan.textContent = (info.excerpt || '').slice(0, 100);
+    }
+  }
+
+  function clearReply() {
+    currentReplyTo = null;
+    const pill = document.getElementById('reply-pill');
+    if (pill) {
+      pill.classList.add('d-none');
+    }
+  }
+
+  chatSend.addEventListener('click', sendMessage);
+  chatInput.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      sendMessage();
+    }
+  });
+
+  const replyCancel = document.getElementById('reply-pill-cancel');
+  if (replyCancel) {
+    replyCancel.addEventListener('click', function () {
+      clearReply();
+    });
+  }
+
+  /* Input-area emoji picker (near file upload) */
+  const inputEmojiPicker = document.getElementById('chat-input-emoji-picker');
+  if (inputEmojiPicker && inputEmojiPicker.parentNode) {
+    inputEmojiPicker.innerHTML = '';
+    inputEmojis.forEach(function (emoji) {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.textContent = emoji;
+      btn.addEventListener('click', function () {
+        const start = chatInput.selectionStart || chatInput.value.length;
+        const end = chatInput.selectionEnd || chatInput.value.length;
+        const before = chatInput.value.slice(0, start);
+        const after = chatInput.value.slice(end);
+        chatInput.value = before + emoji + after;
+        chatInput.focus();
+        chatInput.selectionStart = chatInput.selectionEnd = start + emoji.length;
+        inputEmojiPicker.classList.add('d-none');
+      });
+      inputEmojiPicker.appendChild(btn);
+    });
+  }
+  const emojiBtn = document.getElementById('chat-emoji');
+  if (emojiBtn) {
+    emojiBtn.addEventListener('click', function (e) {
+      if (!inputEmojiPicker) return;
+      inputEmojiPicker.classList.toggle('d-none');
+      e.stopPropagation();
+    });
+  }
+  document.addEventListener('click', function () {
+    if (inputEmojiPicker && !inputEmojiPicker.classList.contains('d-none')) {
+      inputEmojiPicker.classList.add('d-none');
+    }
+  });
+  if (inputEmojiPicker) {
+    inputEmojiPicker.addEventListener('click', function (e) {
+      e.stopPropagation();
+    });
+  }
+
+  /* More menu: Camera, Photo, Video, Location */
+  let mediaOverlay = null;
+  let mediaStream = null;
+  let mediaRecorder = null;
+  let recordedChunks = [];
+
+  function closeMediaOverlay() {
+    if (mediaRecorder) {
+      mediaRecorder.ondataavailable = null;
+      mediaRecorder.onstop = null;
+      mediaRecorder = null;
+    }
+    if (mediaStream) {
+      mediaStream.getTracks().forEach(function (t) { t.stop(); });
+      mediaStream = null;
+    }
+    if (mediaOverlay && mediaOverlay.parentNode) {
+      mediaOverlay.parentNode.removeChild(mediaOverlay);
+    }
+    mediaOverlay = null;
+    recordedChunks = [];
+  }
+
+  function openMediaOverlay(title, controlsBuilder) {
+    closeMediaOverlay();
+    mediaOverlay = document.createElement('div');
+    mediaOverlay.style.position = 'fixed';
+    mediaOverlay.style.inset = '0';
+    mediaOverlay.style.background = 'rgba(0,0,0,0.6)';
+    mediaOverlay.style.display = 'flex';
+    mediaOverlay.style.alignItems = 'center';
+    mediaOverlay.style.justifyContent = 'center';
+    mediaOverlay.style.zIndex = '1055';
+
+    const inner = document.createElement('div');
+    inner.style.background = '#fff';
+    inner.style.borderRadius = '0.5rem';
+    inner.style.maxWidth = '480px';
+    inner.style.width = '100%';
+    inner.style.padding = '1rem';
+    inner.style.boxShadow = '0 0.5rem 1rem rgba(0,0,0,0.15)';
+
+    const header = document.createElement('div');
+    header.textContent = title;
+    header.style.fontWeight = '600';
+    header.style.marginBottom = '0.5rem';
+
+    const videoEl = document.createElement('video');
+    videoEl.autoplay = true;
+    videoEl.playsInline = true;
+    videoEl.muted = true;
+    videoEl.style.width = '100%';
+    videoEl.style.borderRadius = '0.5rem';
+
+    const controls = document.createElement('div');
+    controls.style.marginTop = '0.75rem';
+    controls.style.display = 'flex';
+    controls.style.justifyContent = 'flex-end';
+    controls.style.gap = '0.5rem';
+
+    controlsBuilder(videoEl, controls);
+
+    inner.appendChild(header);
+    inner.appendChild(videoEl);
+    inner.appendChild(controls);
+    mediaOverlay.appendChild(inner);
+    document.body.appendChild(mediaOverlay);
+
+    mediaOverlay.addEventListener('click', function (e) {
+      if (e.target === mediaOverlay) {
+        closeMediaOverlay();
+      }
+    });
+  }
+
+  var pendingUploadFile = null;
+  var sendFileConfirmModal = document.getElementById('send-file-confirm-modal');
+  var sendFileConfirmName = document.getElementById('send-file-confirm-name');
+  var sendFileConfirmYes = document.getElementById('send-file-confirm-yes');
+
+  function showSendFileConfirm(file) {
+    if (!file || !uploadUrl) return;
+    pendingUploadFile = file;
+    if (sendFileConfirmName) sendFileConfirmName.textContent = file.name || 'Attachment';
+    if (sendFileConfirmModal) {
+      var m = new bootstrap.Modal(sendFileConfirmModal);
+      m.show();
+    }
+  }
+
+  function doUpload(file) {
+    if (!uploadUrl || !file) return;
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+    fetch(uploadUrl, {
+      method: 'POST',
+      body: formData,
+      credentials: 'same-origin',
+    }).then(function (r) {
+      if (!r.ok) console.error('Upload failed');
+    }).catch(function (err) { console.error(err); });
+  }
+
+  if (sendFileConfirmModal && sendFileConfirmYes) {
+    sendFileConfirmYes.addEventListener('click', function () {
+      if (pendingUploadFile) {
+        doUpload(pendingUploadFile);
+        pendingUploadFile = null;
+      }
+      var m = bootstrap.Modal.getInstance(sendFileConfirmModal);
+      if (m) m.hide();
+    });
+    sendFileConfirmModal.addEventListener('hidden.bs.modal', function () {
+      if (pendingUploadFile) pendingUploadFile = null;
+    });
+  }
+  const photoInput = document.getElementById('chat-photo-input');
+  const videoInput = document.getElementById('chat-video-input');
+  const cameraInput = document.getElementById('chat-camera-input');
+  document.querySelectorAll('[data-more-action]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var action = btn.getAttribute('data-more-action');
+      if (action === 'camera') {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          // Fallback to simple file input on unsupported browsers.
+          if (cameraInput) {
+            cameraInput.value = '';
+            cameraInput.click();
+          } else {
+            alert('Camera is not supported in this browser.');
+          }
+          return;
+        }
+        openMediaOverlay('Take a photo', function (videoEl, controls) {
+          navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+            .then(function (stream) {
+              mediaStream = stream;
+              videoEl.srcObject = stream;
+            })
+            .catch(function () {
+              closeMediaOverlay();
+              alert('Could not access camera.');
+            });
+
+          const captureBtn = document.createElement('button');
+          captureBtn.type = 'button';
+          captureBtn.className = 'btn btn-primary btn-sm';
+          captureBtn.textContent = 'Capture & upload';
+          captureBtn.addEventListener('click', function () {
+            if (!mediaStream) return;
+            const track = mediaStream.getVideoTracks()[0];
+            const settings = track.getSettings ? track.getSettings() : {};
+            const width = settings.width || 640;
+            const height = settings.height || 480;
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(videoEl, 0, 0, width, height);
+            canvas.toBlob(function (blob) {
+              if (blob) {
+                const file = new File([blob], 'photo-' + Date.now() + '.png', { type: 'image/png' });
+                closeMediaOverlay();
+                showSendFileConfirm(file);
+              } else {
+                closeMediaOverlay();
+              }
+            }, 'image/png');
+          });
+
+          const cancelBtn = document.createElement('button');
+          cancelBtn.type = 'button';
+          cancelBtn.className = 'btn btn-outline-secondary btn-sm';
+          cancelBtn.textContent = 'Cancel';
+          cancelBtn.addEventListener('click', function () {
+            closeMediaOverlay();
+          });
+
+          controls.appendChild(cancelBtn);
+          controls.appendChild(captureBtn);
+        });
+      } else if (action === 'photo' && photoInput) {
+        photoInput.value = '';
+        photoInput.click();
+      } else if (action === 'video') {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || typeof MediaRecorder === 'undefined') {
+          // Fallback to simple file input on unsupported browsers.
+          if (videoInput) {
+            videoInput.value = '';
+            videoInput.click();
+          } else {
+            alert('Video recording is not supported in this browser.');
+          }
+          return;
+        }
+        openMediaOverlay('Record a video', function (videoEl, controls) {
+          navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+            .then(function (stream) {
+              mediaStream = stream;
+              videoEl.srcObject = stream;
+
+              recordedChunks = [];
+              try {
+                mediaRecorder = new MediaRecorder(stream);
+              } catch (e) {
+                closeMediaOverlay();
+                alert('Video recording is not available.');
+                return;
+              }
+              mediaRecorder.ondataavailable = function (ev) {
+                if (ev.data && ev.data.size > 0) {
+                  recordedChunks.push(ev.data);
+                }
+              };
+              mediaRecorder.onstop = function () {
+                if (recordedChunks.length) {
+                  const blob = new Blob(recordedChunks, { type: 'video/webm' });
+                  const file = new File([blob], 'video-' + Date.now() + '.webm', { type: 'video/webm' });
+                  showSendFileConfirm(file);
+                }
+                closeMediaOverlay();
+              };
+              mediaRecorder.start();
+            })
+            .catch(function () {
+              closeMediaOverlay();
+              alert('Could not access camera/microphone.');
+            });
+
+          const stopBtn = document.createElement('button');
+          stopBtn.type = 'button';
+          stopBtn.className = 'btn btn-danger btn-sm';
+          stopBtn.textContent = 'Stop & upload';
+          stopBtn.addEventListener('click', function () {
+            if (mediaRecorder && mediaRecorder.state === 'recording') {
+              mediaRecorder.stop();
+            } else {
+              closeMediaOverlay();
+            }
+          });
+
+          const cancelBtn = document.createElement('button');
+          cancelBtn.type = 'button';
+          cancelBtn.className = 'btn btn-outline-secondary btn-sm';
+          cancelBtn.textContent = 'Cancel';
+          cancelBtn.addEventListener('click', function () {
+            // Cancel without uploading.
+            if (mediaRecorder && mediaRecorder.state === 'recording') {
+              mediaRecorder.onstop = null;
+              mediaRecorder.stop();
+            }
+            closeMediaOverlay();
+          });
+
+          controls.appendChild(cancelBtn);
+          controls.appendChild(stopBtn);
+        });
+      } else if (action === 'screenshare') {
+        if (!navigator.mediaDevices || typeof navigator.mediaDevices.getDisplayMedia !== 'function' || typeof MediaRecorder === 'undefined') {
+          alert('Screen sharing is not supported in this browser. Try Chrome, Edge or Firefox.');
+          return;
+        }
+        if (!uploadUrl) {
+          alert('Screen sharing is not available in this room.');
+          return;
+        }
+        openMediaOverlay('Share your screen', function (videoEl, controls) {
+          navigator.mediaDevices.getDisplayMedia({ video: true, audio: true })
+            .then(function (stream) {
+              mediaStream = stream;
+              videoEl.srcObject = stream;
+              videoEl.volume = 0;
+              recordedChunks = [];
+              try {
+                mediaRecorder = new MediaRecorder(stream);
+              } catch (e) {
+                closeMediaOverlay();
+                alert('Screen recording is not available.');
+                return;
+              }
+              mediaRecorder.ondataavailable = function (ev) {
+                if (ev.data && ev.data.size > 0) {
+                  recordedChunks.push(ev.data);
+                }
+              };
+              mediaRecorder.onstop = function () {
+                if (recordedChunks.length) {
+                  var blob = new Blob(recordedChunks, { type: 'video/webm' });
+                  var file = new File([blob], 'screen-share-' + Date.now() + '.webm', { type: 'video/webm' });
+                  closeMediaOverlay();
+                  showSendFileConfirm(file);
+                } else {
+                  closeMediaOverlay();
+                }
+              };
+              mediaRecorder.start();
+            })
+            .catch(function (err) {
+              closeMediaOverlay();
+              if (err && err.name === 'NotAllowedError') {
+                alert('Screen share was cancelled or denied.');
+              } else {
+                alert('Could not start screen sharing.');
+              }
+            });
+
+          var stopBtn = document.createElement('button');
+          stopBtn.type = 'button';
+          stopBtn.className = 'btn btn-danger btn-sm';
+          stopBtn.textContent = 'Stop & upload';
+          stopBtn.addEventListener('click', function () {
+            if (mediaRecorder && mediaRecorder.state === 'recording') {
+              mediaRecorder.stop();
+            } else {
+              closeMediaOverlay();
+            }
+          });
+          var cancelBtn = document.createElement('button');
+          cancelBtn.type = 'button';
+          cancelBtn.className = 'btn btn-outline-secondary btn-sm';
+          cancelBtn.textContent = 'Cancel';
+          cancelBtn.addEventListener('click', function () {
+            if (mediaRecorder && mediaRecorder.state === 'recording') {
+              mediaRecorder.onstop = null;
+              mediaRecorder.stop();
+            }
+            closeMediaOverlay();
+          });
+          controls.appendChild(cancelBtn);
+          controls.appendChild(stopBtn);
+        });
+      } else if (action === 'location') {
+        if (!navigator.geolocation) {
+          chatInput.value += (chatInput.value ? ' ' : '') + '📍 Location not supported by browser.';
+          return;
+        }
+        navigator.geolocation.getCurrentPosition(
+          function (pos) {
+            var lat = pos.coords.latitude.toFixed(5);
+            var lng = pos.coords.longitude.toFixed(5);
+            var link = 'https://www.google.com/maps?q=' + lat + ',' + lng;
+            chatInput.value += (chatInput.value ? ' ' : '') + '📍 My location: ' + link;
+            chatInput.focus();
+          },
+          function () {
+            chatInput.value += (chatInput.value ? ' ' : '') + '📍 Location unavailable.';
+          }
+        );
+      }
+    });
+  });
+  if (photoInput && uploadUrl) {
+    photoInput.addEventListener('change', function () {
+      if (photoInput.files.length) {
+        showSendFileConfirm(photoInput.files[0]);
+        photoInput.value = '';
+      }
+    });
+  }
+  if (videoInput && uploadUrl) {
+    videoInput.addEventListener('change', function () {
+      if (videoInput.files.length) {
+        showSendFileConfirm(videoInput.files[0]);
+        videoInput.value = '';
+      }
+    });
+  }
+  if (cameraInput && uploadUrl) {
+    cameraInput.addEventListener('change', function () {
+      if (cameraInput.files.length) {
+        showSendFileConfirm(cameraInput.files[0]);
+        cameraInput.value = '';
+      }
+    });
+  }
+
+  const attachBtn = document.getElementById('chat-attach');
+  const fileInput = document.getElementById('chat-file-input');
+  if (attachBtn && fileInput && uploadUrl) {
+    attachBtn.addEventListener('click', function () {
+      fileInput.click();
+    });
+    fileInput.addEventListener('change', function () {
+      if (!fileInput.files.length) return;
+      var file = fileInput.files[0];
+      showSendFileConfirm(file);
+      fileInput.value = '';
+    });
+  }
+</script>
+{% endblock %}

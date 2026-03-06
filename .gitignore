@@ -1,0 +1,26 @@
+.env
+.env.local
+*.pyc
+__pycache__/
+db.sqlite3
+venv/
+media/
+staticfiles/
+
+# Sensitive / secrets (backup names)
+.env.*
+!.env.example
+*.key
+*.pem
+*.crt
+secrets/
+credentials/
+
+# Office / documents (exclude from repo)
+*.doc
+*.docx
+*.pdf
+
+# Markdown except README.md
+*.md
+!README.md

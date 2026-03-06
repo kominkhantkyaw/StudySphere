@@ -1,0 +1,196 @@
+{% extends 'base.html' %}
+
+{% block title %}My Courses — StudySphere{% endblock %}
+
+{% block content %}
+<div class="mt-3">
+  <h2 class="fw-bold mb-4"><i class="bi bi-journal-bookmark me-2"></i>My Courses</h2>
+
+  {% if user.is_student %}
+  {# Status: Pending until teacher approves (then Active); Certificate: Not issued until teacher issues (then Download). #}
+  {% if enrolments_with_certificate %}
+  <div class="card shadow-sm border-0 mb-4 border-success border-2">
+    <div class="card-header bg-success bg-opacity-25 fw-semibold">
+      <i class="bi bi-award me-2"></i>My Certificates
+    </div>
+    <div class="card-body p-0">
+      <p class="px-3 pt-2 mb-0 small text-muted">Certificates appear here once your teacher has generated them. Download to your PC, save to cloud, or share the link with friends.</p>
+      <ul class="list-group list-group-flush">
+        {% for enrolment in enrolments_with_certificate %}
+        {% url 'courses:download_certificate' enrolment.id as enrol_cert_url %}
+        <li class="list-group-item d-flex flex-wrap justify-content-between align-items-center gap-2">
+          <span class="fw-semibold">#{{ enrolment.course.id }} — {{ enrolment.course.title }}</span>
+          <div class="d-flex align-items-center gap-1">
+            <a href="{{ enrol_cert_url }}" class="btn btn-success btn-sm">
+              <i class="bi bi-download me-1"></i>Download to PC
+            </a>
+            {% include "includes/certificate_share_dropdown.html" with cert_url=enrol_cert_url btn_class="btn-outline-success" %}
+          </div>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="card shadow-sm border-0">
+    <div class="card-header bg-white fw-semibold">
+      <i class="bi bi-book me-2"></i>My course requests
+    </div>
+    <div class="card-body p-0">
+      {% if all_my_enrolments %}
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Student ID</th>
+              <th>Course</th>
+              <th>Teacher</th>
+              <th>Enrolled date</th>
+              <th>Status</th>
+              <th>Certificate</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for enrolment in all_my_enrolments %}
+            <tr>
+              <td>
+                <span class="text-muted small">{{ user.student_id|default:"—" }}</span>
+              </td>
+              <td>
+                <a href="{% url 'courses:course_detail' enrolment.course.id %}" class="text-decoration-none fw-semibold">
+                  #{{ enrolment.course.id }} &mdash; {{ enrolment.course.title }}
+                </a>
+              </td>
+              <td>
+                <small class="text-muted">{{ enrolment.course.teacher.get_full_name|default:enrolment.course.teacher.username }}</small>
+              </td>
+              <td>{{ enrolment.enrolled_at|date:"d M Y" }}</td>
+              <td>
+                {% if enrolment.status == 'PENDING' %}
+                  <span class="badge bg-warning text-dark">Pending</span>
+                {% elif enrolment.status == 'REJECTED' %}
+                  <span class="badge bg-secondary">Rejected</span>
+                {% elif enrolment.blocked %}
+                  <span class="badge bg-danger">Blocked</span>
+                {% else %}
+                  <span class="badge bg-success">Active</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if enrolment.certificate_status == 'ISSUED' %}
+                  <span class="badge bg-success">Issued</span>
+                {% elif enrolment.certificate_status == 'REVOKED' %}
+                  <span class="badge bg-danger">Revoked</span>
+                {% elif enrolment.certificate_status == 'EXPIRED' %}
+                  <span class="badge bg-secondary">Expired</span>
+                {% else %}
+                  <span class="badge bg-warning text-dark">Pending validation</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div class="text-center py-5 px-3">
+        <i class="bi bi-journal-x fs-1 text-muted"></i>
+        <p class="text-muted mt-2 mb-0">You haven't requested any courses yet.</p>
+        <a href="{% url 'courses:course_list' %}" class="btn btn-primary mt-3">Browse courses</a>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
+
+  {% if user.is_teacher %}
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <ul class="nav nav-pills small">
+      <li class="nav-item">
+        <a href="?tab=all" class="nav-link {% if courses_tab|default:'all' == 'all' %}active{% endif %}">All</a>
+      </li>
+      <li class="nav-item">
+        <a href="?tab=active" class="nav-link {% if courses_tab == 'active' %}active{% endif %}">Active</a>
+      </li>
+      <li class="nav-item">
+        <a href="?tab=completed" class="nav-link {% if courses_tab == 'completed' %}active{% endif %}">Completed</a>
+      </li>
+      <li class="nav-item">
+        <a href="?tab=averages" class="nav-link {% if courses_tab == 'averages' %}active{% endif %}">Averages</a>
+      </li>
+      <li class="nav-item">
+        <a href="?tab=archive" class="nav-link {% if courses_tab == 'archive' %}active{% endif %}">Archive</a>
+      </li>
+    </ul>
+    <a href="{% url 'courses:course_create' %}" class="btn btn-success btn-sm">
+      <i class="bi bi-plus-circle me-1"></i>Create Course
+    </a>
+  </div>
+
+  <div class="card shadow-sm border-0">
+    <div class="card-header bg-white fw-semibold d-flex justify-content-between align-items-center">
+      <span><i class="bi bi-journal-richtext me-2"></i>My Courses</span>
+    </div>
+    <div class="card-body p-0">
+      {% if taught_courses_table %}
+      <div class="table-responsive">
+        <table class="table table-hover mb-0 align-middle">
+          <thead class="table-light">
+            <tr>
+              <th scope="col">Course</th>
+              <th scope="col" class="text-center">Students</th>
+              <th scope="col" style="width: 180px;">Completion</th>
+              <th scope="col" class="text-center">Average Score</th>
+              <th scope="col" class="text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in taught_courses_table %}
+            <tr>
+              <td>
+                <div class="fw-semibold">#{{ row.course.id }} &mdash; {{ row.course.title }}</div>
+                <small class="text-muted">Created {{ row.course.created_at|date:"M j, Y" }}</small>
+              </td>
+              <td class="text-center">
+                <span class="fw-semibold">{{ row.students|default:0 }}</span>
+              </td>
+              <td>
+                <div class="d-flex justify-content-between small">
+                  <span class="text-muted">Progress</span>
+                  <span class="fw-semibold">{{ row.completion_pct }}%</span>
+                </div>
+                <div class="progress rounded mt-1" style="height: 6px;">
+                  <div class="progress-bar bg-primary" role="progressbar"
+                       style="width: {{ row.completion_pct }}%;"
+                       aria-valuenow="{{ row.completion_pct }}" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+              </td>
+              <td class="text-center">
+                {% if row.avg_score %}
+                  <span class="fw-semibold">{{ row.avg_score|floatformat:1 }}/5</span>
+                {% else %}
+                  <span class="text-muted small">No ratings</span>
+                {% endif %}
+              </td>
+              <td class="text-end">
+                <a href="{% url 'courses:course_detail' row.course.id %}?from=my-courses" class="btn btn-outline-primary btn-sm">
+                  View All Students
+                </a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div class="text-center py-5">
+        <i class="bi bi-journal-x fs-1 text-muted"></i>
+        <p class="text-muted mt-2 mb-0">You haven't created any courses yet.</p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

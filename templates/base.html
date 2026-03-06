@@ -1,0 +1,330 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}StudySphere{% endblock %}</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="{% static 'css/style.css' %}" rel="stylesheet">
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+  {% if not embed|default:False %}
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+    <div class="container">
+      <a class="navbar-brand fw-bold" href="{% url 'home' %}">
+        <i class="bi bi-mortarboard-fill me-2"></i>StudySphere
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="mainNav">
+        {% if user.is_authenticated %}
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="coursesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Courses</a>
+            <ul class="dropdown-menu" aria-labelledby="coursesDropdown">
+              <li><a class="dropdown-item" href="{% url 'courses:course_list' %}">All Courses</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="{% url 'courses:course_list' %}?category=LANGUAGES">Languages</a></li>
+              <li><a class="dropdown-item" href="{% url 'courses:course_list' %}?category=AI">AI</a></li>
+              <li><a class="dropdown-item" href="{% url 'courses:course_list' %}?category=CYBER">Cyber Security</a></li>
+              <li><a class="dropdown-item" href="{% url 'courses:course_list' %}?category=DATA">Data Analysis</a></li>
+              <li><a class="dropdown-item" href="{% url 'courses:course_list' %}?category=WEB">Web Development</a></li>
+              <li><a class="dropdown-item" href="{% url 'courses:course_list' %}?category=OTHER">Other</a></li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'courses:my_courses' %}">My Courses</a>
+          </li>
+          {% if user.is_teacher %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'accounts:my_students' %}">My Students</a>
+          </li>
+          {% endif %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'chat:chat_lobby' %}">Chat</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'courses:video_resources' %}"><i class="bi bi-youtube me-1 text-danger"></i>Videos</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'calendar_app:calendar' %}"><i class="bi bi-calendar3 me-1"></i>Calendar</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'accounts:contact' %}">Contact</a>
+          </li>
+        </ul>
+
+        <ul class="navbar-nav ms-auto align-items-center">
+          <li class="nav-item me-3">
+            <a class="nav-link" href="{% url 'accounts:search_users' %}" title="Search">
+              <i class="bi bi-search fs-5"></i>
+            </a>
+          </li>
+          <li class="nav-item me-3">
+            <a class="nav-link position-relative" href="{% url 'notifications:notification_list' %}">
+              <i class="bi bi-bell-fill fs-5"></i>
+              {% if unread_count %}
+              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                {{ unread_count }}
+              </span>
+              {% endif %}
+            </a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
+              <span class="presence-dot presence-{{ user.presence|lower }} me-2" id="navbar-presence-dot" title="{{ user.get_presence_display }}"></span>
+              {% if user.photo %}
+              <img src="{{ user.photo.url }}" alt="{{ user.username }}" class="rounded-circle me-2" width="28" height="28" style="object-fit: cover;">
+              {% else %}
+              <i class="bi bi-person-circle me-1"></i>
+              {% endif %}
+              <span class="d-none d-sm-inline">{{ user.username }}</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" style="min-width: 280px;">
+              <li class="border-bottom">
+                <button type="button" class="d-flex align-items-center justify-content-between w-100 px-3 py-2 btn btn-link text-decoration-none text-dark p-0 border-0 bg-transparent text-start" id="availability-toggle" data-bs-toggle="collapse" data-bs-target="#availability-collapse" aria-expanded="false">
+                  <span class="d-flex align-items-center">
+                    <span class="presence-dot presence-{{ user.presence|lower }} me-2" id="navbar-presence-dot" title="{{ user.get_presence_display }}"></span>
+                    <span id="navbar-presence-label">{{ user.get_presence_display }}</span>
+                  </span>
+                  <i class="bi bi-chevron-right" id="availability-chevron"></i>
+                </button>
+                <div class="collapse px-3 pb-2" id="availability-collapse">
+                  <div class="d-flex flex-column gap-1">
+                    <button type="button" class="dropdown-item presence-set py-1 rounded" data-status="AVAILABLE"><span class="presence-dot presence-available me-2"></span>Available</button>
+                    <button type="button" class="dropdown-item presence-set py-1 rounded" data-status="ONLINE"><span class="presence-dot presence-online me-2"></span>Online</button>
+                    <button type="button" class="dropdown-item presence-set py-1 rounded" data-status="AWAY"><span class="presence-dot presence-away me-2"></span>Away</button>
+                    <button type="button" class="dropdown-item presence-set py-1 rounded" data-status="OFFLINE"><span class="presence-dot presence-offline me-2"></span>Offline</button>
+                  </div>
+                </div>
+              </li>
+              <li class="border-bottom">
+                <button type="button" class="d-flex align-items-center justify-content-between w-100 px-3 py-2 btn btn-link text-decoration-none text-dark p-0 border-0 bg-transparent text-start" id="status-msg-toggle" data-bs-toggle="collapse" data-bs-target="#status-message-collapse" aria-expanded="false">
+                  <span class="d-flex align-items-center">
+                    <i class="bi bi-chat-left-text me-2 text-muted"></i>
+                    <span>Set status message</span>
+                  </span>
+                  <i class="bi bi-chevron-right" id="status-msg-chevron"></i>
+                </button>
+                <div class="collapse px-3 pb-2" id="status-message-collapse">
+                  <textarea class="form-control form-control-sm mb-2" id="navbar-status-text-input" rows="2" placeholder="e.g. In a meeting, Studying now..." maxlength="200">{{ user.status_text|default:'' }}</textarea>
+                  <div class="d-flex gap-2 justify-content-end">
+                    <button type="button" class="btn btn-sm btn-outline-secondary" id="navbar-status-text-clear">Clear</button>
+                    <button type="button" class="btn btn-sm btn-primary" id="navbar-status-text-save">Save</button>
+                  </div>
+                </div>
+              </li>
+              <li><hr class="dropdown-divider my-1"></li>
+              <li><a class="dropdown-item" href="{% url 'accounts:profile' user.username %}"><i class="bi bi-person me-2"></i>Profile</a></li>
+              <li><a class="dropdown-item" href="{% url 'accounts:settings' %}"><i class="bi bi-gear me-2"></i>Settings</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="{% url 'accounts:logout' %}"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+            </ul>
+          </li>
+        </ul>
+        {% else %}
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'accounts:login' %}">Sign In</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link btn btn-outline-light btn-sm ms-2 px-3" href="{% url 'accounts:register' %}">Register</a>
+          </li>
+        </ul>
+        {% endif %}
+      </div>
+    </div>
+  </nav>
+
+  {% if messages %}
+  <div class="container mt-3">
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+      {{ message }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% endif %}
+
+  <main class="{% if embed|default:False %}container-fluid p-0{% else %}container my-4{% endif %} flex-grow-1">
+    {% block content %}{% endblock %}
+  </main>
+
+  {% if not embed|default:False %}
+  <footer class="bg-dark text-white py-4 mt-auto">
+    <div class="container">
+      <div class="row g-3 align-items-center">
+        <div class="col-md-4 text-center text-md-start">
+          <span class="fw-bold"><i class="bi bi-mortarboard-fill me-1"></i>StudySphere</span>
+          <p class="small text-white-50 mb-0 mt-1">Learning platform for students and teachers.</p>
+        </div>
+        <div class="col-md-4 text-center">
+          <small>&copy; {% now "Y" %} StudySphere. All rights reserved.</small>
+        </div>
+        <div class="col-md-4 text-center text-md-end">
+          <a href="{% url 'accounts:contact' %}" class="text-white text-decoration-none me-3 small">Help &amp; Support</a>
+          <a href="{% url 'accounts:contact' %}?tab=privacy" class="text-white text-decoration-none me-3 small">Privacy</a>
+          <a href="{% url 'accounts:contact' %}" class="text-white text-decoration-none small">Contact</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+  {% endif %}
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  {% if user.is_authenticated %}
+  <script>
+    (function() {
+      function getCookie(name) {
+        var v = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
+        return v ? v[2] : null;
+      }
+      function setPresenceUi(data) {
+        var labels = {
+          'AVAILABLE': 'Available',
+          'ONLINE': 'Online',
+          'BUSY': 'Busy',
+          'AWAY': 'Away',
+          'OFFLINE': 'Offline'
+        };
+        var presence = data.presence || data;
+        var dot = document.getElementById('navbar-presence-dot');
+        var label = document.getElementById('navbar-presence-label');
+        if (dot) { dot.className = 'presence-dot presence-' + presence.toLowerCase() + ' me-2'; dot.title = labels[presence] || presence; }
+        if (label) { label.textContent = labels[presence] || presence; }
+        if (typeof data === 'object' && data.status_text !== undefined) {
+          var inputEl = document.getElementById('navbar-status-text-input');
+          if (inputEl) inputEl.value = data.status_text || '';
+        }
+      }
+      document.querySelectorAll('.presence-set').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var status = this.getAttribute('data-status');
+          var form = new FormData();
+          form.append('status', status);
+          form.append('csrfmiddlewaretoken', getCookie('csrftoken'));
+          fetch('{% url "accounts:set_presence" %}', { method: 'POST', body: form, credentials: 'same-origin', headers: { 'X-CSRFToken': getCookie('csrftoken') } })
+            .then(function(r) { return r.json(); })
+            .then(function(data) { if (data.ok) setPresenceUi(data); });
+        });
+      });
+      var saveBtn = document.getElementById('navbar-status-text-save');
+      if (saveBtn) {
+        saveBtn.addEventListener('click', function() {
+          var input = document.getElementById('navbar-status-text-input');
+          var form = new FormData();
+          form.append('status_text', input ? input.value.trim() : '');
+          form.append('csrfmiddlewaretoken', getCookie('csrftoken'));
+          fetch('{% url "accounts:set_presence" %}', { method: 'POST', body: form, credentials: 'same-origin', headers: { 'X-CSRFToken': getCookie('csrftoken') } })
+            .then(function(r) { return r.json(); })
+            .then(function(data) { if (data.ok) setPresenceUi(data); });
+        });
+      }
+      var clearBtn = document.getElementById('navbar-status-text-clear');
+      if (clearBtn) {
+        clearBtn.addEventListener('click', function() {
+          var input = document.getElementById('navbar-status-text-input');
+          if (input) input.value = '';
+          var form = new FormData();
+          form.append('status_text', '');
+          form.append('csrfmiddlewaretoken', getCookie('csrftoken'));
+          fetch('{% url "accounts:set_presence" %}', { method: 'POST', body: form, credentials: 'same-origin', headers: { 'X-CSRFToken': getCookie('csrftoken') } })
+            .then(function(r) { return r.json(); })
+            .then(function(data) { if (data.ok) setPresenceUi(data); });
+        });
+      }
+      var availabilityCollapse = document.getElementById('availability-collapse');
+      var statusCollapse = document.getElementById('status-message-collapse');
+      function toggleChevron(el, show) {
+        if (!el) return;
+        el.classList.remove('bi-chevron-right', 'bi-chevron-down');
+        el.classList.add(show ? 'bi-chevron-down' : 'bi-chevron-right');
+      }
+      if (availabilityCollapse) {
+        availabilityCollapse.addEventListener('show.bs.collapse', function() { toggleChevron(document.getElementById('availability-chevron'), true); });
+        availabilityCollapse.addEventListener('hide.bs.collapse', function() { toggleChevron(document.getElementById('availability-chevron'), false); });
+      }
+      if (statusCollapse) {
+        statusCollapse.addEventListener('show.bs.collapse', function() { toggleChevron(document.getElementById('status-msg-chevron'), true); });
+        statusCollapse.addEventListener('hide.bs.collapse', function() { toggleChevron(document.getElementById('status-msg-chevron'), false); });
+      }
+    })();
+  </script>
+  {% endif %}
+  <script>
+  (function() {
+    function getFullUrl(path) {
+      if (!path) return '';
+      return path.startsWith('http') ? path : (window.location.origin + (path.startsWith('/') ? '' : '/') + path);
+    }
+    function showFeedback(container, msg) {
+      var fb = container.querySelector('.cert-share-feedback');
+      if (fb) { fb.textContent = msg || 'Copied!'; fb.style.display = 'inline'; setTimeout(function() { fb.style.display = 'none'; }, 2000); }
+    }
+    document.querySelectorAll('.cert-share-dropdown').forEach(function(dropdown) {
+      var certUrl = dropdown.getAttribute('data-cert-url');
+      if (!certUrl) return;
+      var fullUrl = getFullUrl(certUrl);
+      var shareText = 'Check out my StudySphere certificate!';
+      dropdown.querySelectorAll('.cert-share-copy').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+          e.preventDefault();
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(fullUrl).then(function() { showFeedback(dropdown); });
+          } else {
+            var ta = document.createElement('textarea'); ta.value = fullUrl; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+            showFeedback(dropdown);
+          }
+        });
+      });
+      dropdown.querySelectorAll('.cert-share-native').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+          e.preventDefault();
+          if (navigator.share) {
+            navigator.share({ title: 'My Certificate', url: fullUrl, text: shareText }).catch(function() {});
+          } else {
+            navigator.clipboard && navigator.clipboard.writeText(fullUrl).then(function() { showFeedback(dropdown, 'Link copied!'); });
+          }
+        });
+      });
+      dropdown.querySelectorAll('.cert-share-facebook').forEach(function(btn) {
+        btn.href = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(fullUrl);
+      });
+      dropdown.querySelectorAll('.cert-share-telegram').forEach(function(btn) {
+        btn.href = 'https://t.me/share/url?url=' + encodeURIComponent(fullUrl) + '&text=' + encodeURIComponent(shareText);
+      });
+      dropdown.querySelectorAll('.cert-share-whatsapp').forEach(function(btn) {
+        btn.href = 'https://wa.me/?text=' + encodeURIComponent(shareText + ' ' + fullUrl);
+      });
+      dropdown.querySelectorAll('.cert-share-twitter').forEach(function(btn) {
+        btn.href = 'https://twitter.com/intent/tweet?url=' + encodeURIComponent(fullUrl) + '&text=' + encodeURIComponent(shareText);
+      });
+      dropdown.querySelectorAll('.cert-share-signal').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+          e.preventDefault();
+          if (navigator.share) {
+            navigator.share({ title: 'My Certificate', url: fullUrl, text: shareText }).catch(function() {});
+          } else {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+              navigator.clipboard.writeText(fullUrl).then(function() { showFeedback(dropdown); });
+            } else {
+              var ta = document.createElement('textarea'); ta.value = fullUrl; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+              showFeedback(dropdown);
+            }
+          }
+        });
+      });
+    });
+  })();
+  </script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

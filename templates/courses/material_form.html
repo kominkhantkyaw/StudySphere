@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit material — {{ course.title }} — StudySphere{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mt-4">
+  <div class="col-md-8">
+    <div class="card shadow-sm border-0">
+      <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+        <h4 class="mb-0 fw-bold">
+          <i class="bi bi-pencil-square me-2"></i>Edit material
+        </h4>
+        <span class="small text-muted text-truncate">Course: {{ course.title }}</span>
+      </div>
+      <div class="card-body p-4">
+        {% if form.errors %}
+        <div class="alert alert-danger">
+          <i class="bi bi-exclamation-circle me-1"></i>
+          <strong>Please correct the errors below.</strong>
+        </div>
+        {% endif %}
+
+        <div class="d-flex flex-column gap-3">
+          <!-- Edit form: fields only -->
+          <form id="edit-material-form" method="post" enctype="multipart/form-data" class="mb-0">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label for="{{ form.title.id_for_label }}" class="form-label fw-semibold">Title</label>
+              {{ form.title }}
+            </div>
+            <div class="mb-3">
+              <label for="{{ form.file.id_for_label }}" class="form-label fw-semibold">File</label>
+              {{ form.file }}
+              {% if material.material_url or material.file %}
+                <div class="small text-muted mt-1">
+                  Current file:
+                  {% if material.material_url %}
+                    <a href="{{ material.material_url }}" target="_blank">Open</a>
+                  {% elif material.file %}
+                    <a href="{{ material.file.url }}" target="_blank">Open</a>
+                  {% endif %}
+                </div>
+              {% endif %}
+            </div>
+          </form>
+          <!-- Actions row: Save changes | Delete | Cancel -->
+          <div class="d-flex gap-2 align-items-center flex-wrap">
+            <button type="submit" form="edit-material-form" class="btn btn-primary">
+              <i class="bi bi-check-circle me-1"></i>Save Changes
+            </button>
+            <form method="post"
+                  action="{% url 'courses:delete_material' course.id material.id %}"
+                  onsubmit="return confirm('Delete this material? This cannot be undone.');"
+                  class="mb-0 d-inline">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-outline-danger btn-sm">
+                <i class="bi bi-trash me-1"></i>Delete
+              </button>
+            </form>
+            <a href="{% url 'courses:course_detail' course.id %}" class="btn btn-outline-secondary">
+              Cancel
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+

@@ -1,0 +1,394 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if form.instance.pk %}Edit Course{% else %}Create Course{% endif %} — StudySphere{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mt-4">
+  <div class="col-md-8">
+    <div class="card shadow-sm border-0">
+      <div class="card-header bg-white py-3">
+        <h4 class="mb-0 fw-bold">
+          {% if form.instance.pk %}
+            <i class="bi bi-pencil-square me-2"></i>Edit Course
+          {% else %}
+            <i class="bi bi-plus-circle me-2"></i>Create Course
+          {% endif %}
+        </h4>
+      </div>
+      <div class="card-body p-4">
+        {% if form.errors %}
+        <div class="alert alert-danger">
+          <i class="bi bi-exclamation-circle me-1"></i>
+          <strong>Please correct the errors below.</strong>
+          <ul class="mb-0 mt-2">
+            {% for field in form %}
+              {% for error in field.errors %}
+                <li>{{ field.label }}: {{ error }}</li>
+              {% endfor %}
+            {% endfor %}
+            {% for error in form.non_field_errors %}
+              <li>{{ error }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+        {% endif %}
+
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label for="{{ form.title.id_for_label }}" class="form-label fw-semibold">Course name (title)</label>
+            {{ form.title }}
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Description</label>
+            <div class="border rounded mb-2 bg-light-subtle">
+              <div class="px-3 py-2 border-bottom bg-light">
+                <div class="d-flex flex-wrap align-items-center gap-2 py-1 border-bottom border-secondary border-opacity-25 pb-2 mb-2">
+                  <div class="d-flex align-items-center me-2">
+                    <label for="desc-font-family" class="small text-muted me-1 mb-0">Font</label>
+                    <select id="desc-font-family" class="form-select form-select-sm" style="width: auto; min-width: 7rem;" title="Font family">
+                      <option value="Arial">Arial</option>
+                      <option value="Times New Roman">Times New Roman</option>
+                      <option value="Georgia">Georgia</option>
+                      <option value="Verdana">Verdana</option>
+                      <option value="Courier New">Courier New</option>
+                      <option value="Trebuchet MS">Trebuchet MS</option>
+                      <option value="Helvetica">Helvetica</option>
+                    </select>
+                  </div>
+                  <div class="d-flex align-items-center me-2">
+                    <label for="font-size-select" class="small text-muted me-1 mb-0">Size</label>
+                    <select id="font-size-select" class="form-select form-select-sm" style="width: auto; min-width: 4rem;" title="Font size">
+                      <option value="">—</option>
+                      <option value="10">10</option>
+                      <option value="11">11</option>
+                      <option value="12">12</option>
+                      <option value="14">14</option>
+                      <option value="16">16</option>
+                      <option value="18">18</option>
+                      <option value="20">20</option>
+                      <option value="24">24</option>
+                    </select>
+                  </div>
+                  <div class="btn-group btn-group-sm me-2" role="group" aria-label="Paragraph styles">
+                    <button type="button" class="btn btn-outline-secondary py-1 px-2" data-format-block="p" title="Normal">Normal</button>
+                    <button type="button" class="btn btn-outline-secondary py-1 px-2" data-format-block="h2" title="Heading 2">H2</button>
+                    <button type="button" class="btn btn-outline-secondary py-1 px-2" data-format-block="h3" title="Heading 3">H3</button>
+                    <button type="button" class="btn btn-outline-secondary py-1 px-2" data-format-block="h4" title="Heading 4">H4</button>
+                  </div>
+                  <div class="btn-group btn-group-sm me-2" role="group" aria-label="Lists">
+                    <button type="button" class="btn btn-outline-secondary py-1 px-2" data-format="insertUnorderedList" title="Bullet list"><i class="bi bi-list-ul"></i></button>
+                    <button type="button" class="btn btn-outline-secondary py-1 px-2" data-format="insertOrderedList" title="Numbered list"><i class="bi bi-list-ol"></i></button>
+                  </div>
+                  <div class="btn-group btn-group-sm ms-1" role="group" aria-label="Alignment">
+                    <button type="button" class="btn btn-outline-secondary py-1 px-2" data-format="justifyLeft" title="Align left"><i class="bi bi-text-left"></i></button>
+                    <button type="button" class="btn btn-outline-secondary py-1 px-2" data-format="justifyCenter" title="Centre"><i class="bi bi-text-center"></i></button>
+                    <button type="button" class="btn btn-outline-secondary py-1 px-2" data-format="justifyRight" title="Align right"><i class="bi bi-text-right"></i></button>
+                  </div>
+                </div>
+                <div class="d-flex flex-wrap align-items-center gap-2 py-1">
+                  <div class="btn-group btn-group-sm me-2" role="group" aria-label="Text formatting">
+                    <button type="button" class="btn btn-outline-secondary py-1 px-2" data-format="bold" title="Bold"><strong>B</strong></button>
+                    <button type="button" class="btn btn-outline-secondary py-1 px-2" data-format="italic" title="Italic"><em>I</em></button>
+                    <button type="button" class="btn btn-outline-secondary py-1 px-2" data-format="underline" title="Underline"><u>U</u></button>
+                  </div>
+                  <div class="d-flex align-items-center me-2">
+                    <div class="position-relative" style="width: 28px; height: 28px;">
+                      <input type="color" id="desc-font-color" value="#0d6efd" class="form-control form-control-color p-0 border rounded w-100 h-100 position-absolute start-0 top-0" style="cursor: pointer;" title="Font colour">
+                      <span class="position-absolute top-50 start-50 translate-middle fw-bold text-decoration-none lh-1 pointer-events-none" id="desc-font-color-a" style="color: #fff; font-size: 0.75rem; text-shadow: 0 0 1px #333;">A</span>
+                    </div>
+                  </div>
+                  <div class="d-flex align-items-center me-2">
+                    <div class="position-relative" style="width: 28px; height: 28px;">
+                      <input type="color" id="desc-highlight-color" value="#ffff00" class="form-control form-control-color p-0 border rounded w-100 h-100 position-absolute start-0 top-0" style="cursor: pointer;" title="Text highlight colour">
+                      <span class="position-absolute top-50 start-50 translate-middle lh-1 pointer-events-none" title="Text highlight colour"><i class="bi bi-pencil" style="color: #333; font-size: 0.7rem;"></i></span>
+                    </div>
+                  </div>
+                  <button type="button" class="btn btn-outline-secondary btn-sm py-1 px-2" id="desc-format-painter" title="Format Painter: select formatted text, click here, then select text to apply"><i class="bi bi-brush me-1"></i>Format</button>
+                  <button type="button" class="btn btn-outline-secondary btn-sm py-1 px-2" id="desc-paste" title="Paste"><i class="bi bi-clipboard-check me-1"></i>Paste</button>
+                  <button type="button" class="btn btn-outline-secondary btn-sm py-1 px-2 me-2" data-format="removeFormat" title="Clear formatting"><i class="bi bi-eraser me-1"></i>Erase</button>
+                  <div class="d-flex align-items-center gap-2 ms-auto">
+                    {{ form.hero_image }}
+                    {% if form.instance.pk and form.instance.hero_image_url or form.instance.pk and form.instance.hero_image %}
+                      <div class="form-check form-check-inline mb-0">
+                        <input class="form-check-input" type="checkbox" name="remove_hero_image" id="id_remove_hero_image">
+                        <label class="form-check-label small text-muted" for="id_remove_hero_image">Remove</label>
+                      </div>
+                      <img src="{% if form.instance.hero_image_url %}{{ form.instance.hero_image_url }}{% else %}{{ form.instance.hero_image.url }}{% endif %}" alt="" style="max-height: 28px;" class="rounded border">
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+              <div id="description-editor" class="p-2" contenteditable="true" style="min-height: 180px;">
+                {{ form.description.value|default_if_none:''|safe }}
+              </div>
+            </div>
+            <textarea name="description" id="id_description_hidden" class="d-none">{{ form.description.value|default_if_none:'' }}</textarea>
+            <div class="form-text">Format text (B bold, I italic, U underline), use the colour boxes for font and highlight, and upload a course image if needed.</div>
+          </div>
+
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Start date &amp; time</label>
+              {{ form.start_datetime }}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">End date &amp; time</label>
+              {{ form.end_datetime }}
+            </div>
+          </div>
+
+          <div class="row g-3 mt-1">
+            <div class="col-md-4">
+              <label class="form-label fw-semibold">Duration (hours)</label>
+              {{ form.duration_minutes }}
+            </div>
+            <div class="col-md-4">
+              <label class="form-label fw-semibold">Course costs</label>
+              {{ form.cost }}
+            </div>
+            <div class="col-md-4">
+              <label class="form-label fw-semibold">Language</label>
+              {{ form.language }}
+            </div>
+          </div>
+
+          <div class="row g-3 mt-1">
+            <div class="col-md-6 col-lg-4">
+              <label class="form-label fw-semibold">Capacity</label>
+              {{ form.capacity_type }}
+            </div>
+            <div class="col-md-6 col-lg-4">
+              <label class="form-label fw-semibold">Delivery mode</label>
+              {{ form.delivery_mode }}
+            </div>
+          </div>
+          <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary px-4 py-2 fw-semibold">
+              {% if form.instance.pk %}
+                <i class="bi bi-check-circle me-1"></i>Update Course
+              {% else %}
+                <i class="bi bi-plus-circle me-1"></i>Create Course
+              {% endif %}
+            </button>
+            <a href="{% url 'courses:course_list' %}" class="btn btn-outline-secondary px-4 py-2">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% block extra_js %}
+<script>
+  (function () {
+    var editor = document.getElementById('description-editor');
+    var hidden = document.getElementById('id_description_hidden');
+    if (!editor || !hidden) return;
+    var savedSelection = null;
+    function saveSelection() {
+      var sel = window.getSelection();
+      if (sel.rangeCount && editor.contains(sel.anchorNode)) {
+        savedSelection = sel.getRangeAt(0).cloneRange();
+      } else {
+        savedSelection = null;
+      }
+    }
+    function restoreSelection() {
+      if (savedSelection) {
+        var sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(savedSelection);
+      }
+    }
+    function syncToHidden() {
+      hidden.value = editor.innerHTML.trim();
+    }
+    function applyCommand(fn) {
+      editor.focus();
+      restoreSelection();
+      fn();
+      syncToHidden();
+    }
+    editor.addEventListener('mouseup', saveSelection);
+    editor.addEventListener('keyup', saveSelection);
+    document.querySelectorAll('[data-format],[data-format-block]').forEach(function (btn) {
+      btn.addEventListener('mousedown', function (e) {
+        e.preventDefault();
+        saveSelection();
+      });
+      btn.addEventListener('click', function (e) {
+        e.preventDefault();
+        var cmd = btn.getAttribute('data-format');
+        var color = btn.getAttribute('data-color');
+        var block = btn.getAttribute('data-format-block');
+        applyCommand(function () {
+          if (block) {
+            document.execCommand('formatBlock', false, block);
+          } else if ((cmd === 'foreColor' || cmd === 'hiliteColor') && color) {
+            document.execCommand(cmd, false, color);
+          } else if (cmd) {
+            document.execCommand(cmd, false, null);
+          }
+        });
+      });
+    });
+    var fontColorBox = document.getElementById('desc-font-color');
+    var fontColorA = document.getElementById('desc-font-color-a');
+    function setFontColorAContrast(hex) {
+      if (!fontColorA) return;
+      var r = parseInt(hex.slice(1, 3), 16), g = parseInt(hex.slice(3, 5), 16), b = parseInt(hex.slice(5, 7), 16);
+      var luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+      fontColorA.style.color = luminance > 0.5 ? '#333' : '#fff';
+      fontColorA.style.textShadow = luminance > 0.5 ? '0 0 1px #fff' : '0 0 1px #333';
+    }
+    if (fontColorBox) {
+      setFontColorAContrast(fontColorBox.value);
+      fontColorBox.addEventListener('input', function () {
+        setFontColorAContrast(fontColorBox.value);
+        applyCommand(function () {
+          document.execCommand('foreColor', false, fontColorBox.value);
+        });
+      });
+    }
+    var highlightColorBox = document.getElementById('desc-highlight-color');
+    if (highlightColorBox) {
+      highlightColorBox.addEventListener('input', function () {
+        applyCommand(function () {
+          document.execCommand('hiliteColor', false, highlightColorBox.value);
+        });
+      });
+    }
+    var fontFamilySelect = document.getElementById('desc-font-family');
+    if (fontFamilySelect) {
+      fontFamilySelect.addEventListener('change', function () {
+        var val = fontFamilySelect.value;
+        if (!val) return;
+        applyCommand(function () {
+          document.execCommand('fontName', false, val);
+        });
+      });
+    }
+    var sizeSelect = document.getElementById('font-size-select');
+    if (sizeSelect) {
+      sizeSelect.addEventListener('change', function () {
+        var val = sizeSelect.value;
+        if (!val) return;
+        applyCommand(function () {
+          document.execCommand('fontSize', false, '4');
+          Array.prototype.forEach.call(
+            editor.querySelectorAll('font[size="4"]'),
+            function (el) {
+              el.removeAttribute('size');
+              el.style.fontSize = val + 'px';
+            }
+          );
+        });
+      });
+    }
+    var formatPainterActive = false;
+    var paintedFormat = null;
+    function getFormatFromSelection() {
+      var sel = window.getSelection();
+      if (!sel.rangeCount || sel.isCollapsed) return null;
+      var node = sel.anchorNode;
+      if (node.nodeType === Node.TEXT_NODE) node = node.parentElement;
+      if (!editor.contains(node)) return null;
+      var style = window.getComputedStyle(node);
+      var color = style.color;
+      var bg = style.backgroundColor;
+      if (bg === 'rgba(0, 0, 0, 0)' || bg === 'transparent') bg = '';
+      return {
+        bold: parseInt(style.fontWeight, 10) >= 600,
+        italic: style.fontStyle === 'italic',
+        underline: style.textDecorationLine.indexOf('underline') !== -1 || style.textDecoration.indexOf('underline') !== -1,
+        color: color,
+        backgroundColor: bg,
+        fontFamily: style.fontFamily,
+        fontSize: style.fontSize
+      };
+    }
+    function applySavedFormat() {
+      if (!paintedFormat) return;
+      editor.focus();
+      document.execCommand('removeFormat', false, null);
+      var f = paintedFormat;
+      if (f.bold) document.execCommand('bold', false, null);
+      if (f.italic) document.execCommand('italic', false, null);
+      if (f.underline) document.execCommand('underline', false, null);
+      if (f.color) document.execCommand('foreColor', false, rgbToHex(f.color));
+      if (f.backgroundColor) document.execCommand('hiliteColor', false, rgbToHex(f.backgroundColor));
+      if (f.fontFamily) document.execCommand('fontName', false, f.fontFamily.split(',')[0].trim().replace(/^["']|["']$/g, ''));
+      if (f.fontSize) {
+        document.execCommand('fontSize', false, '4');
+        var px = parseInt(f.fontSize, 10);
+        Array.prototype.forEach.call(editor.querySelectorAll('font[size="4"]'), function (el) {
+          el.removeAttribute('size');
+          el.style.fontSize = (px || 16) + 'px';
+        });
+      }
+    }
+    function rgbToHex(rgb) {
+      if (rgb.indexOf('rgb') === -1) return rgb;
+      var m = rgb.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+      if (!m) return rgb;
+      return '#' + [m[1], m[2], m[3]].map(function (x) {
+        var h = parseInt(x, 10).toString(16);
+        return h.length === 1 ? '0' + h : h;
+      }).join('');
+    }
+    var formatPainterBtn = document.getElementById('desc-format-painter');
+    if (formatPainterBtn) {
+      formatPainterBtn.addEventListener('mousedown', function (e) { e.preventDefault(); saveSelection(); });
+      formatPainterBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        restoreSelection();
+        paintedFormat = getFormatFromSelection();
+        if (paintedFormat) {
+          formatPainterActive = true;
+          formatPainterBtn.classList.add('active');
+        }
+      });
+    }
+    editor.addEventListener('mouseup', function () {
+      if (formatPainterActive && paintedFormat) {
+        var sel = window.getSelection();
+        if (sel.rangeCount && !sel.isCollapsed && editor.contains(sel.anchorNode)) {
+          applySavedFormat();
+          syncToHidden();
+        }
+        formatPainterActive = false;
+        paintedFormat = null;
+        if (formatPainterBtn) formatPainterBtn.classList.remove('active');
+      }
+    });
+    var copyBtn = document.getElementById('desc-copy');
+    if (copyBtn) {
+      copyBtn.addEventListener('mousedown', function (e) { e.preventDefault(); saveSelection(); });
+      copyBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        applyCommand(function () {
+          try {
+            document.execCommand('copy');
+          } catch (err) {}
+        });
+      });
+    }
+    var pasteBtn = document.getElementById('desc-paste');
+    if (pasteBtn) {
+      pasteBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        editor.focus();
+        try {
+          document.execCommand('paste');
+          syncToHidden();
+        } catch (err) {}
+      });
+    }
+    editor.addEventListener('input', syncToHidden);
+    // Initial sync
+    syncToHidden();
+  })();
+</script>
+{% endblock %}
+{% endblock %}

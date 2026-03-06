@@ -1,0 +1,300 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ profile_user.username }} — StudySphere{% endblock %}
+
+{% block content %}
+<div class="row g-4 mt-2">
+
+  <div class="col-md-4">
+    <div class="card shadow-sm border-0">
+      <div class="card-body text-center p-4">
+        <div class="position-relative d-inline-block mb-3 profile-avatar-wrapper">
+          {% if profile_user.photo %}
+            <img src="{{ profile_user.photo.url }}" alt="{{ profile_user.username }}" class="rounded-circle" width="120" height="120" style="object-fit: cover;">
+          {% else %}
+            <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 120px; height: 120px; font-size: 2.5rem;">
+              {{ profile_user.username|first|upper }}
+            </div>
+          {% endif %}
+          {% if user == profile_user %}
+          <div class="dropdown position-absolute bottom-0 end-0">
+            <button type="button"
+                    class="btn btn-light btn-sm rounded-circle shadow"
+                    id="avatar-menu-toggle"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                    title="Profile picture options">
+              <i class="bi bi-camera"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+              <li>
+                <button class="dropdown-item" type="button" id="avatar-menu-update">
+                  <i class="bi bi-arrow-repeat me-1"></i>Update your picture
+                </button>
+              </li>
+              {% if profile_user.photo %}
+              <li>
+                <button class="dropdown-item text-danger" type="button" id="avatar-menu-remove">
+                  <i class="bi bi-trash me-1"></i>Remove your picture
+                </button>
+              </li>
+              {% endif %}
+            </ul>
+          </div>
+          {% endif %}
+        </div>
+
+        {% if user == profile_user %}
+        <form method="post" action="{% url 'accounts:profile' profile_user.username %}" enctype="multipart/form-data" id="profile-photo-form" class="d-none">
+          {% csrf_token %}
+          <input type="hidden" name="form_type" value="profile_photo">
+          <input type="hidden" name="remove_photo" id="id_remove_photo" value="">
+          <input type="file" name="photo" id="id_photo" accept="image/*" class="d-none">
+        </form>
+        {% endif %}
+
+        <h4 class="fw-bold mb-1">{{ profile_user.get_full_name|default:profile_user.username }}</h4>
+        <p class="text-muted mb-1">@{{ profile_user.username }}</p>
+
+        {% if profile_user.is_teacher %}
+          <span class="badge bg-success px-3 py-1 mb-2"><i class="bi bi-easel me-1"></i>Teacher</span>
+        {% else %}
+          <span class="badge bg-primary px-3 py-1 mb-2"><i class="bi bi-mortarboard me-1"></i>Student</span>
+          {% if profile_user.student_id %}
+          <p class="text-muted small mb-1">Student ID: <strong>{{ profile_user.student_id }}</strong></p>
+          {% endif %}
+        {% endif %}
+
+        {% if profile_user.address %}
+        <p class="text-muted small mb-1"><i class="bi bi-geo-alt me-1"></i>{{ profile_user.address }}</p>
+        {% endif %}
+
+        {% if profile_user.bio %}
+        <hr>
+        <p class="text-muted mb-0">{{ profile_user.bio }}</p>
+        {% endif %}
+
+        {% if user == profile_user %}
+        <div class="mt-3">
+          <a href="{% url 'accounts:settings' %}?tab=profile" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-gear me-1"></i>Edit profile (name, bio, etc.)
+          </a>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    {% if profile_user.is_student and study_streak is not None %}
+    <div class="card shadow-sm border-0 mt-4">
+      <div class="card-header profile-header-progress border-0 py-2 fw-semibold">
+        <i class="bi bi-trophy me-2"></i>Progress & achievements
+      </div>
+      <div class="card-body py-3">
+        <div class="profile-gamification">
+          <div class="profile-gamification-item streak">
+            <div class="icon-wrap"><i class="bi bi-fire"></i></div>
+            <div>
+              <div class="value">{{ study_streak.current_streak|default:0 }}</div>
+              <div class="label">Day streak</div>
+            </div>
+          </div>
+          <div class="profile-gamification-item certs">
+            <div class="icon-wrap"><i class="bi bi-award"></i></div>
+            <div>
+              <div class="value">{{ learning_stats.certificates|default:0 }}</div>
+              <div class="label">Certificates</div>
+            </div>
+          </div>
+        </div>
+        {% if study_streak.longest_streak %}
+        <small class="text-muted mt-2 d-block">Longest streak: {{ study_streak.longest_streak }} day{{ study_streak.longest_streak|pluralize }}</small>
+        {% endif %}
+      </div>
+    </div>
+    {% endif %}
+
+    {% if user == profile_user and user.is_student %}
+    <div class="card shadow-sm border-0 mt-4">
+      <div class="card-header profile-header-share fw-semibold border-0">
+        <i class="bi bi-pencil-square me-2"></i>Share an Update
+      </div>
+      <div class="card-body">
+        <form method="post" action="{% url 'social:post_status' %}">
+          {% csrf_token %}
+          <div class="mb-3">
+            <textarea name="content" class="form-control" rows="3" placeholder="What's on your mind?"></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary btn-sm">
+            <i class="bi bi-send me-1"></i>Post
+          </button>
+        </form>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+
+  <div class="col-md-8">
+
+    {% if learning_stats %}
+    <div class="row g-3 mb-3">
+      <div class="col-4">
+        <div class="border rounded-3 bg-light p-3 h-100">
+          <p class="text-muted small mb-1 text-uppercase">Courses</p>
+          <div class="d-flex justify-content-between align-items-baseline mb-1">
+            <h4 class="fw-bold mb-0">{{ learning_stats.courses_total|default:0 }}</h4>
+            <span class="badge bg-primary bg-opacity-25 text-primary fw-semibold">{% if learning_stats.courses_total %}100%{% else %}0%{% endif %}</span>
+          </div>
+          <div class="progress progress-stat rounded mt-2" style="height: 8px;">
+            <div class="progress-bar bg-primary" role="progressbar" style="width: {% if learning_stats.courses_total %}100{% else %}0{% endif %}%;" aria-valuenow="{% if learning_stats.courses_total %}100{% else %}0{% endif %}" aria-valuemin="0" aria-valuemax="100"></div>
+          </div>
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="border rounded-3 bg-light p-3 h-100">
+          <p class="text-muted small mb-1 text-uppercase">Completed</p>
+          <div class="d-flex justify-content-between align-items-baseline mb-1">
+            <h4 class="fw-bold mb-0">{{ learning_stats.courses_completed|default:0 }}</h4>
+            <span class="badge bg-success bg-opacity-25 text-success fw-semibold">{{ learning_stats.pct_completed|default:0 }}%</span>
+          </div>
+          <div class="progress progress-stat rounded mt-2" style="height: 8px;">
+            <div class="progress-bar bg-success" role="progressbar" style="width: {{ learning_stats.pct_completed|default:0 }}%;" aria-valuenow="{{ learning_stats.pct_completed|default:0 }}" aria-valuemin="0" aria-valuemax="100"></div>
+          </div>
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="border rounded-3 bg-light p-3 h-100">
+          <p class="text-muted small mb-1 text-uppercase">Certificates</p>
+          <div class="d-flex justify-content-between align-items-baseline mb-1">
+            <h4 class="fw-bold mb-0">{{ learning_stats.certificates|default:0 }}</h4>
+            <span class="badge bg-info bg-opacity-25 text-info fw-semibold">{{ learning_stats.pct_certificates|default:0 }}%</span>
+          </div>
+          <div class="progress progress-stat rounded mt-2" style="height: 8px;">
+            <div class="progress-bar bg-info" role="progressbar" style="width: {{ learning_stats.pct_certificates|default:0 }}%;" aria-valuenow="{{ learning_stats.pct_certificates|default:0 }}" aria-valuemin="0" aria-valuemax="100"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    <div class="card shadow-sm border-0 mb-3">
+      <div class="card-header profile-header-activity fw-semibold border-0">
+        <i class="bi bi-activity me-2"></i>Activity timeline
+      </div>
+      <div class="card-body">
+        {% if status_updates %}
+          {% for status in status_updates %}
+          <div class="d-flex mb-3 pb-3 {% if not forloop.last %}border-bottom{% endif %}">
+            <div>
+              <p class="mb-1">{{ status.content }}</p>
+              <small class="text-muted"><i class="bi bi-clock me-1"></i>{{ status.created_at|timesince }} ago</small>
+            </div>
+          </div>
+          {% endfor %}
+        {% else %}
+          <p class="text-muted mb-0">No status updates yet.</p>
+        {% endif %}
+      </div>
+    </div>
+
+    {% if achievements %}
+    <div class="card shadow-sm border-0 mb-3">
+      <div class="card-header profile-header-achievements fw-semibold border-0">
+        <i class="bi bi-trophy me-2"></i>Achievements
+      </div>
+      <div class="card-body">
+        <ul class="list-unstyled mb-0 small">
+          {% if achievements.courses_enrolled is not None %}
+          <li class="mb-1"><strong>{{ achievements.courses_enrolled }}</strong> course{{ achievements.courses_enrolled|pluralize }} enrolled</li>
+          <li class="mb-1"><strong>{{ achievements.certificates_earned }}</strong> certificate{{ achievements.certificates_earned|pluralize }} earned</li>
+          {% endif %}
+          {% if achievements.courses_created is not None %}
+          <li class="mb-1"><strong>{{ achievements.courses_created }}</strong> course{{ achievements.courses_created|pluralize }} created</li>
+          <li class="mb-1"><strong>{{ achievements.certificates_issued }}</strong> certificate{{ achievements.certificates_issued|pluralize }} issued to students</li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+    {% endif %}
+
+    {% if profile_user.is_student %}
+    <div class="card shadow-sm border-0">
+      <div class="card-header profile-header-enrolled fw-semibold border-0">
+        <i class="bi bi-book me-2"></i>Enrolled Courses
+      </div>
+      <div class="card-body">
+        {% if enrolled_courses %}
+        <div class="list-group list-group-flush">
+          {% for enrolment in enrolled_courses %}
+          <a href="{% url 'courses:course_detail' enrolment.course.id %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+            <span>#{{ enrolment.course.id }} &mdash; {{ enrolment.course.title }}</span>
+            <span class="badge bg-primary rounded-pill">{{ enrolment.course.teacher.username }}</span>
+          </a>
+          {% endfor %}
+        </div>
+        {% else %}
+          <p class="text-muted mb-0">No enrolled courses yet.</p>
+        {% endif %}
+      </div>
+    </div>
+    {% endif %}
+
+    {% if profile_user.is_teacher %}
+    <div class="card shadow-sm border-0">
+      <div class="card-header profile-header-courses-created fw-semibold border-0">
+        <i class="bi bi-journal-richtext me-2"></i>Courses Created
+      </div>
+      <div class="card-body">
+        {% if taught_courses %}
+        <div class="list-group list-group-flush">
+          {% for course in taught_courses %}
+          <a href="{% url 'courses:course_detail' course.id %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+            <span>#{{ course.id }} &mdash; {{ course.title }}</span>
+            <small class="text-muted">{{ course.created_at|date:"d M Y" }}</small>
+          </a>
+          {% endfor %}
+        </div>
+        {% else %}
+          <p class="text-muted mb-0">No courses created yet.</p>
+        {% endif %}
+      </div>
+    </div>
+    {% endif %}
+
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var wrapper = document.querySelector('.profile-avatar-wrapper');
+  if (!wrapper) return;
+
+  var updateItem = document.getElementById('avatar-menu-update');
+  var removeItem = document.getElementById('avatar-menu-remove');
+  var fileInput = document.getElementById('id_photo');
+  var removeInput = document.getElementById('id_remove_photo');
+  var form = document.getElementById('profile-photo-form');
+
+  if (updateItem && fileInput && form) {
+    updateItem.addEventListener('click', function() {
+      if (removeInput) removeInput.value = '';
+      fileInput.click();
+    });
+    fileInput.addEventListener('change', function() {
+      if (fileInput.files.length) {
+        form.submit();
+      }
+    });
+  }
+
+  if (removeItem && form && removeInput) {
+    removeItem.addEventListener('click', function() {
+      removeInput.value = 'on';
+      form.submit();
+    });
+  }
+});
+</script>
+{% endblock %}

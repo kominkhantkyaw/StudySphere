@@ -1,0 +1,17 @@
+{# Certificate share dropdown - use with: {% include "includes/certificate_share_dropdown.html" with cert_url=url_var btn_class="btn-outline-primary" %} #}
+<div class="dropdown cert-share-dropdown d-inline-block" data-cert-url="{{ cert_url }}">
+  <button type="button" class="btn {{ btn_class|default:'btn-outline-primary' }} btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" title="Share certificate">
+    <i class="bi bi-share me-1"></i>Share
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><a class="dropdown-item cert-share-copy" href="#"><i class="bi bi-clipboard me-2"></i>Copy link</a></li>
+    <li><a class="dropdown-item cert-share-native" href="#"><i class="bi bi-share me-2"></i>Share via...</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><a class="dropdown-item cert-share-facebook" href="#" target="_blank" rel="noopener"><i class="bi bi-facebook me-2 text-primary"></i>Facebook</a></li>
+    <li><a class="dropdown-item cert-share-telegram" href="#" target="_blank" rel="noopener"><i class="bi bi-telegram me-2 text-info"></i>Telegram</a></li>
+    <li><a class="dropdown-item cert-share-whatsapp" href="#" target="_blank" rel="noopener"><i class="bi bi-whatsapp me-2 text-success"></i>WhatsApp</a></li>
+    <li><a class="dropdown-item cert-share-signal" href="#" target="_blank" rel="noopener"><i class="bi bi-chat-dots me-2"></i>Signal</a></li>
+    <li><a class="dropdown-item cert-share-twitter" href="#" target="_blank" rel="noopener"><i class="bi bi-twitter-x me-2"></i>Twitter / X</a></li>
+  </ul>
+  <span class="cert-share-feedback small text-success ms-1" style="display: none;">Copied!</span>
+</div>

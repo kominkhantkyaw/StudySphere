@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+
+{% block title %}Courses — StudySphere{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 mt-3">
+  <h2 class="fw-bold mb-0"><i class="bi bi-collection me-2"></i>Courses</h2>
+  {% if user.is_teacher %}
+  <a href="{% url 'courses:course_create' %}" class="btn btn-success">
+    <i class="bi bi-plus-circle me-1"></i>Create Courses
+  </a>
+  {% endif %}
+</div>
+
+<div class="card shadow-sm border-0 mb-4">
+  <div class="card-body">
+    <form method="get" class="row g-2 align-items-end">
+      <input type="hidden" name="category" value="{{ category|default:'' }}">
+      <div class="col-md-10">
+        <input type="text" name="q" class="form-control" placeholder="Search courses..." value="{{ q|default:'' }}">
+      </div>
+      <div class="col-md-2">
+        <button type="submit" class="btn btn-primary w-100">
+          <i class="bi bi-search me-1"></i>Search
+        </button>
+      </div>
+    </form>
+    {% if category_label %}
+    <p class="mb-0 mt-2 small text-muted">
+      Category: <span class="badge bg-primary">{{ category_label }}</span>
+      <a href="{% url 'courses:course_list' %}{% if q %}?q={{ q|urlencode }}{% endif %}" class="ms-2 small">Show all</a>
+    </p>
+    {% endif %}
+  </div>
+</div>
+
+{% if courses %}
+<div class="row g-4">
+  {% for course in courses %}
+  <div class="col-md-6 col-lg-4">
+    <div class="card shadow-sm border-0 h-100">
+      {% if course.hero_image_url %}
+      <div class="ratio ratio-16x9">
+        <img src="{{ course.hero_image_url }}" alt="{{ course.title }} image" class="card-img-top img-fluid" style="object-fit: cover;">
+      </div>
+      {% elif course.hero_image %}
+      <div class="ratio ratio-16x9">
+        <img src="{{ course.hero_image.url }}" alt="{{ course.title }} image" class="card-img-top img-fluid" style="object-fit: cover;">
+      </div>
+      {% endif %}
+      <div class="card-body d-flex flex-column">
+        <h6 class="text-muted mb-1">
+          <i class="bi bi-person me-1"></i>{{ course.teacher.get_full_name|default:course.teacher.username }}
+        </h6>
+        <h5 class="card-title fw-bold mb-1">{{ course.title }}</h5>
+        <p class="text-muted small mb-2">Course ID: #{{ course.id }}</p>
+        <p class="card-text text-muted small flex-grow-1">{{ course.description|striptags|truncatechars:110 }}</p>
+        <div class="mt-2 small text-muted d-flex flex-wrap gap-2">
+          {% if course.duration_hours %}
+            <span><i class="bi bi-clock me-1"></i>{{ course.duration_hours }} hours</span>
+          {% endif %}
+          {% if course.language %}
+            <span><i class="bi bi-translate me-1"></i>{{ course.get_language_display }}</span>
+          {% endif %}
+          {% if course.delivery_mode %}
+            <span><i class="bi bi-globe me-1"></i>{{ course.get_delivery_mode_display }}</span>
+          {% endif %}
+          {% if course.capacity_type %}
+            <span><i class="bi bi-people me-1"></i>{{ course.get_capacity_type_display }}</span>
+          {% endif %}
+        </div>
+      </div>
+      <div class="card-footer bg-transparent border-0 pb-3 px-3">
+        <a href="{% url 'courses:course_detail' course.id %}?from=courses" class="btn btn-outline-primary w-100">
+          View Course <i class="bi bi-arrow-right ms-1"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% if page_obj.has_other_pages %}
+<nav aria-label="Course list pagination" class="mt-4">
+  <ul class="pagination justify-content-center flex-wrap">
+    {% if page_obj.has_previous %}
+    <li class="page-item">
+      <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if q %}&amp;q={{ q|urlencode }}{% endif %}{% if category %}&amp;category={{ category|urlencode }}{% endif %}">Previous</a>
+    </li>
+    {% endif %}
+    {% for num in page_obj.paginator.page_range %}
+      {% if page_obj.number == num %}
+    <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+      {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+    <li class="page-item">
+      <a class="page-link" href="?page={{ num }}{% if q %}&amp;q={{ q|urlencode }}{% endif %}{% if category %}&amp;category={{ category|urlencode }}{% endif %}">{{ num }}</a>
+    </li>
+      {% endif %}
+    {% endfor %}
+    {% if page_obj.has_next %}
+    <li class="page-item">
+      <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if q %}&amp;q={{ q|urlencode }}{% endif %}{% if category %}&amp;category={{ category|urlencode }}{% endif %}">Next</a>
+    </li>
+    {% endif %}
+  </ul>
+  <p class="text-center small text-muted">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</p>
+</nav>
+{% endif %}
+{% else %}
+<div class="text-center py-5">
+  <i class="bi bi-journal-x fs-1 text-muted"></i>
+  <p class="text-muted mt-2">No courses found.</p>
+</div>
+{% endif %}
+{% endblock %}

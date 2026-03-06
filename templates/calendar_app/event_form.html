@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if editing %}Edit Event{% else %}New Event{% endif %} — StudySphere{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8 col-lg-6">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h3 class="card-title mb-4">
+          <i class="bi bi-{% if editing %}pencil-square{% else %}calendar-plus{% endif %} me-2"></i>
+          {% if editing %}Edit Event{% else %}Create Event{% endif %}
+        </h3>
+
+        {% if form.non_field_errors %}
+        <div class="alert alert-danger">
+          {% for error in form.non_field_errors %}
+            <p class="mb-0">{{ error }}</p>
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        <form method="post">
+          {% csrf_token %}
+          {% for field in form %}
+          <div class="mb-3">
+            <label for="{{ field.id_for_label }}" class="form-label fw-semibold">{{ field.label }}</label>
+            {{ field }}
+            {% if field.errors %}
+            <div class="invalid-feedback d-block">
+              {% for error in field.errors %}{{ error }}{% endfor %}
+            </div>
+            {% endif %}
+            {% if field.help_text %}
+            <div class="form-text">{{ field.help_text }}</div>
+            {% endif %}
+          </div>
+          {% endfor %}
+          <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary">
+              <i class="bi bi-check-lg me-1"></i>{% if editing %}Save Changes{% else %}Create Event{% endif %}
+            </button>
+            <a href="{% url 'calendar_app:calendar' %}" class="btn btn-outline-secondary">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

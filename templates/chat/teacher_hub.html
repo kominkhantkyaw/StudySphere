@@ -1,0 +1,754 @@
+{% extends 'base.html' %}
+
+{% block title %}Chat &amp; Feed — StudySphere{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-3">
+  <div class="row align-items-center mb-3">
+    <div class="col">
+      <h2 class="fw-bold mb-0"><i class="bi bi-chat-square-dots me-2"></i>Chat &amp; Feed</h2>
+      <p class="text-muted small mb-0 mt-1">Open a room from the left; post and see activity on the right. Click a room to open its chat in the Online tab.</p>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <!-- Left: Chat & Feed (rooms list) -->
+    <div class="col-lg-5 col-xl-4">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-body p-0">
+          <ul class="list-group list-group-flush">
+            {% if general_room %}
+            <li class="list-group-item d-flex align-items-center border-success border-start border-3 bg-success bg-opacity-10 chat-room-item"
+                role="button"
+                style="cursor: pointer;"
+                data-open-mode="activity"
+                data-room-url="{% url 'chat:chat_room' general_room.id %}?embed=1">
+              <div class="flex-shrink-0 me-2">
+                <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
+                  <i class="bi bi-megaphone-fill"></i>
+                </div>
+              </div>
+              <div class="flex-grow-1 min-w-0 overflow-hidden">
+                <div class="fw-semibold text-truncate d-block">{{ general_room.title }}</div>
+                <small class="text-muted">Default — announcements for everyone</small>
+              </div>
+              <div class="flex-shrink-0">
+                <button type="button" class="btn btn-sm btn-success chat-room-open-btn"
+                        data-open-mode="activity"
+                        data-room-url="{% url 'chat:chat_room' general_room.id %}?embed=1">Open</button>
+              </div>
+            </li>
+            {% endif %}
+            {% if show_teachers_room %}
+            <li class="list-group-item d-flex align-items-center chat-room-item"
+                role="button"
+                style="cursor: pointer;"
+                data-open-mode="online"
+                data-room-url="{% url 'chat:chat_teachers_room' %}?embed=1">
+              <div class="flex-shrink-0 me-2">
+                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
+                  <i class="bi bi-people-fill"></i>
+                </div>
+              </div>
+              <div class="flex-grow-1 min-w-0 overflow-hidden">
+                <div class="fw-semibold text-truncate d-block">Teachers' room</div>
+                <small class="text-muted">Teacher-to-teacher</small>
+              </div>
+              <div class="flex-shrink-0">
+                <button type="button" class="btn btn-sm btn-outline-primary chat-room-open-btn"
+                        data-open-mode="online"
+                        data-room-url="{% url 'chat:chat_teachers_room' %}?embed=1">Open</button>
+              </div>
+            </li>
+            {% endif %}
+            {% for course in courses %}
+            <li class="list-group-item d-flex align-items-center chat-room-item"
+                role="button"
+                style="cursor: pointer;"
+                data-open-mode="online"
+                data-room-url="{% url 'chat:chat_room' course.id %}?embed=1">
+              <div class="flex-shrink-0 me-2">
+                <div class="bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;">
+                  <i class="bi bi-chat-fill"></i>
+                </div>
+              </div>
+              <div class="flex-grow-1 min-w-0 overflow-hidden">
+                <div class="fw-semibold text-truncate d-block" title="{{ course.title }}">{{ course.title }}</div>
+                <small class="text-muted">Course #{{ course.id }}</small>
+              </div>
+              <div class="flex-shrink-0">
+                <button type="button" class="btn btn-sm btn-outline-secondary chat-room-open-btn"
+                        data-open-mode="online"
+                        data-room-url="{% url 'chat:chat_room' course.id %}?embed=1">Open</button>
+              </div>
+            </li>
+            {% empty %}
+            {% if not general_room and not show_teachers_room %}
+            <li class="list-group-item text-muted small py-4 text-center">
+              {% if is_teacher %}Create a course to add chat rooms.{% else %}Enrol in a course to see its chat.{% endif %}
+            </li>
+            {% endif %}
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Two tabs — Activity Feed (default) and Online (chat room) -->
+    <div class="col-lg-7 col-xl-8">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-header bg-white border-0 pt-3 pb-0 px-3">
+          <ul class="nav nav-tabs card-header-tabs" id="rightPanelTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button class="nav-link active" id="tab-activity-feed" data-bs-toggle="tab" data-bs-target="#pane-activity-feed" type="button" role="tab" aria-controls="pane-activity-feed" aria-selected="true">
+                <i class="bi bi-rss me-1"></i>Activity Feed
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="tab-online" data-bs-toggle="tab" data-bs-target="#pane-online" type="button" role="tab" aria-controls="pane-online" aria-selected="false">
+                <i class="bi bi-people-fill me-1"></i>Online
+              </button>
+            </li>
+          </ul>
+        </div>
+        <div class="card-body tab-content p-0" id="rightPanelTabContent">
+          <!-- Activity Feed tab (default): same design as Online (messages above, input below) -->
+          <div class="tab-pane fade show active p-0" id="pane-activity-feed" role="tabpanel" aria-labelledby="tab-activity-feed">
+            <div class="p-2 bg-light border-bottom small text-muted">
+              <i class="bi bi-rss me-1"></i>Share announcements and updates with everyone in the General room.
+            </div>
+            <div class="p-3">
+            <div class="row g-3">
+              <div class="col-lg-8">
+                <div class="card shadow-sm border-0">
+                  <div class="card-body p-0">
+                    <div id="feed-messages" class="p-3" style="height: 400px; overflow-y: auto; background-color: #f8f9fa;">
+                      {% if statuses %}
+                      {% for status in statuses reversed %}
+                      <div class="d-flex mb-2 {% if status.user == user %}justify-content-end{% else %}justify-content-start{% endif %}">
+                        <div class="chat-message-bubble px-3 py-2 rounded-3 {% if status.user == user %}chat-bubble-own{% else %}chat-bubble-other{% endif %}" style="max-width: 70%;" data-status-id="{{ status.id }}">
+                          {% if status.user != user %}
+                          <small class="fw-bold d-block mb-1">{{ status.user.get_full_name|default:status.user.username }}</small>
+                          {% endif %}
+                          {% if status.attachment %}
+                          <a href="{{ status.attachment.url }}" target="_blank" rel="noopener noreferrer" class="d-block mb-1">{{ status.attachment.name|default:"View attachment" }}</a>
+                          {% endif %}
+                          {% if status.content %}<span class="text-break" data-status-text style="white-space: pre-wrap;">{{ status.content }}</span>{% endif %}
+                          <small class="d-block mt-1 text-muted" style="font-size: 0.75rem;">{{ status.created_at|timesince }} ago</small>
+                          <div class="chat-message-reactions mt-1 d-flex flex-wrap gap-1 align-items-center" data-status-id="{{ status.id }}">
+                            {% for r in status.reactions.all %}
+                            <span class="badge chat-emoji-chip" title="{{ r.user.username }} reacted" data-username="{{ r.user.username }}">{{ r.emoji }}</span>
+                            {% endfor %}
+                          </div>
+                          <div class="chat-message-actions mt-1 d-flex justify-content-end gap-2 align-items-center">
+                            <div class="dropdown">
+                              <button type="button" class="btn btn-link btn-sm p-0 small text-decoration-none" title="React" data-bs-toggle="dropdown"><i class="bi bi-emoji-smile"></i></button>
+                              <ul class="dropdown-menu dropdown-menu-start feed-emoji-reaction-menu" data-status-id="{{ status.id }}">
+                                <li><button type="button" class="dropdown-item btn-sm" data-emoji="😊">😊</button></li>
+                                <li><button type="button" class="dropdown-item btn-sm" data-emoji="😂">😂</button></li>
+                                <li><button type="button" class="dropdown-item btn-sm" data-emoji="❤️">❤️</button></li>
+                                <li><button type="button" class="dropdown-item btn-sm" data-emoji="👍">👍</button></li>
+                                <li><button type="button" class="dropdown-item btn-sm" data-emoji="🎉">🎉</button></li>
+                              </ul>
+                            </div>
+                            {% if status.user == user or user.is_staff %}
+                            <button type="button" class="btn btn-link btn-sm p-0 small text-decoration-none feed-edit-btn" title="Edit" data-status-id="{{ status.id }}"><i class="bi bi-pencil"></i></button>
+                            {% endif %}
+                            <div class="dropdown">
+                              <button type="button" class="btn btn-link btn-sm p-0 small text-decoration-none" title="More options" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></button>
+                              <ul class="dropdown-menu dropdown-menu-end">
+                                <li><button type="button" class="dropdown-item feed-reply-btn" data-status-id="{{ status.id }}" data-username="{{ status.user.username }}" data-excerpt="{{ status.content|default:status.attachment.name|default:''|truncatechars:100 }}"><i class="bi bi-reply me-2"></i>Reply</button></li>
+                                <li>
+                                  <button
+                                    type="button"
+                                    class="dropdown-item feed-copy-link-btn"
+                                    data-attachment-url="{% if status.attachment %}{{ status.attachment.url }}{% endif %}"
+                                    data-content="{{ status.content|default:''|escape }}"
+                                  >
+                                    <i class="bi bi-link-45deg me-2"></i>Copy link
+                                  </button>
+                                </li>
+                                <li>
+                                  <button
+                                    type="button"
+                                    class="dropdown-item feed-forward-btn"
+                                    data-content="{{ status.content|default:''|escape }}"
+                                    data-attachment-url="{% if status.attachment %}{{ status.attachment.url }}{% endif %}"
+                                    data-attachment-name="{% if status.attachment %}{{ status.attachment.name|escape }}{% endif %}"
+                                  >
+                                    <i class="bi bi-share me-2"></i>Forward
+                                  </button>
+                                </li>
+                                {% if status.user == user or user.is_staff %}
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                  <form method="post" action="{% url 'social:delete_status' status.id %}" onsubmit="return confirm('Delete this post for everyone?');" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="dropdown-item text-danger"><i class="bi bi-trash me-2"></i>Delete</button>
+                                  </form>
+                                </li>
+                                {% endif %}
+                                <li><hr class="dropdown-divider"></li>
+                                <li><button type="button" class="dropdown-item feed-pin-btn"><i class="bi bi-pin-angle me-2"></i>Pin for everyone</button></li>
+                                <li><button type="button" class="dropdown-item feed-unread-btn"><i class="bi bi-circle me-2"></i>Mark as unread</button></li>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      {% if status.user == user or user.is_staff %}
+                      <form method="post" action="{% url 'social:edit_status' status.id %}" class="d-none" id="feed-edit-form-{{ status.id }}">
+                        {% csrf_token %}
+                        <input type="hidden" name="content" id="feed-edit-content-{{ status.id }}">
+                      </form>
+                      {% endif %}
+                      {% endfor %}
+                      {% else %}
+                      <div class="text-center text-muted py-5">
+                        <i class="bi bi-chat-square-dots fs-1"></i>
+                        <p class="mt-2">No activity yet. Post below or open a room to chat.</p>
+                      </div>
+                      {% endif %}
+                    </div>
+                  </div>
+                  <div class="card-footer bg-white p-3">
+                    <form method="post" action="{% url 'social:post_status' %}" id="feed-post-form" enctype="multipart/form-data">
+                      {% csrf_token %}
+                      <div id="feed-reply-pill" class="small text-muted mb-2 d-none">
+                        Replying to <span id="feed-reply-pill-user"></span>: <span id="feed-reply-pill-text"></span>
+                        <button type="button" class="btn btn-link btn-sm p-0 ms-1" id="feed-reply-pill-cancel">Cancel</button>
+                      </div>
+                      <div class="d-flex align-items-center gap-2 flex-wrap position-relative">
+                        <div class="d-flex align-items-center gap-1 flex-wrap">
+                          <div class="position-relative">
+                            <button type="button" id="feed-emoji-btn" class="btn btn-light btn-sm" title="Insert emoji"><i class="bi bi-emoji-smile"></i></button>
+                            <div id="feed-emoji-picker" class="chat-input-emoji-picker d-none"></div>
+                          </div>
+                          <button type="button" id="feed-attach-btn" class="btn btn-light btn-sm" title="Attach file"><i class="bi bi-paperclip"></i></button>
+                          <div class="dropdown">
+                            <button type="button" id="feed-more-btn" class="btn btn-light btn-sm dropdown-toggle" title="More" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-plus-lg"></i></button>
+                            <ul class="dropdown-menu dropdown-menu-start" aria-labelledby="feed-more-btn">
+                              <li><button type="button" class="dropdown-item" data-feed-action="camera"><i class="bi bi-camera me-2"></i>Camera</button></li>
+                              <li><button type="button" class="dropdown-item" data-feed-action="photo"><i class="bi bi-image me-2"></i>Photo</button></li>
+                              <li><button type="button" class="dropdown-item" data-feed-action="video"><i class="bi bi-camera-video me-2"></i>Video</button></li>
+                              <li><hr class="dropdown-divider"></li>
+                              <li><button type="button" class="dropdown-item" data-feed-action="location"><i class="bi bi-geo-alt me-2"></i>Location</button></li>
+                            </ul>
+                          </div>
+                          <input type="file" name="attachment" id="feed-file-input" class="d-none" accept="image/*,video/*,.pdf" aria-label="Attach file">
+                          <input type="file" id="feed-camera-input" class="d-none" accept="image/*" capture="environment" aria-label="Take photo">
+                        </div>
+                        <div class="flex-grow-1">
+                          <div class="input-group">
+                            <textarea name="content" id="feed-content-input" class="form-control" rows="2" placeholder="Type your message..." maxlength="500" autocomplete="off"></textarea>
+                            <button type="submit" class="btn btn-primary"><i class="bi bi-send me-1"></i>Post</button>
+                          </div>
+                          <div id="feed-attachment-preview" class="small mt-1 text-success d-none"></div>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-4">
+                <div class="card shadow-sm border-0 h-100">
+                  <div class="card-header bg-white py-2">
+                    <span class="fw-bold"><i class="bi bi-people-fill me-1"></i>Chat members</span>
+                    <span class="badge bg-success rounded-pill ms-1" id="feed-online-count">0</span>
+                  </div>
+                  <div class="card-body p-2" style="max-height: 400px; overflow-y: auto;">
+                    <ul class="list-group list-group-flush" id="feed-online-list"></ul>
+                    <p class="small text-muted mb-0 mt-2" id="feed-online-empty">No one else in the General room yet.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            </div>
+          </div>
+          <!-- Online tab: chat room (Teachers' room or course) — load when user clicks Open -->
+          <div class="tab-pane fade p-0" id="pane-online" role="tabpanel" aria-labelledby="tab-online">
+            <div class="p-2 bg-light border-bottom small text-muted">
+              <i class="bi bi-chat-dots me-1"></i>Chat with students and teachers; share assignments and messages. Open a room from the left to load it here.
+            </div>
+            <iframe id="chat-room-frame" title="Chat room" src="about:blank" class="w-100 border-0" style="height: 560px; min-height: 400px;"></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Edit modal for Activity Feed (multi-line textarea) -->
+<div class="modal fade" id="feed-edit-modal" tabindex="-1" aria-labelledby="feed-edit-label" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header py-2">
+        <h5 class="modal-title" id="feed-edit-label"><i class="bi bi-pencil me-2"></i>Edit post</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body py-3">
+        <label for="feed-edit-textarea" class="form-label small text-muted">You can use multiple lines.</label>
+        <textarea id="feed-edit-textarea" class="form-control" rows="5" maxlength="500" placeholder="Type your message..."></textarea>
+      </div>
+      <div class="modal-footer py-2">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" id="feed-edit-save"><i class="bi bi-check-lg me-1"></i>Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Forward modal for Activity Feed -->
+<div class="modal fade" id="feed-forward-modal" tabindex="-1" aria-labelledby="feed-forward-label" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header py-2">
+        <h5 class="modal-title" id="feed-forward-label"><i class="bi bi-share me-2"></i>Forward to</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body py-2">
+        <p class="small text-muted mb-2">Choose who in this room should receive this message.</p>
+        <ul class="list-group list-group-flush" id="feed-forward-list"></ul>
+        <p class="small text-muted mt-2 mb-0 d-none" id="feed-forward-empty">No other participants in this room right now.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  const feedContent = document.getElementById('feed-content-input');
+  const feedForm = document.getElementById('feed-post-form');
+  const feedFileInput = document.getElementById('feed-file-input');
+  const feedCameraInput = document.getElementById('feed-camera-input');
+  const feedAttachmentPreview = document.getElementById('feed-attachment-preview');
+
+  var feedOnlineUsers = {};
+  function feedEscapeHtml(s) {
+    var div = document.createElement('div');
+    div.textContent = s;
+    return div.innerHTML;
+  }
+
+  const inputEmojis = ['😊', '😂', '❤️', '👍', '🎉', '😮', '😢', '🙏', '👏', '😡', '⭐', '🔥', '✨', '💯', '🙂', '😎', '🥳', '😇', '🤔', '👋'];
+
+  /* Emoji picker */
+  const emojiPicker = document.getElementById('feed-emoji-picker');
+  const emojiBtn = document.getElementById('feed-emoji-btn');
+  if (emojiPicker && emojiBtn && feedContent) {
+    inputEmojis.forEach(function (emoji) {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.textContent = emoji;
+      btn.classList.add('border-0', 'bg-transparent');
+      btn.style.cursor = 'pointer';
+      btn.addEventListener('click', function () {
+        const start = feedContent.selectionStart || feedContent.value.length;
+        const end = feedContent.selectionEnd || feedContent.value.length;
+        feedContent.value = feedContent.value.slice(0, start) + emoji + feedContent.value.slice(end);
+        feedContent.focus();
+        feedContent.selectionStart = feedContent.selectionEnd = start + emoji.length;
+        emojiPicker.classList.add('d-none');
+      });
+      emojiPicker.appendChild(btn);
+    });
+    emojiBtn.addEventListener('click', function (e) {
+      emojiPicker.classList.toggle('d-none');
+      e.stopPropagation();
+    });
+    document.addEventListener('click', function () {
+      emojiPicker.classList.add('d-none');
+    });
+    emojiPicker.addEventListener('click', function (e) { e.stopPropagation(); });
+  }
+
+  /* Attach button */
+  const attachBtn = document.getElementById('feed-attach-btn');
+  if (attachBtn && feedFileInput) {
+    attachBtn.addEventListener('click', function () {
+      feedFileInput.value = '';
+      feedFileInput.setAttribute('accept', 'image/*,video/*,.pdf');
+      feedFileInput.click();
+    });
+  }
+
+  /* File input: show preview and keep file for submit */
+  if (feedFileInput && feedAttachmentPreview) {
+    feedFileInput.addEventListener('change', function () {
+      if (feedFileInput.files.length) {
+        feedAttachmentPreview.textContent = '📎 ' + feedFileInput.files[0].name;
+        feedAttachmentPreview.classList.remove('d-none');
+      } else {
+        feedAttachmentPreview.classList.add('d-none');
+      }
+    });
+  }
+  if (feedCameraInput && feedAttachmentPreview) {
+    feedCameraInput.addEventListener('change', function () {
+      if (feedCameraInput.files.length) {
+        feedAttachmentPreview.textContent = '📷 Photo from camera';
+        feedAttachmentPreview.classList.remove('d-none');
+        if (feedFileInput) {
+          const dt = new DataTransfer();
+          dt.items.add(feedCameraInput.files[0]);
+          feedFileInput.files = dt.files;
+        }
+      }
+    });
+  }
+
+  /* More menu: Camera, Photo, Video, Location */
+  document.querySelectorAll('[data-feed-action]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      const action = btn.getAttribute('data-feed-action');
+      if (action === 'camera' && feedCameraInput) {
+        feedCameraInput.value = '';
+        feedCameraInput.click();
+      } else if ((action === 'photo' || action === 'video') && feedFileInput) {
+        feedFileInput.value = '';
+        feedFileInput.setAttribute('accept', action === 'photo' ? 'image/*' : 'video/*');
+        feedFileInput.click();
+      } else if (action === 'location' && feedContent && navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          function (pos) {
+            const text = ' 📍 Location: ' + pos.coords.latitude.toFixed(5) + ', ' + pos.coords.longitude.toFixed(5);
+            feedContent.value = (feedContent.value + text).trim();
+          },
+          function () {
+            if (feedContent) feedContent.value = (feedContent.value + ' 📍 Location: (unavailable)').trim();
+          }
+        );
+      }
+    });
+  });
+
+  /* After submit, clear attachment preview (form may redirect) */
+  if (feedForm && feedAttachmentPreview) {
+    feedForm.addEventListener('submit', function () {
+      feedAttachmentPreview.classList.add('d-none');
+      feedAttachmentPreview.textContent = '';
+    });
+  }
+
+  /* Ctrl+Enter or Cmd+Enter to submit */
+  if (feedContent && feedForm) {
+    feedContent.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault();
+        feedForm.requestSubmit();
+      }
+    });
+  }
+
+  /* Chat members on Activity Feed (General room presence, like Online tab) */
+  const feedOnlineList = document.getElementById('feed-online-list');
+  const feedOnlineCount = document.getElementById('feed-online-count');
+  const feedOnlineEmpty = document.getElementById('feed-online-empty');
+  const feedGeneralRoomId = '{{ general_room.id|default:"" }}';
+
+  if (feedOnlineList && feedOnlineCount && feedOnlineEmpty && feedGeneralRoomId) {
+    const feedPresenceLabels = {
+      'AVAILABLE': 'Available',
+      'ONLINE': 'Online',
+      'BUSY': 'Busy',
+      'AWAY': 'Away',
+      'OFFLINE': 'Offline',
+    };
+
+    function renderFeedOnline() {
+      const users = Object.keys(feedOnlineUsers).sort();
+      feedOnlineList.innerHTML = '';
+      feedOnlineCount.textContent = users.length;
+      feedOnlineEmpty.style.display = users.length ? 'none' : 'block';
+      users.forEach(function (username) {
+        const info = feedOnlineUsers[username] || {};
+        const presence = info.presence || 'AVAILABLE';
+        const statusText = info.status_text || '';
+        const li = document.createElement('li');
+        li.className = 'list-group-item d-flex align-items-start py-2 px-2 border-0';
+        li.innerHTML =
+          '<span class="presence-dot presence-present me-2 mt-1" title="In this room"></span>' +
+          '<span class="presence-dot presence-' + presence.toLowerCase() + ' me-2 mt-1" title="' + (feedPresenceLabels[presence] || presence) + '"></span>' +
+          '<div class="flex-grow-1 min-w-0"><span class="small text-truncate d-block">' +
+          feedEscapeHtml(username) + '</span>' +
+          (statusText ? '<span class="small text-muted text-truncate d-block" title="' + feedEscapeHtml(statusText) + '">' + feedEscapeHtml(statusText) + '</span>' : '') +
+          '</div>';
+        feedOnlineList.appendChild(li);
+      });
+    }
+
+    const feedWsProtocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
+    const feedWsPath = '/ws/chat/' + feedGeneralRoomId + '/';
+    try {
+      const feedWs = new WebSocket(feedWsProtocol + window.location.host + feedWsPath);
+      feedWs.onmessage = function (e) {
+        let data;
+        try {
+          data = JSON.parse(e.data);
+        } catch (err) {
+          return;
+        }
+        if (data.type === 'user_list') {
+          Object.keys(feedOnlineUsers).forEach(function (k) { delete feedOnlineUsers[k]; });
+          (data.users || []).forEach(function (u) {
+            feedOnlineUsers[u.username] = { presence: u.presence || 'AVAILABLE', status_text: u.status_text || '' };
+          });
+          renderFeedOnline();
+        } else if (data.type === 'user_joined') {
+          feedOnlineUsers[data.username] = { presence: data.presence || 'AVAILABLE', status_text: data.status_text || '' };
+          renderFeedOnline();
+        } else if (data.type === 'user_left') {
+          delete feedOnlineUsers[data.username];
+          renderFeedOnline();
+        } else if (data.type === 'status_reaction') {
+          addFeedReactionChip(data.status_id, data.emoji, data.username);
+        }
+      };
+    } catch (e) {
+      console.error('Could not connect Activity Feed online list WebSocket:', e);
+    }
+  }
+
+  /* Room submenu behaviour:
+     - General: keep Activity Feed tab (announcements)
+     - Teachers/Courses: switch to Online tab + load chat iframe (stay on same page)
+  */
+  var chatFrame = document.getElementById('chat-room-frame');
+  var onlineTab = document.getElementById('tab-online');
+  var activityTab = document.getElementById('tab-activity-feed');
+  function showTab(btnEl) {
+    if (!btnEl || !window.bootstrap) return;
+    var tab = new bootstrap.Tab(btnEl);
+    tab.show();
+  }
+  function openRoom(mode, url) {
+    if (mode === 'activity') {
+      showTab(activityTab);
+      return;
+    }
+    if (url && chatFrame) chatFrame.src = url;
+    showTab(onlineTab);
+  }
+
+  document.querySelectorAll('.chat-room-open-btn').forEach(function (btn) {
+    btn.addEventListener('click', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      var mode = btn.getAttribute('data-open-mode') || 'online';
+      var url = btn.getAttribute('data-room-url') || '';
+      openRoom(mode, url);
+    });
+  });
+
+  document.querySelectorAll('.chat-room-item').forEach(function (row) {
+    row.addEventListener('click', function () {
+      var mode = row.getAttribute('data-open-mode') || 'online';
+      var url = row.getAttribute('data-room-url') || '';
+      openRoom(mode, url);
+    });
+  });
+
+  /* Activity Feed: Reply */
+  var feedCurrentReplyTo = null;
+  var feedReplyPill = document.getElementById('feed-reply-pill');
+  var feedReplyPillUser = document.getElementById('feed-reply-pill-user');
+  var feedReplyPillText = document.getElementById('feed-reply-pill-text');
+  var feedReplyPillCancel = document.getElementById('feed-reply-pill-cancel');
+
+  document.querySelectorAll('.feed-reply-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      feedCurrentReplyTo = {
+        id: btn.getAttribute('data-status-id'),
+        username: btn.getAttribute('data-username'),
+        excerpt: (btn.getAttribute('data-excerpt') || '').slice(0, 100)
+      };
+      if (feedReplyPill && feedReplyPillUser && feedReplyPillText) {
+        feedReplyPill.classList.remove('d-none');
+        feedReplyPillUser.textContent = feedCurrentReplyTo.username;
+        feedReplyPillText.textContent = feedCurrentReplyTo.excerpt;
+      }
+    });
+  });
+  if (feedReplyPillCancel) {
+    feedReplyPillCancel.addEventListener('click', function () {
+      feedCurrentReplyTo = null;
+      if (feedReplyPill) feedReplyPill.classList.add('d-none');
+    });
+  }
+
+  /* Activity Feed: Copy link (attachment URL or content) */
+  document.querySelectorAll('.feed-copy-link-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var url = btn.getAttribute('data-attachment-url') || '';
+      var content = (btn.getAttribute('data-content') || '').replace(/\\'/g, "'");
+      var text = url || content;
+      if (!text) return;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).catch(function (err) { console.error(err); });
+      } else {
+        window.prompt('Copy', text);
+      }
+    });
+  });
+
+  /* Activity Feed: Forward */
+  function openFeedForwardModal(forwardContent) {
+    var listEl = document.getElementById('feed-forward-list');
+    var emptyEl = document.getElementById('feed-forward-empty');
+    var modalEl = document.getElementById('feed-forward-modal');
+    if (!listEl || !emptyEl || !modalEl) return;
+    listEl.innerHTML = '';
+    var others = Object.keys(feedOnlineUsers || {}).filter(function (u) { return u !== currentFeedUser; }).sort();
+    if (others.length === 0) {
+      emptyEl.classList.remove('d-none');
+    } else {
+      emptyEl.classList.add('d-none');
+      others.forEach(function (username) {
+        var li = document.createElement('li');
+        li.className = 'list-group-item list-group-item-action d-flex align-items-center py-2';
+        li.innerHTML = '<i class="bi bi-person-circle me-2 text-secondary"></i><span>' + feedEscapeHtml(username) + '</span>';
+        li.addEventListener('click', function () {
+          if (feedContent) {
+            feedContent.value = (feedContent.value ? feedContent.value + ' ' : '') + 'Forwarded to @' + username + ': ' + forwardContent;
+            feedContent.focus();
+          }
+          var inst = window.bootstrap && window.bootstrap.Modal && window.bootstrap.Modal.getInstance(modalEl);
+          if (inst) inst.hide();
+        });
+        listEl.appendChild(li);
+      });
+    }
+    var modal = window.bootstrap && window.bootstrap.Modal && window.bootstrap.Modal.getInstance(modalEl);
+    if (!modal) modal = new window.bootstrap.Modal(modalEl);
+    if (modal) modal.show();
+  }
+  var currentFeedUser = '{{ user.username }}';
+  document.querySelectorAll('.feed-forward-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var content = (btn.getAttribute('data-content') || '').replace(/\\'/g, "'");
+      var url = btn.getAttribute('data-attachment-url') || '';
+      var name = (btn.getAttribute('data-attachment-name') || '').replace(/\\'/g, "'");
+      var parts = [];
+      if (content) parts.push(content);
+      if (url) parts.push((name || 'Attachment') + ': ' + url);
+      openFeedForwardModal(parts.length ? parts.join(' ') : '');
+    });
+  });
+
+  /* Activity Feed: Edit own post (modal with multi-line textarea) */
+  var feedEditModal = document.getElementById('feed-edit-modal');
+  var feedEditTextarea = document.getElementById('feed-edit-textarea');
+  var feedEditSave = document.getElementById('feed-edit-save');
+  var feedEditCurrentId = null;
+
+  document.querySelectorAll('.feed-edit-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var id = btn.getAttribute('data-status-id');
+      if (!id) return;
+      var bubble = document.querySelector('.chat-message-bubble[data-status-id="' + id + '"]');
+      if (!bubble) return;
+      var textEl = bubble.querySelector('[data-status-text]');
+      var current = textEl ? (textEl.textContent || '') : '';
+      feedEditCurrentId = id;
+      if (feedEditTextarea) feedEditTextarea.value = current;
+      if (feedEditModal && window.bootstrap) {
+        var m = new bootstrap.Modal(feedEditModal);
+        m.show();
+      }
+    });
+  });
+
+  if (feedEditSave && feedEditTextarea) {
+    feedEditSave.addEventListener('click', function () {
+      var id = feedEditCurrentId;
+      if (!id) return;
+      var updated = feedEditTextarea.value;
+      if (!updated.trim()) return;
+      var form = document.getElementById('feed-edit-form-' + id);
+      var input = document.getElementById('feed-edit-content-' + id);
+      if (form && input) {
+        input.value = updated;
+        form.submit();
+      }
+      feedEditCurrentId = null;
+      if (feedEditModal && window.bootstrap) {
+        var m = bootstrap.Modal.getInstance(feedEditModal);
+        if (m) m.hide();
+      }
+    });
+  }
+
+  /* Activity Feed: Pin for everyone, Mark as unread */
+  document.querySelectorAll('.feed-pin-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var bubble = btn.closest('.chat-message-bubble');
+      if (bubble) bubble.classList.toggle('chat-message-pinned');
+    });
+  });
+  document.querySelectorAll('.feed-unread-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var bubble = btn.closest('.chat-message-bubble');
+      if (bubble) bubble.classList.toggle('chat-message-unread');
+    });
+  });
+
+  /* Activity Feed: Emoji reaction (persist + broadcast, display on both sides) */
+  function addFeedReactionChip(statusId, emoji, username) {
+    var reactionsDiv = document.querySelector('.chat-message-reactions[data-status-id="' + statusId + '"]');
+    if (!reactionsDiv) return;
+    var chips = reactionsDiv.querySelectorAll('.chat-emoji-chip[data-username="' + (username || '') + '"]');
+    chips.forEach(function (c) { c.remove(); });
+    var chip = document.createElement('span');
+    chip.className = 'badge chat-emoji-chip';
+    chip.setAttribute('data-username', username || '');
+    chip.title = (username || '') + ' reacted';
+    chip.textContent = emoji || '';
+    reactionsDiv.appendChild(chip);
+  }
+
+  document.querySelectorAll('.feed-emoji-reaction-menu').forEach(function (menu) {
+    menu.querySelectorAll('[data-emoji]').forEach(function (item) {
+      item.addEventListener('click', function () {
+        var bubble = menu.closest('.chat-message-bubble');
+        if (!bubble) return;
+        var statusId = bubble.getAttribute('data-status-id');
+        if (!statusId) return;
+        var emoji = item.getAttribute('data-emoji') || '';
+        if (!emoji) return;
+        addFeedReactionChip(statusId, emoji, currentFeedUser);
+        var formData = new FormData();
+        formData.append('emoji', emoji);
+        formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+        fetch('/social/status/' + statusId + '/react/', {
+          method: 'POST',
+          body: formData,
+          credentials: 'same-origin',
+        }).then(function (r) {
+          if (!r.ok) {
+            var chip = document.querySelector('.chat-message-reactions[data-status-id="' + statusId + '"] .chat-emoji-chip[data-username="' + currentFeedUser + '"]');
+            if (chip) chip.remove();
+          }
+        }).catch(function () {
+          var chip = document.querySelector('.chat-message-reactions[data-status-id="' + statusId + '"] .chat-emoji-chip[data-username="' + currentFeedUser + '"]');
+          if (chip) chip.remove();
+        });
+      });
+    });
+  });
+
+  /* Activity Feed: Prepend reply quote on submit when replying */
+  if (feedForm && feedContent) {
+    feedForm.addEventListener('submit', function () {
+      if (feedCurrentReplyTo && feedCurrentReplyTo.username) {
+        var val = feedContent.value.trim();
+        if (val) {
+          feedContent.value = 'Replying to @' + feedCurrentReplyTo.username + ': ' + (feedCurrentReplyTo.excerpt || '').slice(0, 80) + '\n\n' + val;
+        }
+      }
+      feedCurrentReplyTo = null;
+      if (feedReplyPill) feedReplyPill.classList.add('d-none');
+    });
+  }
+})();
+</script>
+{% endblock %}
