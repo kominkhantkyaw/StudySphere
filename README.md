@@ -179,4 +179,4 @@ Set `DEBUG=False`, `ALLOWED_HOSTS`, `CSRF_TRUSTED_ORIGINS`; use PostgreSQL and o
 
 ---
 
-Developed with ❤️ — E-learning platform for students and educators to share knowledge, develop skills, and support academic growth.
+Developed with ❤️ E-learning platform for students and educators to share knowledge, develop skills, and support academic growth.
