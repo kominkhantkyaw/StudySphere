@@ -1,11 +1,12 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 
 class User(AbstractUser):
     ROLE_CHOICES = (
-        ('STUDENT', 'Student'),
-        ('TEACHER', 'Teacher'),
+        ('STUDENT', _('Student')),
+        ('TEACHER', _('Teacher')),
     )
 
     AVAILABLE = 'AVAILABLE'
@@ -14,11 +15,11 @@ class User(AbstractUser):
     AWAY = 'AWAY'
     OFFLINE = 'OFFLINE'
     PRESENCE_CHOICES = (
-        (AVAILABLE, 'Available'),
-        (ONLINE, 'Online'),
-        (BUSY, 'Busy'),
-        (AWAY, 'Away'),
-        (OFFLINE, 'Offline'),
+        (AVAILABLE, _('Available')),
+        (ONLINE, _('Online')),
+        (BUSY, _('Busy')),
+        (AWAY, _('Away')),
+        (OFFLINE, _('Offline')),
     )
 
     CLEAR_NEVER = 'NEVER'
@@ -27,11 +28,11 @@ class User(AbstractUser):
     CLEAR_TODAY = 'TODAY'
     CLEAR_WEEK = 'WEEK'
     STATUS_CLEAR_CHOICES = (
-        (CLEAR_NEVER, 'Never'),
-        (CLEAR_1H, '1 hour'),
-        (CLEAR_5H, '5 hours'),
-        (CLEAR_TODAY, 'Today'),
-        (CLEAR_WEEK, 'This week'),
+        (CLEAR_NEVER, _('Never')),
+        (CLEAR_1H, _('1 hour')),
+        (CLEAR_5H, _('5 hours')),
+        (CLEAR_TODAY, _('Today')),
+        (CLEAR_WEEK, _('This week')),
     )
 
     role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='STUDENT')
@@ -78,18 +79,18 @@ class User(AbstractUser):
     THEME_DARK = 'DARK'
     THEME_SYSTEM = 'SYSTEM'
     THEME_CHOICES = (
-        (THEME_LIGHT, 'Light'),
-        (THEME_DARK, 'Dark'),
-        (THEME_SYSTEM, 'System'),
+        (THEME_LIGHT, _('Light')),
+        (THEME_DARK, _('Dark')),
+        (THEME_SYSTEM, _('System')),
     )
 
     LANGUAGE_EN = 'EN'
     LANGUAGE_DE = 'DE'
     LANGUAGE_OTHER = 'OTHER'
     LANGUAGE_CHOICES = (
-        (LANGUAGE_EN, 'English'),
-        (LANGUAGE_DE, 'German'),
-        (LANGUAGE_OTHER, 'Other'),
+        (LANGUAGE_EN, _('English')),
+        (LANGUAGE_DE, _('German')),
+        (LANGUAGE_OTHER, _('Other')),
     )
 
     theme_mode = models.CharField(
@@ -113,6 +114,10 @@ class User(AbstractUser):
     notify_in_app = models.BooleanField(
         default=True,
         help_text='Show in-app notifications for updates.',
+    )
+    subscribe_course_updates = models.BooleanField(
+        default=True,
+        help_text='Receive course updates and up-to-date info by email (e.g. new materials, announcements).',
     )
     share_activity = models.BooleanField(
         default=True,

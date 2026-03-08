@@ -1,27 +1,28 @@
 {% extends 'base.html' %}
+{% load i18n %}
 
-{% block title %}Create Account — StudySphere{% endblock %}
+{% block title %}{% trans "Create Account" %} — {% trans "StudySphere" %}{% endblock %}
 
 {% block content %}
 <div class="row justify-content-center py-4">
   <div class="col-12 col-md-10 col-lg-8">
     <nav aria-label="Breadcrumb" class="mb-3">
       <a href="{% url 'home' %}" class="auth-back-link text-muted text-decoration-none small">
-        <i class="bi bi-arrow-left me-1" aria-hidden="true"></i>Back to home
+        <i class="bi bi-arrow-left me-1" aria-hidden="true"></i>{% trans "Back to home" %}
       </a>
     </nav>
 
     <div class="card shadow-sm border-0 overflow-hidden">
       <div class="card-header bg-success text-white py-3 px-4">
-        <h1 class="h4 mb-0 fw-semibold"><i class="bi bi-person-plus-fill me-2" aria-hidden="true"></i>Create account</h1>
-        <p class="small mb-0 mt-1 opacity-90">Join StudySphere to access courses and connect with your learning community.</p>
+        <h1 class="h4 mb-0 fw-semibold"><i class="bi bi-person-plus-fill me-2" aria-hidden="true"></i>{% trans "Create account" %}</h1>
+        <p class="small mb-0 mt-1 opacity-90">{% trans "Join StudySphere to access courses and connect with your learning community." %}</p>
       </div>
       <div class="card-body p-4">
         {% if form.errors %}
         <div class="alert alert-danger d-flex align-items-start" role="alert">
           <i class="bi bi-exclamation-circle-fill me-2 mt-1 flex-shrink-0" aria-hidden="true"></i>
           <div>
-            <strong>Please correct the errors below.</strong>
+            <strong>{% trans "Please correct the errors below." %}</strong>
             <ul class="mb-0 mt-2 ps-3">
               {% for field in form %}
                 {% for error in field.errors %}
@@ -68,7 +69,7 @@
                     {% elif 'password' in field.name %}<i class="bi bi-lock text-muted"></i>
                     {% else %}<i class="bi bi-pencil text-muted"></i>{% endif %}
                   </span>
-                  <input type="{{ field.field.widget.input_type|default:'text' }}" name="{{ field.html_name }}" id="{{ field.id_for_label }}" class="form-control {% if field.errors %}is-invalid{% endif %}" value="{{ field.value|default:'' }}" placeholder="{% if field.name == 'username' %}Choose a username{% elif field.name == 'email' %}you@example.com{% elif 'password' in field.name %}••••••••{% endif %}" {% if field.field.required %}required{% endif %} {% if field.name == 'username' %}autofocus{% endif %}>
+                  <input type="{{ field.field.widget.input_type|default:'text' }}" name="{{ field.html_name }}" id="{{ field.id_for_label }}" class="form-control {% if field.errors %}is-invalid{% endif %}" value="{{ field.value|default:'' }}" placeholder="{% if field.name == 'username' %}{% trans 'Choose a username' %}{% elif field.name == 'email' %}you@example.com{% elif 'password' in field.name %}••••••••{% endif %}" {% if field.field.required %}required{% endif %} {% if field.name == 'username' %}autofocus{% endif %}>
                 </div>
               {% endif %}
               {% if field.help_text %}
@@ -82,16 +83,16 @@
           </div>
 
           <div class="d-flex flex-column flex-sm-row gap-2 align-items-stretch align-items-sm-center justify-content-between mt-4 pt-2">
-            <a href="{% url 'home' %}" class="btn btn-outline-secondary order-sm-2">Cancel</a>
+            <a href="{% url 'home' %}" class="btn btn-outline-secondary order-sm-2">{% trans "Cancel" %}</a>
             <button type="submit" class="btn btn-success px-4 py-2 fw-semibold order-sm-1">
-              <i class="bi bi-person-plus me-1" aria-hidden="true"></i>Create account
+              <i class="bi bi-person-plus me-1" aria-hidden="true"></i>{% trans "Create account" %}
             </button>
           </div>
         </form>
       </div>
       <div class="card-footer bg-light text-center py-3">
-        <span class="text-muted">Already have an account?</span>
-        <a href="{% url 'accounts:login' %}" class="fw-semibold text-decoration-none ms-1">Sign in</a>
+        <span class="text-muted">{% trans "Already have an account?" %}</span>
+        <a href="{% url 'accounts:login' %}" class="fw-semibold text-decoration-none ms-1">{% trans "Sign in" %}</a>
       </div>
     </div>
   </div>

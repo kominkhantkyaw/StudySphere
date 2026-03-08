@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
+{% load i18n %}
 
-{% block title %}Chat — {{ room_title }} — StudySphere{% endblock %}
+{% block title %}{% trans "Chat" %} — {{ room_title }} — {% trans "StudySphere" %}{% endblock %}
 
 {% block content %}
 <div class="{% if embed|default:False %}p-2{% else %}mt-3{% endif %}">
@@ -16,42 +17,42 @@
       <i class="bi bi-chat-dots me-2"></i>{{ room_title }}
     </h3>
     <a href="{% url 'chat:chat_lobby' %}" class="btn btn-outline-secondary btn-sm">
-      <i class="bi bi-arrow-left me-1"></i>Back to Lobby
+      <i class="bi bi-arrow-left me-1"></i>{% trans "Back to Lobby" %}
     </a>
   </div>
   {% endif %}
 
   <div class="row g-3">
-    <div class="col-md-9">
-  <div class="card shadow-sm border-0">
-    <div class="card-body p-0">
-      <div id="chat-messages" class="p-3" style="height: 400px; overflow-y: auto; background-color: #f8f9fa;">
+    <div class="col-12 col-md-9 order-2 order-md-1">
+  <div class="card shadow-sm border-0 h-100">
+    <div class="card-body p-0 d-flex flex-column">
+      <div id="chat-messages" class="chat-messages-panel p-3 flex-grow-1" style="height: 400px; overflow-y: auto; background-color: #f8f9fa;">
         <div class="text-center text-muted py-5">
           <i class="bi bi-chat-square-dots fs-1"></i>
-          <p class="mt-2">Connecting to chat...</p>
+          <p class="mt-2">{% trans "Connecting to chat..." %}</p>
         </div>
       </div>
     </div>
     <div class="card-footer bg-white p-3">
       <div id="reply-pill" class="small text-muted mb-2 d-none">
-        Replying to <span id="reply-pill-user"></span>:
+        {% trans "Replying to" %} <span id="reply-pill-user"></span>:
         <span id="reply-pill-text"></span>
-        <button type="button" class="btn btn-link btn-sm p-0 ms-1" id="reply-pill-cancel">Cancel</button>
+        <button type="button" class="btn btn-link btn-sm p-0 ms-1" id="reply-pill-cancel">{% trans "Cancel" %}</button>
       </div>
       <div class="d-flex align-items-center gap-2 flex-wrap position-relative">
         <div class="d-flex align-items-center gap-1 flex-wrap">
           <div class="position-relative">
-            <button type="button" id="chat-emoji" class="btn btn-light btn-sm" title="Insert emoji">
+            <button type="button" id="chat-emoji" class="btn btn-light btn-sm" title="{% trans 'Insert emoji' %}">
               <i class="bi bi-emoji-smile"></i>
             </button>
             <div id="chat-input-emoji-picker" class="chat-input-emoji-picker d-none"></div>
           </div>
           {% if upload_url %}
-          <button type="button" id="chat-attach" class="btn btn-light btn-sm" title="Attach file">
+          <button type="button" id="chat-attach" class="btn btn-light btn-sm" title="{% trans 'Attach file' %}">
             <i class="bi bi-paperclip"></i>
           </button>
           <div class="dropdown">
-            <button type="button" id="chat-more" class="btn btn-light btn-sm dropdown-toggle" title="More" data-bs-toggle="dropdown" aria-expanded="false">
+            <button type="button" id="chat-more" class="btn btn-light btn-sm dropdown-toggle" title="{% trans 'More' %}" data-bs-toggle="dropdown" aria-expanded="false">
               <i class="bi bi-plus-lg"></i>
             </button>
             <ul class="dropdown-menu dropdown-menu-start" aria-labelledby="chat-more">
@@ -73,9 +74,9 @@
         </div>
         <div class="flex-grow-1">
           <div class="input-group">
-            <input type="text" id="chat-input" class="form-control" placeholder="Type your message..." autocomplete="off">
+            <input type="text" id="chat-input" class="form-control" placeholder="{% trans 'Type your message...' %}" autocomplete="off">
             <button id="chat-send" class="btn btn-primary" type="button">
-              <i class="bi bi-send me-1"></i>Send
+              <i class="bi bi-send me-1"></i>{% trans "Send" %}
             </button>
           </div>
         </div>
@@ -83,7 +84,7 @@
     </div>
   </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-12 col-md-3 order-1 order-md-2">
       <div class="card shadow-sm border-0">
         <div class="card-header bg-white py-2">
           <span class="fw-bold"><i class="bi bi-people-fill me-1"></i>Online</span>

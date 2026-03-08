@@ -1,3 +1,6 @@
+import base64
+import io
+
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -10,7 +13,10 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
-from django.views.decorators.http import require_POST
+from django.utils.translation import gettext as _
+from django.views.decorators.http import require_GET, require_POST
+
+from django_otp.plugins.otp_totp.models import TOTPDevice
 
 from .forms import UserProfileForm, UserRegistrationForm
 from .models import User
@@ -60,6 +66,11 @@ def user_login(request):
         password = request.POST.get('password')
         user = authenticate(request, username=username, password=password)
         if user is not None:
+            # If user has 2FA (TOTP) enabled, require OTP before logging in
+            if TOTPDevice.objects.filter(user=user, confirmed=True).exists():
+                request.session['otp_user_id'] = user.pk
+                request.session['otp_next'] = request.GET.get('next', '/')
+                return redirect('accounts:two_factor_verify')
             login(request, user)
             next_url = request.GET.get('next', '/')
             return redirect(next_url)
@@ -193,6 +204,7 @@ def settings_view(request):
     - Account: profile details (name, email, address, presence, bio, photo)
     - Security: password
     """
+    from django.contrib.messages import get_messages
     from .forms import GeneralSettingsForm
 
     general_form = GeneralSettingsForm(instance=request.user)
@@ -202,12 +214,24 @@ def settings_view(request):
 
     if request.method == 'POST':
         form_type = request.POST.get('form_type', '')
-        if form_type == 'general':
+        if form_type == 'language':
+            # CRUD update: only preferred_language (Language tab submits only this field)
+            lang = (request.POST.get('preferred_language') or '').strip().upper()
+            if lang in ('EN', 'DE', 'OTHER'):
+                request.user.preferred_language = lang
+                request.user.save(update_fields=['preferred_language'])
+                from django.utils import translation
+                translation.activate('de' if lang == 'DE' else 'en')
+                messages.success(request, _('Language saved. The interface will use your selected language.'))
+                return redirect(reverse('accounts:settings') + '?tab=language')
+            active_tab = 'language'
+        elif form_type == 'general':
             general_form = GeneralSettingsForm(request.POST, instance=request.user)
             if general_form.is_valid():
                 general_form.save()
-                messages.success(request, 'Settings updated.')
                 next_tab = request.POST.get('active_tab') or 'general'
+                msg = 'Your preferences have been saved.' if next_tab == 'preferences' else 'Settings updated.'
+                messages.success(request, msg)
                 return redirect(f'{reverse("accounts:settings")}?tab={next_tab}')
             active_tab = request.POST.get('active_tab') or 'general'
         elif form_type == 'profile':
@@ -228,12 +252,38 @@ def settings_view(request):
                 return redirect(f'{reverse("accounts:settings")}?tab=security')
             active_tab = 'security'
 
+    two_fa_enabled = bool(_user_has_2fa(request.user))
+    # Pass messages as a list to avoid any template code calling .count() on the storage (which can surface as int in some setups)
+    message_list = list(get_messages(request))
+
     return render(request, 'accounts/settings.html', {
         'general_form': general_form,
         'profile_form': profile_form,
         'password_form': password_form,
         'active_tab': active_tab,
+        'two_fa_enabled': two_fa_enabled,
+        'message_list': message_list,
     })
+
+
+@login_required
+@require_POST
+def set_language(request):
+    """
+    Quick language switch (CRUD update). POST preferred_language=EN|DE|OTHER.
+    Redirects to next, referer, or home. User-friendly: used by navbar language dropdown.
+    """
+    from django.utils import translation
+    lang = (request.POST.get('preferred_language') or '').strip().upper()
+    if lang not in ('EN', 'DE', 'OTHER'):
+        messages.warning(request, _('Invalid language choice.'))
+    else:
+        request.user.preferred_language = lang
+        request.user.save(update_fields=['preferred_language'])
+        translation.activate('de' if lang == 'DE' else 'en')
+        messages.success(request, _('Language updated.'))
+    redirect_url = request.POST.get('next') or request.META.get('HTTP_REFERER') or '/'
+    return redirect(redirect_url)
 
 
 @login_required
@@ -241,8 +291,10 @@ def contact_view(request):
     """
     Contact + Profile & Settings summary page for the Teacher Portal layout.
     Shows a compact profile card and shortcuts to key settings/actions.
+    When ?tab=privacy, the template can show the Privacy Policy prominently.
     """
-    return render(request, 'accounts/contact.html')
+    active_tab = request.GET.get('tab', '')
+    return render(request, 'accounts/contact.html', {'active_tab': active_tab})
 
 
 def home(request):
@@ -674,4 +726,172 @@ def set_presence(request):
         'presence': request.user.presence,
         'status_text': request.user.status_text or '',
         'clear_after': request.user.status_clear_after,
+    })
+
+
+@login_required
+@require_POST
+def set_theme(request):
+    """Set the current user's theme mode (LIGHT, DARK, SYSTEM). Returns JSON for quick theme switching."""
+    mode = (request.POST.get('theme_mode') or '').strip().upper()
+    if mode not in (User.THEME_LIGHT, User.THEME_DARK, User.THEME_SYSTEM):
+        return JsonResponse({'ok': False, 'error': 'Invalid theme'}, status=400)
+    request.user.theme_mode = mode
+    request.user.save(update_fields=['theme_mode'])
+    return JsonResponse({'ok': True, 'theme_mode': mode.lower()})
+
+
+def _user_has_2fa(user):
+    """Return True if the user has at least one confirmed TOTP device."""
+    return TOTPDevice.objects.filter(user=user, confirmed=True).exists()
+
+
+def _make_qr_data_url(provisioning_uri):
+    """Generate a data URL for a QR code image from an otpauth URI."""
+    try:
+        import qrcode
+        buf = io.BytesIO()
+        qr = qrcode.QRCode(version=1, box_size=4, border=2)
+        qr.add_data(provisioning_uri)
+        qr.make(fit=True)
+        img = qr.make_image(fill_color='black', back_color='white')
+        img.save(buf, format='PNG')
+        buf.seek(0)
+        b64 = base64.b64encode(buf.read()).decode('ascii')
+        return f'data:image/png;base64,{b64}'
+    except Exception:
+        return None
+
+
+@login_required
+@require_GET
+def two_factor_setup(request):
+    """Enable 2FA: show QR code and verify with a token from the authenticator app."""
+    if _user_has_2fa(request.user):
+        messages.info(request, 'Two-factor authentication is already enabled.')
+        return redirect(f'{reverse("accounts:settings")}?tab=security')
+
+    device = None
+    # Reuse existing unconfirmed device from this session if any (use our own key to avoid clashing with django_otp middleware)
+    device_id = request.session.get('studysphere_otp_setup_device_id')
+    if device_id:
+        device = TOTPDevice.objects.filter(
+            user=request.user, id=device_id, confirmed=False
+        ).first()
+    if not device:
+        device = TOTPDevice.objects.create(
+            user=request.user,
+            name='default',
+            confirmed=False,
+        )
+        request.session['studysphere_otp_setup_device_id'] = device.id
+
+    provisioning_uri = device.config_url
+    qr_data_url = _make_qr_data_url(provisioning_uri)
+    # Base32 secret for manual entry in authenticator apps (key is stored as hex)
+    try:
+        secret_base32 = base64.b32encode(device.bin_key).decode('ascii').replace('=', '')
+    except Exception:
+        secret_base32 = None
+
+    return render(request, 'accounts/two_factor_setup.html', {
+        'device': device,
+        'qr_data_url': qr_data_url,
+        'provisioning_uri': provisioning_uri,
+        'secret_base32': secret_base32,
+    })
+
+
+@login_required
+@require_POST
+def two_factor_verify_setup(request):
+    """Verify the first OTP token to confirm the device and enable 2FA."""
+    token = (request.POST.get('token') or '').strip().replace(' ', '')
+    device_id = request.session.get('studysphere_otp_setup_device_id')
+    if not device_id or not token:
+        messages.error(request, 'Please enter the 6-digit code from your authenticator app.')
+        return redirect('accounts:two_factor_setup')
+
+    device = TOTPDevice.objects.filter(
+        user=request.user, id=device_id, confirmed=False
+    ).first()
+    if not device:
+        messages.error(request, 'Setup expired. Please start again.')
+        if 'studysphere_otp_setup_device_id' in request.session:
+            del request.session['studysphere_otp_setup_device_id']
+        return redirect('accounts:two_factor_setup')
+
+    if not device.verify_is_allowed():
+        messages.error(request, 'Too many attempts. Please wait a moment and try again.')
+        return redirect('accounts:two_factor_setup')
+
+    if device.verify_token(token):
+        device.confirmed = True
+        device.save(update_fields=['confirmed'])
+        if 'studysphere_otp_setup_device_id' in request.session:
+            del request.session['studysphere_otp_setup_device_id']
+        messages.success(request, 'Two-factor authentication is now enabled.')
+        return redirect(f'{reverse("accounts:settings")}?tab=security')
+    messages.error(request, 'Invalid code. Please enter the current code from your authenticator app.')
+    return redirect('accounts:two_factor_setup')
+
+
+@login_required
+@require_POST
+def two_factor_disable(request):
+    """Disable 2FA after confirming with password."""
+    password = request.POST.get('password', '')
+    if not request.user.check_password(password):
+        messages.error(request, 'Incorrect password. Two-factor authentication was not disabled.')
+        return redirect(f'{reverse("accounts:settings")}?tab=security')
+
+    deleted, _ = TOTPDevice.objects.filter(user=request.user).delete()
+    if deleted:
+        messages.success(request, 'Two-factor authentication has been disabled.')
+    else:
+        messages.info(request, 'Two-factor authentication was not enabled.')
+    return redirect(f'{reverse("accounts:settings")}?tab=security')
+
+
+def two_factor_verify(request):
+    """After password login: prompt for OTP and complete login."""
+    user_id = request.session.get('otp_user_id')
+    if not user_id:
+        return redirect('accounts:login')
+
+    user = get_object_or_404(User, pk=user_id)
+    next_url = request.session.get('otp_next', '/')
+
+    if request.method == 'POST':
+        token = (request.POST.get('token') or '').strip().replace(' ', '')
+        if not token:
+            return render(request, 'accounts/two_factor_verify.html', {
+                'error': 'Please enter the 6-digit code from your authenticator app.',
+                'next_url': next_url,
+            })
+
+        device = TOTPDevice.objects.filter(user=user, confirmed=True).first()
+        if not device:
+            if 'otp_user_id' in request.session:
+                del request.session['otp_user_id']
+            if 'otp_next' in request.session:
+                del request.session['otp_next']
+            return redirect('accounts:login')
+
+        if device.verify_is_allowed() and device.verify_token(token):
+            if 'otp_user_id' in request.session:
+                del request.session['otp_user_id']
+            if 'otp_next' in request.session:
+                del request.session['otp_next']
+            login(request, user)
+            return redirect(next_url)
+
+        return render(request, 'accounts/two_factor_verify.html', {
+            'error': 'Invalid code. Please try again or use the current code from your app.',
+            'next_url': next_url,
+        })
+
+    return render(request, 'accounts/two_factor_verify.html', {
+        'error': None,
+        'next_url': next_url,
     })

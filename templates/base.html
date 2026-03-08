@@ -1,10 +1,27 @@
 {% load static %}
+{% load i18n %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ request.LANGUAGE_CODE|default:'en' }}" data-theme="{{ theme_mode|default:'light' }}" {% if not user.is_authenticated %}data-guest="true"{% endif %}>
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% block title %}StudySphere{% endblock %}</title>
+  <title>{% block title %}{% trans "StudySphere" %}{% endblock %}</title>
+  <script>
+    (function() {
+      var html = document.documentElement;
+      var theme = html.getAttribute('data-theme');
+      if (html.getAttribute('data-guest') === 'true' && typeof localStorage !== 'undefined' && localStorage.getItem('studysphere_theme')) {
+        theme = localStorage.getItem('studysphere_theme');
+      }
+      if (theme === 'system') {
+        var setResolved = function() {
+          html.setAttribute('data-theme', window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        };
+        setResolved();
+        try { window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', setResolved); } catch (e) {}
+      }
+    })();
+  </script>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css" rel="stylesheet">
   <link href="{% static 'css/style.css' %}" rel="stylesheet">
@@ -12,10 +29,10 @@
 <body class="d-flex flex-column min-vh-100">
 
   {% if not embed|default:False %}
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+  <nav class="navbar navbar-expand-lg navbar-dark studysphere-navbar shadow-sm">
     <div class="container">
       <a class="navbar-brand fw-bold" href="{% url 'home' %}">
-        <i class="bi bi-mortarboard-fill me-2"></i>StudySphere
+        <i class="bi bi-mortarboard-fill me-2"></i>{% trans "StudySphere" %}
       </a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
         <span class="navbar-toggler-icon"></span>
@@ -25,37 +42,45 @@
         {% if user.is_authenticated %}
         <ul class="navbar-nav me-auto">
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="coursesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Courses</a>
+            <a class="nav-link dropdown-toggle" href="#" id="coursesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">{% trans "Courses" %}</a>
             <ul class="dropdown-menu" aria-labelledby="coursesDropdown">
-              <li><a class="dropdown-item" href="{% url 'courses:course_list' %}">All Courses</a></li>
+              <li><a class="dropdown-item" href="{% url 'courses:course_list' %}">{% trans "All Courses" %}</a></li>
               <li><hr class="dropdown-divider"></li>
-              <li><a class="dropdown-item" href="{% url 'courses:course_list' %}?category=LANGUAGES">Languages</a></li>
+              <li class="dropdown-submenu">
+                <a class="dropdown-item" href="#" id="coursesLanguageSubmenuTrigger">{% trans "Language" %} <i class="bi bi-chevron-right ms-1 small"></i></a>
+                <ul class="dropdown-menu dropdown-submenu-menu">
+                  <li><a class="dropdown-item" href="{% url 'courses:course_list' %}?language=EN">{% trans "English" %}</a></li>
+                  <li><a class="dropdown-item" href="{% url 'courses:course_list' %}?language=DE">{% trans "German" %}</a></li>
+                  <li><a class="dropdown-item" href="{% url 'courses:course_list' %}?language=OTHER">{% trans "Other" %}</a></li>
+                </ul>
+              </li>
+              <li><hr class="dropdown-divider"></li>
               <li><a class="dropdown-item" href="{% url 'courses:course_list' %}?category=AI">AI</a></li>
-              <li><a class="dropdown-item" href="{% url 'courses:course_list' %}?category=CYBER">Cyber Security</a></li>
-              <li><a class="dropdown-item" href="{% url 'courses:course_list' %}?category=DATA">Data Analysis</a></li>
-              <li><a class="dropdown-item" href="{% url 'courses:course_list' %}?category=WEB">Web Development</a></li>
-              <li><a class="dropdown-item" href="{% url 'courses:course_list' %}?category=OTHER">Other</a></li>
+              <li><a class="dropdown-item" href="{% url 'courses:course_list' %}?category=CYBER">{% trans "Cyber Security" %}</a></li>
+              <li><a class="dropdown-item" href="{% url 'courses:course_list' %}?category=DATA">{% trans "Data Analysis" %}</a></li>
+              <li><a class="dropdown-item" href="{% url 'courses:course_list' %}?category=WEB">{% trans "Web Development" %}</a></li>
+              <li><a class="dropdown-item" href="{% url 'courses:course_list' %}?category=OTHER">{% trans "Other" %}</a></li>
             </ul>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'courses:my_courses' %}">My Courses</a>
+            <a class="nav-link" href="{% url 'courses:my_courses' %}">{% trans "My Courses" %}</a>
           </li>
           {% if user.is_teacher %}
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'accounts:my_students' %}">My Students</a>
+            <a class="nav-link" href="{% url 'accounts:my_students' %}">{% trans "My Students" %}</a>
           </li>
           {% endif %}
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'chat:chat_lobby' %}">Chat</a>
+            <a class="nav-link" href="{% url 'chat:chat_lobby' %}">{% trans "Chat" %}</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'courses:video_resources' %}"><i class="bi bi-youtube me-1 text-danger"></i>Videos</a>
+            <a class="nav-link" href="{% url 'courses:video_resources' %}"><i class="bi bi-youtube me-1 text-danger"></i>{% trans "Videos" %}</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'calendar_app:calendar' %}"><i class="bi bi-calendar3 me-1"></i>Calendar</a>
+            <a class="nav-link" href="{% url 'calendar_app:calendar' %}"><i class="bi bi-calendar3 me-1"></i>{% trans "Calendar" %}</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'accounts:contact' %}">Contact</a>
+            <a class="nav-link" href="{% url 'accounts:contact' %}">{% trans "Contact" %}</a>
           </li>
         </ul>
 
@@ -64,6 +89,16 @@
             <a class="nav-link" href="{% url 'accounts:search_users' %}" title="Search">
               <i class="bi bi-search fs-5"></i>
             </a>
+          </li>
+          <li class="nav-item dropdown me-3">
+            <a class="nav-link dropdown-toggle" href="#" id="themeSwitcherBtn" role="button" data-bs-toggle="dropdown" aria-expanded="false" title="Theme">
+              <i class="bi bi-circle-half fs-5" id="themeSwitcherIcon" aria-hidden="true"></i>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="themeSwitcherBtn">
+              <li><button type="button" class="dropdown-item theme-option {% if theme_mode == 'light' %}active{% endif %}" data-theme="light" aria-label="{% trans 'Light mode' %}"><i class="bi bi-sun me-2"></i>{% trans "Light" %}</button></li>
+              <li><button type="button" class="dropdown-item theme-option {% if theme_mode == 'dark' %}active{% endif %}" data-theme="dark" aria-label="{% trans 'Dark mode' %}"><i class="bi bi-moon me-2"></i>{% trans "Dark" %}</button></li>
+              <li><button type="button" class="dropdown-item theme-option {% if theme_mode == 'system' %}active{% endif %}" data-theme="system" aria-label="{% trans 'System theme' %}"><i class="bi bi-display me-2"></i>{% trans "System" %}</button></li>
+            </ul>
           </li>
           <li class="nav-item me-3">
             <a class="nav-link position-relative" href="{% url 'notifications:notification_list' %}">
@@ -96,10 +131,10 @@
                 </button>
                 <div class="collapse px-3 pb-2" id="availability-collapse">
                   <div class="d-flex flex-column gap-1">
-                    <button type="button" class="dropdown-item presence-set py-1 rounded" data-status="AVAILABLE"><span class="presence-dot presence-available me-2"></span>Available</button>
-                    <button type="button" class="dropdown-item presence-set py-1 rounded" data-status="ONLINE"><span class="presence-dot presence-online me-2"></span>Online</button>
-                    <button type="button" class="dropdown-item presence-set py-1 rounded" data-status="AWAY"><span class="presence-dot presence-away me-2"></span>Away</button>
-                    <button type="button" class="dropdown-item presence-set py-1 rounded" data-status="OFFLINE"><span class="presence-dot presence-offline me-2"></span>Offline</button>
+                    <button type="button" class="dropdown-item presence-set py-1 rounded" data-status="AVAILABLE"><span class="presence-dot presence-available me-2"></span>{% trans "Available" %}</button>
+                    <button type="button" class="dropdown-item presence-set py-1 rounded" data-status="ONLINE"><span class="presence-dot presence-online me-2"></span>{% trans "Online" %}</button>
+                    <button type="button" class="dropdown-item presence-set py-1 rounded" data-status="AWAY"><span class="presence-dot presence-away me-2"></span>{% trans "Away" %}</button>
+                    <button type="button" class="dropdown-item presence-set py-1 rounded" data-status="OFFLINE"><span class="presence-dot presence-offline me-2"></span>{% trans "Offline" %}</button>
                   </div>
                 </div>
               </li>
@@ -107,33 +142,43 @@
                 <button type="button" class="d-flex align-items-center justify-content-between w-100 px-3 py-2 btn btn-link text-decoration-none text-dark p-0 border-0 bg-transparent text-start" id="status-msg-toggle" data-bs-toggle="collapse" data-bs-target="#status-message-collapse" aria-expanded="false">
                   <span class="d-flex align-items-center">
                     <i class="bi bi-chat-left-text me-2 text-muted"></i>
-                    <span>Set status message</span>
+                    <span>{% trans "Set status message" %}</span>
                   </span>
                   <i class="bi bi-chevron-right" id="status-msg-chevron"></i>
                 </button>
                 <div class="collapse px-3 pb-2" id="status-message-collapse">
                   <textarea class="form-control form-control-sm mb-2" id="navbar-status-text-input" rows="2" placeholder="e.g. In a meeting, Studying now..." maxlength="200">{{ user.status_text|default:'' }}</textarea>
                   <div class="d-flex gap-2 justify-content-end">
-                    <button type="button" class="btn btn-sm btn-outline-secondary" id="navbar-status-text-clear">Clear</button>
-                    <button type="button" class="btn btn-sm btn-primary" id="navbar-status-text-save">Save</button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" id="navbar-status-text-clear">{% trans "Clear" %}</button>
+                    <button type="button" class="btn btn-sm btn-primary" id="navbar-status-text-save">{% trans "Save" %}</button>
                   </div>
                 </div>
               </li>
               <li><hr class="dropdown-divider my-1"></li>
-              <li><a class="dropdown-item" href="{% url 'accounts:profile' user.username %}"><i class="bi bi-person me-2"></i>Profile</a></li>
-              <li><a class="dropdown-item" href="{% url 'accounts:settings' %}"><i class="bi bi-gear me-2"></i>Settings</a></li>
+              <li><a class="dropdown-item" href="{% url 'accounts:profile' user.username %}"><i class="bi bi-person me-2"></i>{% trans "Profile" %}</a></li>
+              <li><a class="dropdown-item" href="{% url 'accounts:settings' %}"><i class="bi bi-gear me-2"></i>{% trans "Settings" %}</a></li>
               <li><hr class="dropdown-divider"></li>
-              <li><a class="dropdown-item" href="{% url 'accounts:logout' %}"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+              <li><a class="dropdown-item" href="{% url 'accounts:logout' %}"><i class="bi bi-box-arrow-right me-2"></i>{% trans "Logout" %}</a></li>
             </ul>
           </li>
         </ul>
         {% else %}
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'accounts:login' %}">Sign In</a>
+        <ul class="navbar-nav ms-auto align-items-center">
+          <li class="nav-item dropdown me-3">
+            <a class="nav-link dropdown-toggle" href="#" id="themeSwitcherBtnGuest" role="button" data-bs-toggle="dropdown" aria-expanded="false" title="Theme">
+              <i class="bi bi-circle-half fs-5" id="themeSwitcherIconGuest" aria-hidden="true"></i>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="themeSwitcherBtnGuest">
+              <li><button type="button" class="dropdown-item theme-option" data-theme="light" aria-label="{% trans 'Light mode' %}"><i class="bi bi-sun me-2"></i>{% trans "Light" %}</button></li>
+              <li><button type="button" class="dropdown-item theme-option" data-theme="dark" aria-label="{% trans 'Dark mode' %}"><i class="bi bi-moon me-2"></i>{% trans "Dark" %}</button></li>
+              <li><button type="button" class="dropdown-item theme-option" data-theme="system" aria-label="{% trans 'System theme' %}"><i class="bi bi-display me-2"></i>{% trans "System" %}</button></li>
+            </ul>
           </li>
           <li class="nav-item">
-            <a class="nav-link btn btn-outline-light btn-sm ms-2 px-3" href="{% url 'accounts:register' %}">Register</a>
+            <a class="nav-link" href="{% url 'accounts:login' %}">{% trans "Sign In" %}</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link btn btn-outline-light btn-sm ms-2 px-3" href="{% url 'accounts:register' %}">{% trans "Register" %}</a>
           </li>
         </ul>
         {% endif %}
@@ -154,25 +199,27 @@
 
   {% endif %}
 
-  <main class="{% if embed|default:False %}container-fluid p-0{% else %}container my-4{% endif %} flex-grow-1">
+  <main class="{% if embed|default:False %}container-fluid p-0{% else %}container my-3 my-md-4 px-2 px-md-3{% endif %} flex-grow-1">
     {% block content %}{% endblock %}
   </main>
 
   {% if not embed|default:False %}
-  <footer class="bg-dark text-white py-4 mt-auto">
+  <footer class="studysphere-footer text-white py-4 mt-auto">
     <div class="container">
       <div class="row g-3 align-items-center">
         <div class="col-md-4 text-center text-md-start">
-          <span class="fw-bold"><i class="bi bi-mortarboard-fill me-1"></i>StudySphere</span>
-          <p class="small text-white-50 mb-0 mt-1">Learning platform for students and teachers.</p>
+          <span class="fw-bold"><i class="bi bi-mortarboard-fill me-1"></i>{% trans "StudySphere" %}</span>
+          <p class="small text-white-50 mb-0 mt-1">{% trans "A collaborative learning platform for students and educators to share knowledge, develop skills, and support academic growth." %}</p>
         </div>
         <div class="col-md-4 text-center">
-          <small>&copy; {% now "Y" %} StudySphere. All rights reserved.</small>
+          {% now "Y" as current_year %}
+          <small>{% blocktrans %}© {{ current_year }} StudySphere. All rights reserved.{% endblocktrans %}</small>
         </div>
         <div class="col-md-4 text-center text-md-end">
-          <a href="{% url 'accounts:contact' %}" class="text-white text-decoration-none me-3 small">Help &amp; Support</a>
-          <a href="{% url 'accounts:contact' %}?tab=privacy" class="text-white text-decoration-none me-3 small">Privacy</a>
-          <a href="{% url 'accounts:contact' %}" class="text-white text-decoration-none small">Contact</a>
+          <a href="{% url 'accounts:settings' %}?tab=privacy" class="text-white text-decoration-none me-3 small">{% trans "Privacy Policy" %}</a>
+          <a href="{% url 'accounts:contact' %}" class="text-white text-decoration-none me-3 small">{% trans "Support Center" %}</a>
+          <a href="{% url 'accounts:contact' %}" class="text-white text-decoration-none me-3 small">{% trans "Contact" %}</a>
+          <a href="{% url 'accounts:settings' %}?tab=general" class="text-white text-decoration-none small">{% trans "Community Guidelines" %}</a>
         </div>
       </div>
     </div>
@@ -180,6 +227,82 @@
   {% endif %}
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    (function() {
+      var trigger = document.getElementById('coursesLanguageSubmenuTrigger');
+      if (trigger) {
+        trigger.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          var sub = this.closest('.dropdown-submenu');
+          if (sub) sub.classList.toggle('show');
+        });
+      }
+    })();
+  </script>
+  <script>
+    (function() {
+      var html = document.documentElement;
+      var STORAGE_KEY = 'studysphere_theme';
+      var setThemeIcon = function(iconId, choice) {
+        var icon = document.getElementById(iconId);
+        if (!icon) return;
+        icon.className = 'bi fs-5 ' + (choice === 'light' ? 'bi-sun' : choice === 'dark' ? 'bi-moon' : 'bi-display');
+      };
+      var resolveTheme = function(choice) {
+        return choice === 'system' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : choice;
+      };
+      var applyTheme = function(choice) {
+        var resolved = resolveTheme(choice);
+        html.setAttribute('data-theme', resolved);
+        document.querySelectorAll('.theme-option').forEach(function(btn) {
+          btn.classList.toggle('active', btn.getAttribute('data-theme') === choice);
+        });
+        setThemeIcon('themeSwitcherIcon', choice);
+        setThemeIcon('themeSwitcherIconGuest', choice);
+      };
+      document.querySelectorAll('.theme-option').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var choice = this.getAttribute('data-theme');
+          var isGuest = html.getAttribute('data-guest') === 'true';
+          if (isGuest) {
+            try { localStorage.setItem(STORAGE_KEY, choice); } catch (e) {}
+            applyTheme(choice);
+            return;
+          }
+          var token = document.cookie.match(/(?:^|; )csrftoken=([^;]*)/);
+          token = token ? token[1] : null;
+          if (!token) { applyTheme(choice); return; }
+          var form = new FormData();
+          form.append('theme_mode', choice.toUpperCase());
+          form.append('csrfmiddlewaretoken', token);
+          fetch('{% url "accounts:set_theme" %}', { method: 'POST', body: form, credentials: 'same-origin', headers: { 'X-CSRFToken': token } })
+            .then(function(r) { return r.json(); })
+            .then(function(data) { if (data.ok) applyTheme(choice); })
+            .catch(function() { applyTheme(choice); });
+        });
+      });
+      var currentChoice = (function() {
+        var active = document.querySelector('.theme-option.active');
+        if (active) return active.getAttribute('data-theme');
+        if (html.getAttribute('data-guest') === 'true' && typeof localStorage !== 'undefined' && localStorage.getItem(STORAGE_KEY)) {
+          var stored = localStorage.getItem(STORAGE_KEY);
+          document.querySelectorAll('.theme-option').forEach(function(btn) {
+            if (btn.getAttribute('data-theme') === stored) btn.classList.add('active');
+          });
+          return stored;
+        }
+        return html.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+      })();
+      setThemeIcon('themeSwitcherIcon', currentChoice);
+      setThemeIcon('themeSwitcherIconGuest', currentChoice);
+      if (currentChoice === 'system') {
+        var mq = window.matchMedia('(prefers-color-scheme: dark)');
+        var onSystemChange = function() { html.setAttribute('data-theme', mq.matches ? 'dark' : 'light'); };
+        try { mq.addEventListener('change', onSystemChange); } catch (e) {}
+      }
+    })();
+  </script>
   {% if user.is_authenticated %}
   <script>
     (function() {

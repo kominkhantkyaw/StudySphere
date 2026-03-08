@@ -1,7 +1,8 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load i18n %}
 
-{% block title %}StudySphere — {% if user.is_authenticated %}Dashboard{% else %}Home{% endif %}{% endblock %}
+{% block title %}{% trans "StudySphere" %} — {% if user.is_authenticated %}{% trans "Dashboard" %}{% else %}{% trans "Home" %}{% endif %}{% endblock %}
 
 {% block content %}
 {% if user.is_authenticated %}
@@ -12,9 +13,9 @@
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-4">
       <div>
         <h2 class="fw-bold mb-1">
-          Good {% if greeting == 'morning' %}Morning{% elif greeting == 'afternoon' %}Afternoon{% else %}Evening{% endif %}, {{ user.first_name|default:user.username }}.
+          {% if greeting == 'morning' %}{% trans "Good Morning" %}{% elif greeting == 'afternoon' %}{% trans "Good Afternoon" %}{% else %}{% trans "Good Evening" %}{% endif %}, {{ user.first_name|default:user.username }}.
         </h2>
-        <p class="text-muted mb-0">Here's an overview of your class performance.</p>
+        <p class="text-muted mb-0">{% trans "Here's an overview of your class performance." %}</p>
       </div>
     </div>
 
@@ -22,7 +23,7 @@
       <div class="col-6 col-md-3">
         <div class="card border-0 shadow-sm h-100">
           <div class="card-body">
-            <p class="text-muted small text-uppercase mb-1">Total Students</p>
+            <p class="text-muted small text-uppercase mb-1">{% trans "Total Students" %}</p>
             <div class="d-flex justify-content-between align-items-baseline mb-1">
               <h3 class="fw-bold mb-0">{{ total_students|default:0 }}</h3>
               <span class="badge bg-primary bg-opacity-25 text-primary fw-semibold">{{ stat_students_pct|default:0 }}%</span>
@@ -36,7 +37,7 @@
       <div class="col-6 col-md-3">
         <div class="card border-0 shadow-sm h-100">
           <div class="card-body">
-            <p class="text-muted small text-uppercase mb-1">Active Courses</p>
+            <p class="text-muted small text-uppercase mb-1">{% trans "Active Courses" %}</p>
             <div class="d-flex justify-content-between align-items-baseline mb-1">
               <h3 class="fw-bold mb-0">{{ active_courses_count|default:0 }}</h3>
               <span class="badge bg-success bg-opacity-25 text-success fw-semibold">{{ stat_active_pct|default:0 }}%</span>
@@ -50,7 +51,7 @@
       <div class="col-6 col-md-3">
         <div class="card border-0 shadow-sm h-100 teacher-card-completions">
           <div class="card-body">
-            <p class="text-muted small text-uppercase mb-1"><i class="bi bi-trophy-fill me-1"></i>Completions This Week</p>
+            <p class="text-muted small text-uppercase mb-1"><i class="bi bi-trophy-fill me-1"></i>{% trans "Completions This Week" %}</p>
             <div class="d-flex justify-content-between align-items-baseline mb-1">
               <h3 class="fw-bold mb-0">{{ completions_this_week|default:0 }}</h3>
               <span class="badge fw-semibold">{{ stat_completions_pct|default:0 }}%</span>
@@ -64,7 +65,7 @@
       <div class="col-6 col-md-3">
         <div class="card border-0 shadow-sm h-100 teacher-card-pending">
           <div class="card-body">
-            <p class="text-muted small text-uppercase mb-1"><i class="bi bi-hourglass-split me-1"></i>Pending Approval</p>
+            <p class="text-muted small text-uppercase mb-1"><i class="bi bi-hourglass-split me-1"></i>{% trans "Pending Approval" %}</p>
             <div class="d-flex justify-content-between align-items-baseline mb-1">
               <h3 class="fw-bold mb-0">{{ pending_approval_count|default:0 }}</h3>
               <span class="badge fw-semibold">{{ stat_pending_pct|default:0 }}%</span>
@@ -85,7 +86,7 @@
       <div class="col-lg-6">
         <div class="card border-0 shadow-sm h-100">
           <div class="card-header teacher-header-activity border-0 pt-3 pb-2 fw-semibold">
-            <i class="bi bi-activity me-2"></i>Recent Student Activity
+            <i class="bi bi-activity me-2"></i>{% trans "Recent Student Activity" %}
           </div>
           <div class="card-body pt-0">
             {% if recent_activity %}
@@ -98,7 +99,7 @@
                     </div>
                     <div>
                       <span class="fw-semibold">{{ item.student.get_full_name|default:item.student.username }}</span>: {{ item.label }}
-                      <br><small class="text-muted">{{ item.date|timesince }} ago</small>
+                      <br><small class="text-muted">{{ item.date|timesince }} {% trans "ago" %}</small>
                     </div>
                   </div>
                   <a href="{% url 'courses:course_detail' item.course.id %}" class="btn btn-link btn-sm text-decoration-none p-0"><i class="bi bi-chevron-right"></i></a>
@@ -106,7 +107,7 @@
                 {% endfor %}
               </ul>
             {% else %}
-              <p class="text-muted mb-0">No recent activity yet.</p>
+              <p class="text-muted mb-0">{% trans "No recent activity yet." %}</p>
             {% endif %}
           </div>
         </div>
@@ -114,28 +115,28 @@
       <div class="col-lg-6">
         <div class="card border-0 shadow-sm h-100">
           <div class="card-header teacher-header-engagement border-0 pt-3 pb-2 fw-semibold">
-            <i class="bi bi-graph-up me-2"></i>Engagement Stats
+            <i class="bi bi-graph-up me-2"></i>{% trans "Engagement Stats" %}
           </div>
           <div class="card-body">
-            <p class="text-muted small text-uppercase mb-2">Weekly overview — time series</p>
+            <p class="text-muted small text-uppercase mb-2">{% trans "Weekly overview — time series" %}</p>
             <div class="mb-3" style="height: 200px;">
               <canvas id="engagementLineChart" width="400" height="200"></canvas>
             </div>
             <div class="row g-2 pt-2 border-top">
               <div class="col-4 text-center">
-                <p class="text-muted small mb-0">Avg. rating</p>
+                <p class="text-muted small mb-0">{% trans "Avg. rating" %}</p>
                 <h4 class="fw-bold text-primary mb-0">{% if avg_feedback_rating %}{{ avg_feedback_rating }}/5{% else %}—{% endif %}</h4>
-                <small class="text-muted">from feedback</small>
+                <small class="text-muted">{% trans "from feedback" %}</small>
               </div>
               <div class="col-4 text-center">
-                <p class="text-muted small mb-0">Certificates issued</p>
+                <p class="text-muted small mb-0">{% trans "Certificates issued" %}</p>
                 <h4 class="fw-bold text-success mb-0">{{ certificates_issued_total|default:0 }}</h4>
-                <small class="text-muted">all time</small>
+                <small class="text-muted">{% trans "all time" %}</small>
               </div>
               <div class="col-4 text-center">
-                <p class="text-muted small mb-0">Messages waiting</p>
+                <p class="text-muted small mb-0">{% trans "Messages waiting" %}</p>
                 <h4 class="fw-bold text-info mb-0">{{ messages_waiting|default:0 }}</h4>
-                <small class="text-muted"><a href="{% url 'notifications:notification_list' %}">View</a></small>
+                <small class="text-muted"><a href="{% url 'notifications:notification_list' %}">{% trans "View" %}</a></small>
               </div>
             </div>
           </div>
@@ -147,7 +148,7 @@
       <div class="col-lg-6">
         <div class="card border-0 shadow-sm h-100 teacher-card-pending-list">
           <div class="card-header teacher-card-pending-header border-0 pt-3 pb-2 fw-semibold">
-            <i class="bi bi-hourglass-split me-2"></i>Pending Approvals
+            <i class="bi bi-hourglass-split me-2"></i>{% trans "Pending Approvals" %}
           </div>
           <div class="card-body pt-0">
             {% if pending_approvals %}
@@ -155,16 +156,16 @@
                 {% for enr in pending_approvals %}
                 <li class="list-group-item border-0 px-0 d-flex align-items-center justify-content-between flex-wrap gap-2 teacher-pending-item">
                   <div>
-                    <span class="fw-semibold">{{ enr.student.get_full_name|default:enr.student.username }}</span> — enrolment in <em>{{ enr.course.title }}</em>
+                    <span class="fw-semibold">{{ enr.student.get_full_name|default:enr.student.username }}</span> {% trans "— enrolment in" %} <em>{{ enr.course.title }}</em>
                   </div>
                   <div class="d-flex gap-1">
-                    <a href="{% url 'courses:course_detail' enr.course.id %}" class="btn btn-sm teacher-pending-view-btn">View</a>
+                    <a href="{% url 'courses:course_detail' enr.course.id %}" class="btn btn-sm teacher-pending-view-btn">{% trans "View" %}</a>
                   </div>
                 </li>
                 {% endfor %}
               </ul>
             {% else %}
-              <p class="text-muted mb-0">No pending approvals.</p>
+              <p class="text-muted mb-0">{% trans "No pending approvals." %}</p>
             {% endif %}
           </div>
         </div>
@@ -172,7 +173,7 @@
       <div class="col-lg-6">
         <div class="card border-0 shadow-sm h-100">
           <div class="card-header teacher-header-courses border-0 pt-3 pb-2 fw-semibold">
-            <i class="bi bi-journal-bookmark me-2"></i>Courses Overview
+            <i class="bi bi-journal-bookmark me-2"></i>{% trans "Courses Overview" %}
           </div>
           <div class="card-body pt-0">
             {% if courses_overview %}
@@ -185,13 +186,13 @@
                       <div class="progress-bar bg-primary" role="progressbar" style="width: 70%;" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100"></div>
                     </div>
                   </div>
-                  <span class="text-muted small">{{ course.student_count }} student{{ course.student_count|pluralize }}</span>
-                  <a href="{% url 'courses:course_detail' course.id %}" class="btn btn-link btn-sm text-decoration-none ms-1">Open</a>
+                  <span class="text-muted small">{% blocktrans count n=course.student_count %}{{ n }} student{% plural %}{{ n }} students{% endblocktrans %}</span>
+                  <a href="{% url 'courses:course_detail' course.id %}" class="btn btn-link btn-sm text-decoration-none ms-1">{% trans "Open" %}</a>
                 </li>
                 {% endfor %}
               </ul>
             {% else %}
-              <p class="text-muted mb-0">No courses yet. <a href="{% url 'courses:course_create' %}">Create a course</a>.</p>
+              <p class="text-muted mb-0">{% trans "No courses yet." %} <a href="{% url 'courses:course_create' %}">{% trans "Create a course" %}</a>.</p>
             {% endif %}
           </div>
         </div>
@@ -202,10 +203,10 @@
       <div class="col-lg-6">
         <div class="card border-0 shadow-sm h-100 teacher-card-completions-chart">
           <div class="card-header teacher-card-completions-header border-0 pt-3 pb-2 fw-semibold">
-            <i class="bi bi-trophy-fill me-2"></i>Students Completed This Week
+            <i class="bi bi-trophy-fill me-2"></i>{% trans "Students Completed This Week" %}
           </div>
           <div class="card-body pt-0">
-            <p class="text-muted small mb-2">Certificates issued by course (last 7 days)</p>
+            <p class="text-muted small mb-2">{% trans "Certificates issued by course (last 7 days)" %}</p>
             <div class="d-flex flex-wrap align-items-start gap-3">
               <div class="position-relative flex-shrink-0 teacher-chart-3d-wrapper" style="width: 220px; height: 220px;">
                 <canvas id="completionsPieChart" width="220" height="220"></canvas>
@@ -216,14 +217,14 @@
                     {% for item in completions_by_course_this_week %}
                     <li class="d-flex align-items-center mb-2">
                       <span class="rounded-circle me-2 d-inline-block flex-shrink-0" style="width: 12px; height: 12px; background: {{ item.color }}; border: 1px solid rgba(0,0,0,0.1);"></span>
-                      <span class="text-secondary">{{ item.course_title|default:"Unknown course" }} — <strong>{{ item.count }}</strong> student{{ item.count|pluralize }}</span>
+                      <span class="text-secondary">{% if item.course_title %}{{ item.course_title }}{% else %}{% trans "Unknown course" %}{% endif %} — <strong>{{ item.count }}</strong> {% blocktrans count n=item.count %}student{% plural %}students{% endblocktrans %}</span>
                       {% if item.course_id %}<a href="{% url 'courses:course_detail' item.course_id %}" class="btn btn-link btn-sm text-decoration-none py-0 ms-1">View</a>{% endif %}
                     </li>
                     {% endfor %}
                   </ul>
-                  <p class="small text-muted mt-2 mb-0">Total: <strong>{{ completions_this_week|default:0 }}</strong> certificate{{ completions_this_week|pluralize }} this week.</p>
+                  <p class="small text-muted mt-2 mb-0">{% blocktrans count n=completions_this_week|default:0 %}Total: <strong>{{ n }}</strong> certificate this week.{% plural %}Total: <strong>{{ n }}</strong> certificates this week.{% endblocktrans %}</p>
                 {% else %}
-                  <p class="text-muted mb-0">No certificates issued in the past 7 days.</p>
+                  <p class="text-muted mb-0">{% trans "No certificates issued in the past 7 days." %}</p>
                 {% endif %}
               </div>
             </div>
@@ -233,11 +234,11 @@
       <div class="col-lg-6">
         <div class="card border-0 shadow-sm h-100">
           <div class="card-header bg-white border-0 pt-3 pb-2 fw-semibold">
-            <i class="bi bi-chat-dots me-2"></i>Messages Waiting
+            <i class="bi bi-chat-dots me-2"></i>{% trans "Messages Waiting" %}
           </div>
           <div class="card-body pt-0">
-            <p class="mb-2">You have <strong>{{ messages_waiting|default:0 }}</strong> unread notification{{ messages_waiting|pluralize }}.</p>
-            <a href="{% url 'notifications:notification_list' %}" class="btn btn-outline-primary btn-sm">View notifications</a>
+            <p class="mb-2">{% blocktrans count n=messages_waiting|default:0 %}You have <strong>{{ n }}</strong> unread notification.{% plural %}You have <strong>{{ n }}</strong> unread notifications.{% endblocktrans %}</p>
+            <a href="{% url 'notifications:notification_list' %}" class="btn btn-outline-primary btn-sm">{% trans "View notifications" %}</a>
           </div>
         </div>
       </div>
@@ -247,13 +248,13 @@
       <div class="col-md-6">
         <div class="card border-0 shadow-sm">
           <div class="card-header bg-white border-0 pt-3 pb-2 fw-semibold">
-            <i class="bi bi-pencil-square me-2"></i>Share an Update
+            <i class="bi bi-pencil-square me-2"></i>{% trans "Share an Update" %}
           </div>
           <div class="card-body">
             <form method="post" action="{% url 'social:post_status' %}">
               {% csrf_token %}
-              <textarea name="content" class="form-control" rows="2" placeholder="What's on your mind?"></textarea>
-              <button type="submit" class="btn btn-primary mt-2 btn-sm"><i class="bi bi-send me-1"></i>Post</button>
+              <textarea name="content" class="form-control" rows="2" placeholder="{% trans "What's on your mind?" %}"></textarea>
+              <button type="submit" class="btn btn-primary mt-2 btn-sm"><i class="bi bi-send me-1"></i>{% trans "Post" %}</button>
             </form>
           </div>
         </div>
@@ -261,13 +262,13 @@
       <div class="col-md-6">
         <div class="card border-0 shadow-sm">
           <div class="card-header bg-white border-0 pt-3 pb-2 fw-semibold">
-            <i class="bi bi-chat-dots me-2"></i>Quick Links
+            <i class="bi bi-chat-dots me-2"></i>{% trans "Quick Links" %}
           </div>
           <div class="card-body d-flex flex-wrap gap-2">
-            <a href="{% url 'courses:course_list' %}" class="btn btn-outline-primary btn-sm">Courses</a>
-            <a href="{% url 'courses:course_create' %}" class="btn btn-outline-success btn-sm">Create Course</a>
-            <a href="{% url 'chat:chat_lobby' %}" class="btn btn-outline-info btn-sm">Chat</a>
-            <a href="{% url 'accounts:search_users' %}" class="btn btn-outline-secondary btn-sm">My Students</a>
+            <a href="{% url 'courses:course_list' %}" class="btn btn-outline-primary btn-sm">{% trans "Courses" %}</a>
+            <a href="{% url 'courses:course_create' %}" class="btn btn-outline-success btn-sm">{% trans "Create Course" %}</a>
+            <a href="{% url 'chat:chat_lobby' %}" class="btn btn-outline-info btn-sm">{% trans "Chat" %}</a>
+            <a href="{% url 'accounts:search_users' %}" class="btn btn-outline-secondary btn-sm">{% trans "My Students" %}</a>
           </div>
         </div>
       </div>
@@ -280,9 +281,9 @@
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-4">
       <div>
         <h2 class="fw-bold mb-1">
-          Good {% if greeting == 'morning' %}Morning{% elif greeting == 'afternoon' %}Afternoon{% else %}Evening{% endif %}, {{ user.first_name|default:user.username }}.
+          {% if greeting == 'morning' %}{% trans "Good Morning" %}{% elif greeting == 'afternoon' %}{% trans "Good Afternoon" %}{% else %}{% trans "Good Evening" %}{% endif %}, {{ user.first_name|default:user.username }}.
         </h2>
-        <p class="text-muted mb-0">Here's an overview of your learning journey.</p>
+        <p class="text-muted mb-0">{% trans "Here's an overview of your learning journey." %}</p>
       </div>
     </div>
 
@@ -295,9 +296,9 @@
               <i class="bi bi-fire fs-1 text-white"></i>
             </div>
             <div class="flex-grow-1">
-              <p class="text-muted small text-uppercase mb-0">Study streak</p>
+              <p class="text-muted small text-uppercase mb-0">{% trans "Study streak" %}</p>
               <h3 class="fw-bold mb-0 mt-1">{{ study_streak.current_streak|default:0 }} <span class="fs-6 fw-normal text-muted">day{{ study_streak.current_streak|default:0|pluralize }}</span></h3>
-              <small class="text-muted">{% if study_streak.studied_today %}You studied today — keep it up!{% elif study_streak.current_streak %}Longest: {{ study_streak.longest_streak }} day{{ study_streak.longest_streak|pluralize }}{% else %}Study today to start a streak{% endif %}</small>
+              <small class="text-muted">{% if study_streak.studied_today %}{% trans "You studied today — keep it up!" %}{% elif study_streak.current_streak %}{% blocktrans count n=study_streak.longest_streak %}Longest: {{ n }} day{% plural %}Longest: {{ n }} days{% endblocktrans %}{% else %}{% trans "Study today to start a streak" %}{% endif %}</small>
             </div>
           </div>
         </div>
@@ -309,9 +310,9 @@
               <i class="bi bi-award fs-1 text-white"></i>
             </div>
             <div class="flex-grow-1">
-              <p class="text-muted small text-uppercase mb-0">Certificates earned</p>
+              <p class="text-muted small text-uppercase mb-0">{% trans "Certificates earned" %}</p>
               <h3 class="fw-bold mb-0 mt-1">{{ certificates_earned|default:0 }}</h3>
-              <small class="text-muted">{{ completed_courses_count|default:0 }} course{{ completed_courses_count|default:0|pluralize }} completed</small>
+              <small class="text-muted">{% blocktrans count n=completed_courses_count|default:0 %}{{ n }} course completed{% plural %}{{ n }} courses completed{% endblocktrans %}</small>
             </div>
           </div>
         </div>
@@ -323,9 +324,9 @@
               <i class="bi bi-graph-up-arrow fs-1 text-white"></i>
             </div>
             <div class="flex-grow-1">
-              <p class="text-muted small text-uppercase mb-0">Progress</p>
-              <h3 class="fw-bold mb-0 mt-1">{{ student_active_courses|default:0 }} <span class="fs-6 fw-normal text-muted">active</span></h3>
-              <small class="text-muted">{{ completed_courses_count|default:0 }} completed · Keep going!</small>
+              <p class="text-muted small text-uppercase mb-0">{% trans "Progress" %}</p>
+              <h3 class="fw-bold mb-0 mt-1">{{ student_active_courses|default:0 }} <span class="fs-6 fw-normal text-muted">{% trans "active" %}</span></h3>
+              <small class="text-muted">{{ completed_courses_count|default:0 }} {% trans "completed" %} · {% trans "Keep going!" %}</small>
             </div>
           </div>
         </div>
@@ -336,7 +337,7 @@
       <div class="col-6 col-md-3">
         <div class="card border-0 shadow-sm h-100">
           <div class="card-body">
-            <p class="text-muted small text-uppercase mb-1">Active Courses</p>
+            <p class="text-muted small text-uppercase mb-1">{% trans "Active Courses" %}</p>
             <div class="d-flex justify-content-between align-items-baseline mb-1">
               <h3 class="fw-bold mb-0">{{ student_active_courses|default:0 }}</h3>
               <span class="badge bg-primary bg-opacity-25 text-primary fw-semibold">{{ stat_active_pct|default:0 }}%</span>
@@ -350,7 +351,7 @@
       <div class="col-6 col-md-3">
         <div class="card border-0 shadow-sm h-100">
           <div class="card-body">
-            <p class="text-muted small text-uppercase mb-1">Completed Courses</p>
+            <p class="text-muted small text-uppercase mb-1">{% trans "Completed Courses" %}</p>
             <div class="d-flex justify-content-between align-items-baseline mb-1">
               <h3 class="fw-bold mb-0">{{ completed_courses_count|default:0 }}</h3>
               <span class="badge bg-success bg-opacity-25 text-success fw-semibold">{{ stat_completed_pct|default:0 }}%</span>
@@ -364,7 +365,7 @@
       <div class="col-6 col-md-3">
         <div class="card border-0 shadow-sm h-100">
           <div class="card-body">
-            <p class="text-muted small text-uppercase mb-1">Certificates Earned</p>
+            <p class="text-muted small text-uppercase mb-1">{% trans "Certificates Earned" %}</p>
             <div class="d-flex justify-content-between align-items-baseline mb-1">
               <h3 class="fw-bold mb-0">{{ certificates_earned|default:0 }}</h3>
               <span class="badge bg-info bg-opacity-25 text-info fw-semibold">{{ stat_certs_pct|default:0 }}%</span>
@@ -378,7 +379,7 @@
       <div class="col-6 col-md-3">
         <div class="card border-0 shadow-sm h-100">
           <div class="card-body">
-            <p class="text-muted small text-uppercase mb-1">Unread Notifications</p>
+            <p class="text-muted small text-uppercase mb-1">{% trans "Unread Notifications" %}</p>
             <div class="d-flex justify-content-between align-items-baseline mb-1">
               <h3 class="fw-bold mb-0">{{ unread_count|default:0 }}</h3>
               <span class="badge bg-warning bg-opacity-25 text-warning fw-semibold">{{ stat_unread_pct|default:0 }}%</span>
@@ -395,7 +396,7 @@
       <div class="col-lg-8">
         <div class="card border-0 shadow-sm h-100">
           <div class="card-header student-header-progress border-0 pt-3 pb-2 fw-semibold">
-            <i class="bi bi-bar-chart-steps me-2"></i>Progress Overview
+            <i class="bi bi-bar-chart-steps me-2"></i>{% trans "Progress Overview" %}
           </div>
           <div class="card-body pt-0">
             {% if progress_overview %}
@@ -410,14 +411,14 @@
                     <div class="progress rounded mt-1" style="height: 6px;">
                       <div class="progress-bar bg-primary" role="progressbar" style="width: {{ item.percent }}%;" aria-valuenow="{{ item.percent }}" aria-valuemin="0" aria-valuemax="100"></div>
                     </div>
-                    <small class="text-muted">Instructor: {{ item.course.teacher.get_full_name|default:item.course.teacher.username }}</small>
+                    <small class="text-muted">{% trans "Instructor" %}: {{ item.course.teacher.get_full_name|default:item.course.teacher.username }}</small>
                   </div>
-                  <a href="{% url 'courses:course_detail' item.course.id %}" class="btn btn-outline-primary btn-sm">Continue</a>
+                  <a href="{% url 'courses:course_detail' item.course.id %}" class="btn btn-outline-primary btn-sm">{% trans "Continue" %}</a>
                 </li>
                 {% endfor %}
               </ul>
             {% else %}
-              <p class="text-muted mb-0">No courses in progress yet. <a href="{% url 'courses:course_list' %}">Browse courses</a> to get started.</p>
+              <p class="text-muted mb-0">{% trans "No courses in progress yet." %} <a href="{% url 'courses:course_list' %}">{% trans "Browse courses" %}</a> {% trans "to get started." %}</p>
             {% endif %}
           </div>
         </div>
@@ -425,7 +426,7 @@
       <div class="col-lg-4">
         <div class="card border-0 shadow-sm mb-3">
           <div class="card-header student-header-deadlines border-0 pt-3 pb-2 fw-semibold">
-            <i class="bi bi-calendar-event me-2"></i>Upcoming Deadlines
+            <i class="bi bi-calendar-event me-2"></i>{% trans "Upcoming Deadlines" %}
           </div>
           <div class="card-body pt-0">
             {% if upcoming_deadlines %}
@@ -434,20 +435,20 @@
                 <li class="list-group-item border-0 px-0 d-flex justify-content-between">
                   <div>
                     <span class="fw-semibold">{{ enr.course.title }}</span>
-                    <br><small class="text-muted">Ends {{ enr.course.end_datetime|date:'M j' }}</small>
+                    <br><small class="text-muted">{% trans "Ends" %} {{ enr.course.end_datetime|date:'M j' }}</small>
                   </div>
-                  <a href="{% url 'courses:course_detail' enr.course.id %}" class="btn btn-link btn-sm text-decoration-none">View</a>
+                  <a href="{% url 'courses:course_detail' enr.course.id %}" class="btn btn-link btn-sm text-decoration-none">{% trans "View" %}</a>
                 </li>
                 {% endfor %}
               </ul>
             {% else %}
-              <p class="text-muted mb-0">No upcoming deadlines.</p>
+              <p class="text-muted mb-0">{% trans "No upcoming deadlines." %}</p>
             {% endif %}
           </div>
         </div>
         <div class="card border-0 shadow-sm">
           <div class="card-header student-header-notifications border-0 pt-3 pb-2 fw-semibold">
-            <i class="bi bi-bell me-2"></i>Notifications
+            <i class="bi bi-bell me-2"></i>{% trans "Notifications" %}
           </div>
           <div class="card-body pt-0">
             {% if student_notifications %}
@@ -455,13 +456,13 @@
                 {% for n in student_notifications %}
                 <li class="list-group-item border-0 px-0 d-flex justify-content-between">
                   <span class="small">{{ n.message }}</span>
-                  <small class="text-muted ms-2">{{ n.created_at|timesince }} ago</small>
+                  <small class="text-muted ms-2">{{ n.created_at|timesince }} {% trans "ago" %}</small>
                 </li>
                 {% endfor %}
               </ul>
-              <a href="{% url 'notifications:notification_list' %}" class="btn btn-link btn-sm px-0 mt-2">View all notifications</a>
+              <a href="{% url 'notifications:notification_list' %}" class="btn btn-link btn-sm px-0 mt-2">{% trans "View all notifications" %}</a>
             {% else %}
-              <p class="text-muted mb-0">You're all caught up.</p>
+              <p class="text-muted mb-0">{% trans "You're all caught up." %}</p>
             {% endif %}
           </div>
         </div>
@@ -472,21 +473,21 @@
       <div class="col-lg-6">
         <div class="card border-0 shadow-sm h-100">
           <div class="card-header student-header-achievement border-0 pt-3 pb-2 fw-semibold">
-            <i class="bi bi-award me-2"></i>Latest Achievement
+            <i class="bi bi-award me-2"></i>{% trans "Latest Achievement" %}
           </div>
           <div class="card-body">
             {% if latest_certificate %}
               {% url 'courses:download_certificate' latest_certificate.enrolment.id as latest_cert_download_url %}
-              <p class="mb-1">Completed: <strong>{{ latest_certificate.enrolment.course.title }}</strong></p>
-              <p class="text-muted mb-3 small">Finished: {{ latest_certificate.issued_at|date:'M j, Y' }}</p>
+              <p class="mb-1">{% trans "Completed" %}: <strong>{{ latest_certificate.enrolment.course.title }}</strong></p>
+              <p class="text-muted mb-3 small">{% trans "Finished" %}: {{ latest_certificate.issued_at|date:'M j, Y' }}</p>
               <div class="d-flex flex-wrap gap-2 align-items-center">
                 <a href="{{ latest_cert_download_url }}" class="btn btn-primary btn-sm">
-                  <i class="bi bi-download me-1"></i>Download to PC
+                  <i class="bi bi-download me-1"></i>{% trans "Download to PC" %}
                 </a>
                 {% include "includes/certificate_share_dropdown.html" with cert_url=latest_cert_download_url btn_class="btn-outline-primary" %}
               </div>
             {% else %}
-              <p class="text-muted mb-0">Once you complete a course, your latest certificate will appear here.</p>
+              <p class="text-muted mb-0">{% trans "Once you complete a course, your latest certificate will appear here." %}</p>
             {% endif %}
           </div>
         </div>
@@ -494,8 +495,8 @@
       <div class="col-lg-6">
         <div class="card border-0 shadow-sm h-100">
           <div class="card-header student-header-heatmap border-0 pt-3 pb-2 fw-semibold d-flex justify-content-between align-items-center">
-            <span><i class="bi bi-grid-3x3-gap me-2"></i>Activity Heatmap</span>
-            <small class="text-muted">Monthly activity</small>
+            <span><i class="bi bi-grid-3x3-gap me-2"></i>{% trans "Activity Heatmap" %}</span>
+            <small class="text-muted">{% trans "Monthly activity" %}</small>
           </div>
           <div class="card-body pt-2">
             {% if activity_heatmap_weeks %}
@@ -527,9 +528,9 @@
                 {% endfor %}
               </div>
               <div class="d-flex align-items-center justify-content-between mt-2 flex-wrap gap-2">
-                <p class="small text-muted mb-0">{{ activity_heatmap_total|default:0 }} contribution{{ activity_heatmap_total|default:0|pluralize }} in the last year</p>
+                <p class="small text-muted mb-0">{% blocktrans count n=activity_heatmap_total|default:0 %}{{ n }} contribution in the last year{% plural %}{{ n }} contributions in the last year{% endblocktrans %}</p>
                 <div class="d-flex align-items-center gap-2 small text-muted">
-                  <span>Less</span>
+                  <span>{% trans "Less" %}</span>
                   <div class="d-flex gap-1">
                     <div class="rounded-1" style="width: 10px; height: 10px; background: #ebedf0;"></div>
                     <div class="rounded-1" style="width: 10px; height: 10px; background: #cfe2ff;"></div>
@@ -537,13 +538,13 @@
                     <div class="rounded-1" style="width: 10px; height: 10px; background: #6ea8fe;"></div>
                     <div class="rounded-1" style="width: 10px; height: 10px; background: #3d8bfd;"></div>
                   </div>
-                  <span>More</span>
+                  <span>{% trans "More" %}</span>
                 </div>
               </div>
             </div>
             <p class="small text-muted mt-2 mb-0">Blue-filled squares show effective activity and completed courses over the past year.</p>
             {% else %}
-              <p class="text-muted mb-0">Start learning and your monthly activity will appear here.</p>
+              <p class="text-muted mb-0">{% trans "Start learning and your monthly activity will appear here." %}</p>
             {% endif %}
           </div>
         </div>
@@ -565,12 +566,12 @@
 {# —— Landing (unauthenticated) —— #}
 <section class="py-5 text-center">
   <div class="py-lg-5">
-    <h1 class="display-4 fw-bold">Welcome to <span class="text-primary">StudySphere</span></h1>
+    <h1 class="display-4 fw-bold">{% trans "Welcome to" %} <span class="text-primary">{% trans "StudySphere" %}</span></h1>
     <p class="lead text-muted mx-auto" style="max-width: 600px;">
-      A modern eLearning platform where students and teachers connect, learn, and grow together.
+      {% trans "A modern eLearning platform where students and teachers connect, learn, and grow together." %}
     </p>
     <a href="{% url 'accounts:register' %}" class="btn btn-primary btn-lg mt-3 px-5">
-      Get Started <i class="bi bi-arrow-right ms-1"></i>
+      {% trans "Get Started" %} <i class="bi bi-arrow-right ms-1"></i>
     </a>
   </div>
 </section>
@@ -580,8 +581,8 @@
     <div class="card border-0 shadow-sm text-center h-100 p-4">
       <div class="card-body">
         <i class="bi bi-book fs-1 text-primary mb-3 d-block"></i>
-        <h4 class="fw-bold">Learn</h4>
-        <p class="text-muted">Enrol in courses, access materials, and track your progress at your own pace.</p>
+        <h4 class="fw-bold">{% trans "Learn" %}</h4>
+        <p class="text-muted">{% trans "Enrol in courses, access materials, and track your progress at your own pace." %}</p>
       </div>
     </div>
   </div>
@@ -589,8 +590,8 @@
     <div class="card border-0 shadow-sm text-center h-100 p-4">
       <div class="card-body">
         <i class="bi bi-easel fs-1 text-success mb-3 d-block"></i>
-        <h4 class="fw-bold">Teach</h4>
-        <p class="text-muted">Create and manage courses, upload materials, and engage with your students.</p>
+        <h4 class="fw-bold">{% trans "Teach" %}</h4>
+        <p class="text-muted">{% trans "Create and manage courses, upload materials, and engage with your students." %}</p>
       </div>
     </div>
   </div>
@@ -598,8 +599,8 @@
     <div class="card border-0 shadow-sm text-center h-100 p-4">
       <div class="card-body">
         <i class="bi bi-people fs-1 text-info mb-3 d-block"></i>
-        <h4 class="fw-bold">Connect</h4>
-        <p class="text-muted">Chat in real time, share status updates, and build a learning community.</p>
+        <h4 class="fw-bold">{% trans "Connect" %}</h4>
+        <p class="text-muted">{% trans "Chat in real time, share status updates, and build a learning community." %}</p>
       </div>
     </div>
   </div>

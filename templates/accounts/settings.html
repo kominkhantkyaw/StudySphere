@@ -1,184 +1,495 @@
 {% extends 'base.html' %}
+{% load i18n %}
 
-{% block title %}Settings — StudySphere{% endblock %}
+{% block title %}{% trans "Settings" %} — {% trans "StudySphere" %}{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center mt-4">
-  <div class="col-12 col-lg-10 col-xl-8">
-    <div class="card shadow-sm border-0">
-      <div class="card-header bg-white border-0 pt-4 pb-0 px-4">
-        <h4 class="mb-0 fw-bold"><i class="bi bi-gear me-2"></i>Settings</h4>
-        <p class="text-muted small mt-1 mb-0">Manage your profile and account security.</p>
+<div class="settings-page">
+  <div class="settings-header mb-4">
+    <div class="d-flex align-items-center gap-3 flex-wrap">
+      <div class="settings-header-icon rounded-3">
+        <i class="bi bi-gear-fill"></i>
       </div>
-      <div class="card-body p-0">
-        <ul class="nav nav-tabs nav-fill px-3 pt-2" id="settingsTabs" role="tablist">
-          <li class="nav-item" role="presentation">
-            <button class="nav-link rounded-top {% if active_tab == 'general' %}active{% endif %}" id="general-tab" data-bs-toggle="tab" data-bs-target="#general-pane" type="button" role="tab" aria-controls="general-pane" aria-selected="{% if active_tab == 'general' %}true{% else %}false{% endif %}">
-              <i class="bi bi-sliders me-1"></i>General
-            </button>
-          </li>
-          <li class="nav-item" role="presentation">
-            <button class="nav-link rounded-top {% if active_tab == 'profile' %}active{% endif %}" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-pane" type="button" role="tab" aria-controls="profile-pane" aria-selected="{% if active_tab == 'profile' %}true{% else %}false{% endif %}">
-              <i class="bi bi-person me-1"></i>Account
-            </button>
-          </li>
-          <li class="nav-item" role="presentation">
-            <button class="nav-link rounded-top {% if active_tab == 'security' %}active{% endif %}" id="password-tab" data-bs-toggle="tab" data-bs-target="#password-pane" type="button" role="tab" aria-controls="password-pane" aria-selected="{% if active_tab == 'security' %}true{% else %}false{% endif %}">
-              <i class="bi bi-shield-lock me-1"></i>Security
-            </button>
-          </li>
-          <li class="nav-item" role="presentation">
-            <button class="nav-link rounded-top {% if active_tab == 'preferences' %}active{% endif %}" id="preferences-tab" data-bs-toggle="tab" data-bs-target="#preferences-pane" type="button" role="tab" aria-controls="preferences-pane" aria-selected="{% if active_tab == 'preferences' %}true{% else %}false{% endif %}">
-              <i class="bi bi-sliders2-vertical me-1"></i>Preferences
-            </button>
-          </li>
-          <li class="nav-item" role="presentation">
-            <button class="nav-link rounded-top {% if active_tab == 'language' %}active{% endif %}" id="language-tab" data-bs-toggle="tab" data-bs-target="#language-pane" type="button" role="tab" aria-controls="language-pane" aria-selected="{% if active_tab == 'language' %}true{% else %}false{% endif %}">
-              <i class="bi bi-translate me-1"></i>Language
-            </button>
-          </li>
-        </ul>
+      <div>
+        <h1 class="h4 mb-1 fw-bold">{% trans "Settings" %}</h1>
+        <p class="text-muted small mb-0">{% trans "Manage your account, security, and preferences for" %} <a href="https://studysphere.app/" class="text-decoration-none">{% trans "StudySphere" %}</a>.</p>
+      </div>
+    </div>
+  </div>
 
-        <div class="tab-content p-4" id="settingsTabContent">
-          {% if messages %}
-          <div class="alert alert-success alert-dismissible fade show" role="alert">
-            {% for message in messages %}
-            {{ message }}
-            {% endfor %}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-          </div>
-          {% endif %}
+  <div class="card shadow-sm border-0 settings-card overflow-hidden">
+    <div class="card-body p-0">
+      <div class="row g-0">
+        <!-- Sidebar nav: vertical on desktop, horizontal on mobile -->
+        <div class="col-12 col-md-4 col-lg-3 border-end border-bottom border-md-bottom-0">
+          <nav class="nav nav-pills flex-md-column p-3 p-md-4 settings-nav" id="settingsTabs" role="tablist">
+            <button class="nav-link text-start rounded-3 mb-1 {% if active_tab == 'general' %}active{% endif %}" id="general-tab" data-bs-toggle="tab" data-bs-target="#general-pane" type="button" role="tab" aria-controls="general-pane" aria-selected="{% if active_tab == 'general' %}true{% else %}false{% endif %}">
+              <i class="bi bi-sliders me-2"></i>{% trans "General" %}
+            </button>
+            <button class="nav-link text-start rounded-3 mb-1 {% if active_tab == 'profile' %}active{% endif %}" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-pane" type="button" role="tab" aria-controls="profile-pane" aria-selected="{% if active_tab == 'profile' %}true{% else %}false{% endif %}">
+              <i class="bi bi-person me-2"></i>{% trans "Account" %}
+            </button>
+            <button class="nav-link text-start rounded-3 mb-1 {% if active_tab == 'security' %}active{% endif %}" id="password-tab" data-bs-toggle="tab" data-bs-target="#password-pane" type="button" role="tab" aria-controls="password-pane" aria-selected="{% if active_tab == 'security' %}true{% else %}false{% endif %}">
+              <i class="bi bi-shield-lock me-2"></i>{% trans "Security" %}
+            </button>
+            <button class="nav-link text-start rounded-3 mb-1 {% if active_tab == 'preferences' %}active{% endif %}" id="preferences-tab" data-bs-toggle="tab" data-bs-target="#preferences-pane" type="button" role="tab" aria-controls="preferences-pane" aria-selected="{% if active_tab == 'preferences' %}true{% else %}false{% endif %}">
+              <i class="bi bi-sliders2-vertical me-2"></i>{% trans "Preferences" %}
+            </button>
+            <button class="nav-link text-start rounded-3 mb-1 {% if active_tab == 'language' %}active{% endif %}" id="language-tab" data-bs-toggle="tab" data-bs-target="#language-pane" type="button" role="tab" aria-controls="language-pane" aria-selected="{% if active_tab == 'language' %}true{% else %}false{% endif %}">
+              <i class="bi bi-translate me-2"></i>{% trans "Language" %}
+            </button>
+            <button class="nav-link text-start rounded-3 mb-1 {% if active_tab == 'privacy' %}active{% endif %}" id="privacy-tab" data-bs-toggle="tab" data-bs-target="#privacy-pane" type="button" role="tab" aria-controls="privacy-pane" aria-selected="{% if active_tab == 'privacy' %}true{% else %}false{% endif %}">
+              <i class="bi bi-shield-lock me-2"></i>{% trans "Privacy Policy" %}
+            </button>
+            <button class="nav-link text-start rounded-3 mb-1 {% if active_tab == 'about' %}active{% endif %}" id="about-tab" data-bs-toggle="tab" data-bs-target="#about-pane" type="button" role="tab" aria-controls="about-pane" aria-selected="{% if active_tab == 'about' %}true{% else %}false{% endif %}">
+              <i class="bi bi-info-circle me-2"></i>{% trans "About" %}
+            </button>
+          </nav>
+        </div>
 
-          <div class="tab-pane fade {% if active_tab == 'general' %}show active{% endif %}" id="general-pane" role="tabpanel" aria-labelledby="general-tab">
-            <h5 class="fw-semibold mb-3">General</h5>
-            <form method="post">
-              {% csrf_token %}
-              <input type="hidden" name="form_type" value="general">
-              <h6 class="fw-semibold mb-2">Data &amp; Privacy</h6>
-              <div class="form-check mb-3">
-                {{ general_form.share_activity }}
-                <label class="form-check-label small ms-1" for="{{ general_form.share_activity.id_for_label }}">
-                  Allow my activity to appear in feeds and dashboards
-                </label>
-              </div>
-              <p class="small text-muted mb-3">
-                View our <a href="#">Privacy Policy</a> and <a href="#">Help &amp; Support</a>.
-              </p>
-              <button type="submit" class="btn btn-primary btn-sm">
-                <i class="bi bi-check-circle me-1"></i>Save changes
-              </button>
-            </form>
-          </div>
-
-          <div class="tab-pane fade {% if active_tab == 'preferences' %}show active{% endif %}" id="preferences-pane" role="tabpanel" aria-labelledby="preferences-tab">
-            <h5 class="fw-semibold mb-3">Preferences</h5>
-            <form method="post">
-              {% csrf_token %}
-              <input type="hidden" name="form_type" value="general">
-              <input type="hidden" name="active_tab" value="preferences">
-              <div class="mb-3">
-                <label for="{{ general_form.theme_mode.id_for_label }}" class="form-label fw-semibold">Theme</label>
-                {{ general_form.theme_mode }}
-              </div>
-              <h6 class="fw-semibold mb-2">Notifications</h6>
-              <div class="form-check mb-1">
-                {{ general_form.notify_email }}
-                <label class="form-check-label small ms-1" for="{{ general_form.notify_email.id_for_label }}">
-                  Receive important updates by email
-                </label>
-              </div>
-              <div class="form-check mb-3">
-                {{ general_form.notify_in_app }}
-                <label class="form-check-label small ms-1" for="{{ general_form.notify_in_app.id_for_label }}">
-                  Show in-app notifications
-                </label>
-              </div>
-              <button type="submit" class="btn btn-primary btn-sm">
-                <i class="bi bi-check-circle me-1"></i>Save preferences
-              </button>
-            </form>
-          </div>
-
-          <div class="tab-pane fade {% if active_tab == 'language' %}show active{% endif %}" id="language-pane" role="tabpanel" aria-labelledby="language-tab">
-            <h5 class="fw-semibold mb-3">Language</h5>
-            <form method="post">
-              {% csrf_token %}
-              <input type="hidden" name="form_type" value="general">
-              <input type="hidden" name="active_tab" value="language">
-              <div class="mb-3">
-                <label for="{{ general_form.preferred_language.id_for_label }}" class="form-label fw-semibold">Interface language</label>
-                {{ general_form.preferred_language }}
-              </div>
-              <button type="submit" class="btn btn-primary btn-sm">
-                <i class="bi bi-check-circle me-1"></i>Save language
-              </button>
-            </form>
-          </div>
-
-          <div class="tab-pane fade {% if active_tab == 'profile' %}show active{% endif %}" id="profile-pane" role="tabpanel" aria-labelledby="profile-tab">
-            <h5 class="fw-semibold mb-3">Account details</h5>
-            {% if user.photo %}
-            <div class="text-center mb-3">
-              <img src="{{ user.photo.url }}" alt="{{ user.username }}" class="rounded-circle" width="80" height="80" style="object-fit: cover;">
-              <p class="text-muted small mt-1 mb-0">Current photo</p>
+        <div class="col-12 col-md-8 col-lg-9">
+          <div class="tab-content p-4 p-lg-5" id="settingsTabContent">
+            {% if message_list %}
+            <div class="alert alert-success alert-dismissible fade show d-flex align-items-center" role="alert">
+              <i class="bi bi-check-circle-fill me-2"></i>
+              <span>{% for message in message_list %}{{ message }}{% endfor %}</span>
+              <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
             {% endif %}
-            {% if profile_form.errors %}
-            <div class="alert alert-danger py-2">
-              <i class="bi bi-exclamation-circle me-1"></i>Please correct the errors below.
-            </div>
-            {% endif %}
-            <form method="post" enctype="multipart/form-data">
-              {% csrf_token %}
-              <input type="hidden" name="form_type" value="profile">
-              {% for field in profile_form %}
-              <div class="mb-3">
-                <label for="{{ field.id_for_label }}" class="form-label fw-semibold">{{ field.label }}</label>
-                {% if field.field.widget.input_type == 'file' %}
-                <input type="file" name="{{ field.html_name }}" id="{{ field.id_for_label }}" class="form-control form-control-sm{% if field.errors %} is-invalid{% endif %}">
-                {% elif field.field.widget.input_type == 'textarea' %}
-                <textarea name="{{ field.html_name }}" id="{{ field.id_for_label }}" class="form-control{% if field.errors %} is-invalid{% endif %}" rows="3">{{ field.value|default:"" }}</textarea>
-                {% elif field.name == 'presence' %}
-                {{ field }}
-                {% else %}
-                <input type="{{ field.field.widget.input_type|default:'text' }}" name="{{ field.html_name }}" id="{{ field.id_for_label }}" class="form-control{% if field.errors %} is-invalid{% endif %}" value="{{ field.value|default:'' }}" {% if field.field.widget.attrs.placeholder %}placeholder="{{ field.field.widget.attrs.placeholder }}"{% endif %} {% if field.field.max_length %}maxlength="{{ field.field.max_length }}"{% endif %}>
-                {% endif %}
-                {% if field.help_text %}<div class="form-text small">{{ field.help_text }}</div>{% endif %}
-                {% for error in field.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
-              </div>
-              {% endfor %}
-              <button type="submit" class="btn btn-primary">
-                <i class="bi bi-check-circle me-1"></i>Save profile
-              </button>
-              <a href="{% url 'accounts:profile' user.username %}" class="btn btn-outline-secondary ms-2">View profile</a>
-            </form>
-          </div>
 
-          <div class="tab-pane fade {% if active_tab == 'security' %}show active{% endif %}" id="password-pane" role="tabpanel" aria-labelledby="password-tab">
-            <h5 class="fw-semibold mb-3">Change password</h5>
-            {% if password_form.errors %}
-            <div class="alert alert-danger py-2">
-              <i class="bi bi-exclamation-circle me-1"></i>Please correct the errors below.
-            </div>
-            {% endif %}
-            <form method="post">
-              {% csrf_token %}
-              <input type="hidden" name="form_type" value="password">
-              {% for field in password_form %}
-              <div class="mb-3">
-                <label for="{{ field.id_for_label }}" class="form-label fw-semibold">{{ field.label }}</label>
-                <input type="password" name="{{ field.html_name }}" id="{{ field.id_for_label }}" class="form-control{% if field.errors %} is-invalid{% endif %}" autocomplete="{% if field.name == 'old_password' %}current-password{% else %}new-password{% endif %}">
-                {% for error in field.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+            <!-- General -->
+            <div class="tab-pane fade {% if active_tab == 'general' %}show active{% endif %}" id="general-pane" role="tabpanel" aria-labelledby="general-tab">
+              <h2 class="h5 fw-bold mb-4"><i class="bi bi-sliders me-2 text-primary"></i>{% trans "General" %}</h2>
+
+              <div class="settings-section-card card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                  <div class="d-flex align-items-start gap-3">
+                    <div class="settings-section-icon rounded-3 flex-shrink-0">
+                      <i class="bi bi-mortarboard-fill"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                      <h3 class="h6 fw-bold mb-2">{% trans "About StudySphere" %}</h3>
+                      <p class="small text-muted mb-2">StudySphere is a collaborative learning platform designed to support students who need additional academic guidance, skill development, or career direction.</p>
+                      <p class="small text-muted mb-2">The platform connects learners with educational resources, peer support, and structured study tools that help improve understanding and confidence across different subjects.</p>
+                      <p class="small text-muted mb-2">Our goal is to create an inclusive learning community where students can ask questions, share knowledge, discover learning opportunities, and explore possible career paths.</p>
+                      <p class="small text-muted mb-2">StudySphere encourages collaboration, respectful discussion, and continuous learning. Members can participate in study discussions, share educational resources, follow learning topics, and support others in their academic journey.</p>
+                      <p class="small text-muted mb-0">Whether you are catching up on challenging topics, developing new skills, or preparing for future opportunities, StudySphere provides a place to learn, grow, and connect with others who share similar goals.</p>
+                    </div>
+                  </div>
+                </div>
               </div>
-              {% endfor %}
-              <button type="submit" class="btn btn-primary">
-                <i class="bi bi-key me-1"></i>Update password
-              </button>
-            </form>
+
+              <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="form_type" value="general">
+                <div class="settings-section-card card border-0 shadow-sm mb-4">
+                  <div class="card-body p-4">
+                    <div class="d-flex align-items-start gap-3">
+                      <div class="settings-section-icon rounded-3 flex-shrink-0">
+                        <i class="bi bi-people"></i>
+                      </div>
+                      <div class="flex-grow-1">
+                        <h3 class="h6 fw-bold mb-2">{% trans "Community Principles" %}</h3>
+                        <ul class="small text-muted mb-0 ps-3">
+                          <li>Respect other learners and their perspectives</li>
+                          <li>Share accurate and helpful knowledge</li>
+                          <li>Encourage collaboration and positive learning experiences</li>
+                          <li>Support learners at different stages of their academic journey</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                  <i class="bi bi-check-circle me-1"></i>{% trans "Save changes" %}
+                </button>
+              </form>
+            </div>
+
+            <!-- Account -->
+            <div class="tab-pane fade {% if active_tab == 'profile' %}show active{% endif %}" id="profile-pane" role="tabpanel" aria-labelledby="profile-tab">
+              <h2 class="h5 fw-bold mb-4"><i class="bi bi-person me-2 text-primary"></i>{% trans "Account" %}</h2>
+              {% if profile_form.errors %}
+              <div class="alert alert-danger d-flex align-items-center mb-4">
+                <i class="bi bi-exclamation-circle-fill me-2"></i>
+                <span>{% trans "Please correct the errors below." %}</span>
+              </div>
+              {% endif %}
+              <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="hidden" name="form_type" value="profile">
+                <div class="settings-section-card card border-0 shadow-sm mb-4">
+                  <div class="card-body p-4">
+                    <h3 class="h6 fw-bold mb-3">Profile photo</h3>
+                    {% if user.photo %}
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                      <img src="{{ user.photo.url }}" alt="{{ user.username }}" class="rounded-circle settings-avatar" width="80" height="80" style="object-fit: cover;">
+                      <p class="text-muted small mb-0">Current photo</p>
+                    </div>
+                    {% endif %}
+                    <div class="mb-0">
+                      {% for field in profile_form %}
+                        {% if field.name == 'photo' %}
+                          <label for="{{ field.id_for_label }}" class="form-label fw-semibold">{{ field.label }}</label>
+                          <input type="file" name="{{ field.html_name }}" id="{{ field.id_for_label }}" class="form-control form-control-sm{% if field.errors %} is-invalid{% endif %}" accept="image/*">
+                          {% if field.help_text %}<div class="form-text small">{{ field.help_text }}</div>{% endif %}
+                          {% for error in field.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+                        {% endif %}
+                      {% endfor %}
+                    </div>
+                  </div>
+                </div>
+                <div class="settings-section-card card border-0 shadow-sm mb-4">
+                  <div class="card-body p-4">
+                    <h3 class="h6 fw-bold mb-3">Personal details</h3>
+                    <div class="row g-3">
+                      {% for field in profile_form %}
+                        {% if field.name != 'photo' and field.name != 'bio' and field.name != 'presence' and field.name != 'status_text' %}
+                        <div class="col-md-6">
+                          <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                          <input type="{{ field.field.widget.input_type|default:'text' }}" name="{{ field.html_name }}" id="{{ field.id_for_label }}" class="form-control{% if field.errors %} is-invalid{% endif %}" value="{{ field.value|default:'' }}" {% if field.field.widget.attrs.placeholder %}placeholder="{{ field.field.widget.attrs.placeholder }}"{% endif %} {% if field.field.max_length %}maxlength="{{ field.field.max_length }}"{% endif %}>
+                          {% for error in field.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+                        </div>
+                        {% endif %}
+                      {% endfor %}
+                    </div>
+                    {% for field in profile_form %}
+                      {% if field.name == 'presence' %}
+                      <div class="mt-3">
+                        <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                        {{ field }}
+                      </div>
+                      {% elif field.name == 'status_text' %}
+                      <div class="mt-3">
+                        <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                        <input type="text" name="{{ field.html_name }}" id="{{ field.id_for_label }}" class="form-control{% if field.errors %} is-invalid{% endif %}" value="{{ field.value|default:'' }}" placeholder="{{ field.field.widget.attrs.placeholder }}" maxlength="200">
+                        {% for error in field.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+                      </div>
+                      {% elif field.name == 'bio' %}
+                      <div class="mt-3">
+                        <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                        <textarea name="{{ field.html_name }}" id="{{ field.id_for_label }}" class="form-control{% if field.errors %} is-invalid{% endif %}" rows="4">{{ field.value|default:"" }}</textarea>
+                        {% if field.help_text %}<div class="form-text small">{{ field.help_text }}</div>{% endif %}
+                        {% for error in field.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+                      </div>
+                      {% endif %}
+                    {% endfor %}
+                  </div>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                  <i class="bi bi-check-circle me-1"></i>Save profile
+                </button>
+                <a href="{% url 'accounts:profile' user.username %}" class="btn btn-outline-secondary ms-2">View profile</a>
+              </form>
+            </div>
+
+            <!-- Security -->
+            <div class="tab-pane fade {% if active_tab == 'security' %}show active{% endif %}" id="password-pane" role="tabpanel" aria-labelledby="password-tab">
+              <h2 class="h5 fw-bold mb-4"><i class="bi bi-shield-lock me-2 text-primary"></i>{% trans "Security" %}</h2>
+              {% if password_form.errors %}
+              <div class="alert alert-danger d-flex align-items-center mb-4">
+                <i class="bi bi-exclamation-circle-fill me-2"></i>
+                <span>{% trans "Please correct the errors below." %}</span>
+              </div>
+              {% endif %}
+
+              <!-- Two-Factor Authentication -->
+              <div class="settings-section-card card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                  <h3 class="h6 fw-bold mb-1"><i class="bi bi-phone me-2 text-primary"></i>Two-Factor Authentication (2FA)</h3>
+                  <p class="small text-muted mb-3">Add an extra layer of security using an authenticator app on your phone or device (e.g. Google Authenticator, Microsoft Authenticator, Authy). You can also use biometric sign-in where supported by your app.</p>
+                  {% if two_fa_enabled %}
+                  <p class="mb-2"><span class="badge bg-success"><i class="bi bi-shield-check me-1"></i>2FA enabled</span></p>
+                  <form method="post" action="{% url 'accounts:two_factor_disable' %}" class="d-inline" onsubmit="return confirm('Disable two-factor authentication? You will only need your password to sign in.');">
+                    {% csrf_token %}
+                    <div class="row g-2 align-items-end flex-wrap">
+                      <div class="col-auto">
+                        <label for="id_2fa_disable_password" class="form-label small mb-0">Confirm with your password to disable:</label>
+                        <input type="password" name="password" id="id_2fa_disable_password" class="form-control form-control-sm" placeholder="Your password" required autocomplete="current-password" style="max-width: 200px;">
+                      </div>
+                      <div class="col-auto">
+                        <button type="submit" class="btn btn-outline-danger btn-sm">Disable 2FA</button>
+                      </div>
+                    </div>
+                  </form>
+                  {% else %}
+                  <a href="{% url 'accounts:two_factor_setup' %}" class="btn btn-primary">
+                    <i class="bi bi-shield-plus me-1"></i>Enable Two-Factor Authentication
+                  </a>
+                  {% endif %}
+                </div>
+              </div>
+
+              <div class="settings-section-card card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                  <h3 class="h6 fw-bold mb-1">Change password</h3>
+                  <p class="small text-muted mb-4">Use a strong password with a mix of letters, numbers, and symbols.</p>
+                  <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="form_type" value="password">
+                    {% for field in password_form %}
+                    <div class="mb-3">
+                      <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                      <input type="password" name="{{ field.html_name }}" id="{{ field.id_for_label }}" class="form-control{% if field.errors %} is-invalid{% endif %}" autocomplete="{% if field.name == 'old_password' %}current-password{% else %}new-password{% endif %}">
+                      {% for error in field.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+                    </div>
+                    {% endfor %}
+                    <button type="submit" class="btn btn-primary">
+                      <i class="bi bi-key me-1"></i>Update password
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+            <!-- Preferences -->
+            <div class="tab-pane fade {% if active_tab == 'preferences' %}show active{% endif %}" id="preferences-pane" role="tabpanel" aria-labelledby="preferences-tab">
+              <h2 class="h5 fw-bold mb-4"><i class="bi bi-sliders2-vertical me-2 text-primary"></i>{% trans "Preferences" %}</h2>
+
+              <!-- Theme: separate form with its own Save button and confirmation -->
+              <div class="settings-section-card card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                  <form method="post" id="preferences-theme-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="form_type" value="general">
+                    <input type="hidden" name="active_tab" value="preferences">
+                    <input type="hidden" name="preferred_language" value="{{ user.preferred_language }}">
+                    {% if user.share_activity %}<input type="hidden" name="share_activity" value="on">{% endif %}
+                    {% if user.notify_email %}<input type="hidden" name="notify_email" value="on">{% endif %}
+                    {% if user.notify_in_app %}<input type="hidden" name="notify_in_app" value="on">{% endif %}
+                    {% if user.subscribe_course_updates %}<input type="hidden" name="subscribe_course_updates" value="on">{% endif %}
+                    <div class="d-flex align-items-start gap-3">
+                      <div class="settings-section-icon rounded-3 flex-shrink-0">
+                        <i class="bi bi-palette"></i>
+                      </div>
+                      <div class="flex-grow-1">
+                        <h3 class="h6 fw-bold mb-1">Theme</h3>
+                        <p class="small text-muted mb-2">Choose Light, Dark, or match your device (System). You can also switch from the menu bar.</p>
+                        <label for="{{ general_form.theme_mode.id_for_label }}" class="form-label visually-hidden">Theme</label>
+                        {{ general_form.theme_mode }}
+                        <p class="small text-muted mt-2 mb-3"><i class="bi bi-info-circle me-1"></i>Click <strong>Save</strong> to apply your choice immediately.</p>
+                        <button type="button" class="btn btn-primary" id="preferences-theme-save-btn">
+                          <i class="bi bi-check-circle me-1"></i>Save
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+
+              <!-- Notifications: separate form with its own Save button -->
+              <div class="settings-section-card card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                  <form method="post" id="preferences-notifications-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="form_type" value="general">
+                    <input type="hidden" name="active_tab" value="preferences">
+                    <input type="hidden" name="preferred_language" value="{{ user.preferred_language }}">
+                    <input type="hidden" name="theme_mode" value="{{ user.theme_mode }}">
+                    {% if user.share_activity %}<input type="hidden" name="share_activity" value="on">{% endif %}
+                    <div class="d-flex align-items-start gap-3">
+                      <div class="settings-section-icon rounded-3 flex-shrink-0">
+                        <i class="bi bi-bell"></i>
+                      </div>
+                      <div class="flex-grow-1">
+                        <h3 class="h6 fw-bold mb-1">Notifications</h3>
+                        <p class="small text-muted mb-3">Choose how you want to be notified about course and enrolment updates.</p>
+                        <div class="form-check form-switch mb-2">
+                          {{ general_form.notify_email }}
+                          <label class="form-check-label" for="{{ general_form.notify_email.id_for_label }}">
+                            Receive important updates by email
+                          </label>
+                        </div>
+                        <div class="form-check form-switch mb-2">
+                          {{ general_form.notify_in_app }}
+                          <label class="form-check-label" for="{{ general_form.notify_in_app.id_for_label }}">
+                            Show in-app notifications
+                          </label>
+                        </div>
+                        <div class="form-check form-switch mb-0">
+                          {{ general_form.subscribe_course_updates }}
+                          <label class="form-check-label" for="{{ general_form.subscribe_course_updates.id_for_label }}">
+                            Subscribe to course updates by email (new materials, announcements, up-to-date info)
+                          </label>
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-3" id="preferences-notifications-save-btn">
+                          <i class="bi bi-check-circle me-1"></i>Save notification settings
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+            <!-- Language -->
+            <div class="tab-pane fade {% if active_tab == 'language' %}show active{% endif %}" id="language-pane" role="tabpanel" aria-labelledby="language-tab">
+              <h2 class="h5 fw-bold mb-4"><i class="bi bi-translate me-2 text-primary"></i>{% trans "Language" %}</h2>
+              <div class="settings-section-card card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                  <div class="d-flex align-items-start gap-3">
+                    <div class="settings-section-icon rounded-3 flex-shrink-0">
+                      <i class="bi bi-globe"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                      <h3 class="h6 fw-bold mb-1">{% trans "Interface language" %}</h3>
+                      <p class="small text-muted mb-3">{% trans "Select your preferred language for menus and labels." %}</p>
+                      <form method="post" action="{% url 'accounts:settings' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="form_type" value="language">
+                        <div class="mb-3">
+                          <label for="{{ general_form.preferred_language.id_for_label }}" class="form-label visually-hidden">{% trans "Language" %}</label>
+                          {{ general_form.preferred_language }}
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                          <i class="bi bi-check-circle me-1"></i>{% trans "Save language" %}
+                        </button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Privacy Policy -->
+            <div class="tab-pane fade {% if active_tab == 'privacy' %}show active{% endif %}" id="privacy-pane" role="tabpanel" aria-labelledby="privacy-tab">
+              <h2 class="h5 fw-bold mb-4"><i class="bi bi-shield-lock me-2 text-primary"></i>Privacy Policy</h2>
+              <div class="settings-section-card card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                  <h3 class="h6 fw-bold mb-2">Data &amp; Privacy</h3>
+                  <p class="mb-2">Control whether your activity is visible on the platform. For how we handle your data, see this Privacy Policy.</p>
+                  <p class="mb-3">StudySphere follows EU data protection and privacy law. Your data is used only to run the platform and to provide the services you use.</p>
+                  <p class="fw-semibold mb-2">In line with that:</p>
+                  <ul class="mb-4">
+                    <li>We do <strong>not</strong> collect additional information beyond what is needed for your account and your use of courses and features.</li>
+                    <li>We do <strong>not</strong> sell or share your data with third parties for their marketing or other purposes.</li>
+                    <li>Your information is <strong>not</strong> used for advertising profiling or passed to advertisers.</li>
+                    <li>Your activity on the platform is used only to provide the services you use (such as feeds and learning features), not for marketing or third-party purposes.</li>
+                  </ul>
+                  <p class="text-muted small mb-0">For questions about your data or to request a copy, <a href="{% url 'accounts:contact' %}">contact us</a>.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- About -->
+            <div class="tab-pane fade {% if active_tab == 'about' %}show active{% endif %}" id="about-pane" role="tabpanel" aria-labelledby="about-tab">
+              <h2 class="h5 fw-bold mb-4"><i class="bi bi-info-circle me-2 text-primary"></i>About StudySphere</h2>
+              <div class="settings-section-card card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                  <p class="fw-semibold mb-3">StudySphere helps students collaborate, share knowledge, and develop skills for academic and career success.</p>
+                  <dl class="row small mb-0">
+                    <dt class="col-sm-3 text-muted">Contact</dt>
+                    <dd class="col-sm-9"><a href="mailto:support@studysphere.app">support@studysphere.app</a></dd>
+                    <dt class="col-sm-3 text-muted">Version</dt>
+                    <dd class="col-sm-9">StudySphere v1.0</dd>
+                    <dt class="col-sm-3 text-muted">Maintained by</dt>
+                    <dd class="col-sm-9">StudySphere Development Team</dd>
+                  </dl>
+                  <p class="small text-muted mt-3 mb-0">StudySphere promotes respectful discussion, collaboration, and academic integrity.</p>
+                </div>
+              </div>
+              <div class="settings-section-card card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                  <h3 class="h6 fw-bold mb-3">Support &amp; resources</h3>
+                  <div class="row small text-muted g-3">
+                    <div class="col-md-4">
+                      <p class="fw-semibold mb-1 text-dark">Learning Platform Style</p>
+                      <ul class="list-unstyled mb-0">
+                        <li>Support Center</li>
+                        <li>Help Center</li>
+                        <li>User Support</li>
+                      </ul>
+                    </div>
+                    <div class="col-md-4">
+                      <p class="fw-semibold mb-1 text-dark">Community Style</p>
+                      <ul class="list-unstyled mb-0">
+                        <li>Community Help</li>
+                        <li>Learning Support</li>
+                        <li>Student Support</li>
+                      </ul>
+                    </div>
+                    <div class="col-md-4">
+                      <p class="fw-semibold mb-1 text-dark">Professional</p>
+                      <ul class="list-unstyled mb-0">
+                        <li>Documentation</li>
+                        <li>Assistance</li>
+                        <li>Support</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="small">
+                <a href="{% url 'accounts:settings' %}?tab=privacy" class="text-decoration-none me-3">Privacy Policy</a>
+                <a href="{% url 'accounts:contact' %}" class="text-decoration-none me-3">Help &amp; Support</a>
+                <a href="{% url 'accounts:contact' %}" class="text-decoration-none">Contact / Feedback</a>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function() {
+  function getCookie(name) {
+    var m = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+    return m ? m.pop() : '';
+  }
+  function applyThemeChoice(choice) {
+    var html = document.documentElement;
+    var resolved = choice === 'system'
+      ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+      : choice;
+    html.setAttribute('data-theme', resolved);
+  }
+
+  // Theme: one-click save via AJAX (no confirmation modal)
+  var themeSaveBtn = document.getElementById('preferences-theme-save-btn');
+  var themeForm = document.getElementById('preferences-theme-form');
+  var themeSelect = themeForm && themeForm.querySelector('[name="theme_mode"]');
+  if (themeSaveBtn && themeForm && themeSelect) {
+    themeSaveBtn.addEventListener('click', function() {
+      var choice = (themeSelect.value || 'LIGHT').toLowerCase();
+      var originalHtml = themeSaveBtn.innerHTML;
+      themeSaveBtn.disabled = true;
+      themeSaveBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span> Saving...';
+      var formData = new FormData();
+      formData.append('theme_mode', themeSelect.value);
+      formData.append('csrfmiddlewaretoken', getCookie('csrftoken'));
+      fetch('{% url "accounts:set_theme" %}', {
+        method: 'POST',
+        body: formData,
+        credentials: 'same-origin',
+        headers: { 'X-CSRFToken': getCookie('csrftoken') }
+      })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          applyThemeChoice(choice);
+        })
+        .catch(function() {
+          themeForm.submit();
+        })
+        .finally(function() {
+          themeSaveBtn.disabled = false;
+          themeSaveBtn.innerHTML = originalHtml;
+        });
+    });
+  }
+
+  // Notifications: show loading state immediately, then submit
+  var notifForm = document.getElementById('preferences-notifications-form');
+  var notifBtn = document.getElementById('preferences-notifications-save-btn');
+  if (notifForm && notifBtn) {
+    notifForm.addEventListener('submit', function() {
+      notifBtn.disabled = true;
+      notifBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span> Saving...';
+    });
+  }
+})();
+</script>
 {% endblock %}

@@ -1,21 +1,22 @@
 {% extends 'base.html' %}
+{% load i18n %}
 
-{% block title %}Search — StudySphere{% endblock %}
+{% block title %}{% trans "Search" %} — {% trans "StudySphere" %}{% endblock %}
 
 {% block content %}
 <div class="mt-3">
-  <h2 class="fw-bold mb-4"><i class="bi bi-search me-2"></i>Search</h2>
+  <h2 class="fw-bold mb-4"><i class="bi bi-search me-2"></i>{% trans "Search" %}</h2>
 
   <div class="card shadow-sm border-0 mb-4">
     <div class="card-body">
       <form method="get" class="row g-2 align-items-end">
         <div class="col-md-9">
-          <label for="search-input" class="form-label fw-semibold">Search anything (courses, users, events)</label>
-          <input type="text" name="q" id="search-input" class="form-control" placeholder="Type a name, course, or event..." value="{{ query|default:'' }}">
+          <label for="search-input" class="form-label fw-semibold">{% trans "Search anything (courses, users, events)" %}</label>
+          <input type="text" name="q" id="search-input" class="form-control" placeholder="{% trans 'Type a name, course, or event...' %}" value="{{ query|default:'' }}">
         </div>
         <div class="col-md-3">
           <button type="submit" class="btn btn-primary w-100">
-            <i class="bi bi-search me-1"></i>Search
+            <i class="bi bi-search me-1"></i>{% trans "Search" %}
           </button>
         </div>
       </form>
@@ -25,7 +26,7 @@
   {% if query %}
   <div class="card shadow-sm border-0 mb-3">
     <div class="card-header bg-white fw-semibold">
-      Users matching "{{ query }}"
+      {% blocktrans with q=query %}Users matching "{{ q }}"{% endblocktrans %}
     </div>
     <div class="card-body p-0">
       {% if user_results %}
@@ -33,9 +34,9 @@
         <table class="table table-hover mb-0">
           <thead class="table-light">
             <tr>
-              <th>Username</th>
-              <th>Name</th>
-              <th>Role</th>
+              <th>{% trans "Username" %}</th>
+              <th>{% trans "Name" %}</th>
+              <th>{% trans "Role" %}</th>
             </tr>
           </thead>
           <tbody>
@@ -49,9 +50,9 @@
               <td>{{ u.get_full_name|default:"—" }}</td>
               <td>
                 {% if u.is_teacher %}
-                  <span class="badge bg-success">Teacher</span>
+                  <span class="badge bg-success">{% trans "Teacher" %}</span>
                 {% else %}
-                  <span class="badge bg-primary">Student</span>
+                  <span class="badge bg-primary">{% trans "Student" %}</span>
                 {% endif %}
               </td>
             </tr>
@@ -61,7 +62,7 @@
       </div>
       {% else %}
       <div class="text-muted small p-3">
-        No users found for "{{ query }}".
+        {% blocktrans with q=query %}No users found for "{{ q }}".{% endblocktrans %}
       </div>
       {% endif %}
     </div>
@@ -80,16 +81,16 @@
             <a href="{% url 'courses:course_detail' c.id %}" class="fw-semibold text-decoration-none">{{ c.title }}</a>
             <br>
             <small class="text-muted">
-              Teacher: {{ c.teacher.get_full_name|default:c.teacher.username }}
+              {% trans "Teacher" %}: {{ c.teacher.get_full_name|default:c.teacher.username }}
             </small>
           </div>
-          <a href="{% url 'courses:course_detail' c.id %}" class="btn btn-outline-primary btn-sm">Open</a>
+          <a href="{% url 'courses:course_detail' c.id %}" class="btn btn-outline-primary btn-sm">{% trans "Open" %}</a>
         </li>
         {% endfor %}
       </ul>
       {% else %}
       <div class="text-muted small">
-        No courses found for "{{ query }}".
+        {% blocktrans with q=query %}No courses found for "{{ q }}".{% endblocktrans %}
       </div>
       {% endif %}
     </div>
@@ -97,7 +98,7 @@
 
   <div class="card shadow-sm border-0">
     <div class="card-header bg-white fw-semibold">
-      Events matching "{{ query }}"
+      {% blocktrans with q=query %}Events matching "{{ q }}"{% endblocktrans %}
     </div>
     <div class="card-body">
       {% if event_results %}
@@ -107,17 +108,17 @@
           <div>
             <span class="fw-semibold">{{ e.title }}</span>
             {% if e.course %}
-            <br><small class="text-muted">Course: {{ e.course.title }}</small>
+            <br><small class="text-muted">{% trans "Course" %}: {{ e.course.title }}</small>
             {% endif %}
             <br><small class="text-muted">{{ e.start|date:"M j, Y H:i" }}</small>
           </div>
-          <a href="{% url 'calendar_app:event_detail' e.id %}" class="btn btn-outline-secondary btn-sm">View</a>
+          <a href="{% url 'calendar_app:event_detail' e.id %}" class="btn btn-outline-secondary btn-sm">{% trans "View" %}</a>
         </li>
         {% endfor %}
       </ul>
       {% else %}
       <div class="text-muted small">
-        No events found for "{{ query }}".
+        {% blocktrans with q=query %}No events found for "{{ q }}".{% endblocktrans %}
       </div>
       {% endif %}
     </div>

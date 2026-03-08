@@ -1,43 +1,44 @@
 {% extends 'base.html' %}
 {% load courses_extras %}
+{% load i18n %}
 
-{% block title %}Videos — StudySphere{% endblock %}
+{% block title %}{% trans "Videos" %} — {% trans "StudySphere" %}{% endblock %}
 
 {% block content %}
 <div class="container py-4">
-  <h2 class="fw-bold mb-2"><i class="bi bi-youtube me-2 text-danger"></i>Videos</h2>
-  <p class="text-muted mb-4">Course-related video material. Teachers can add YouTube or other video links here.</p>
+  <h2 class="fw-bold mb-2"><i class="bi bi-youtube me-2 text-danger"></i>{% trans "Videos" %}</h2>
+  <p class="text-muted mb-4">{% trans "Course-related video material. Teachers can add YouTube or other video links here." %}</p>
 
   {% if form %}
   <div class="card border-0 shadow-sm mb-4">
     <div class="card-header bg-light border-0 fw-semibold">
-      <i class="bi bi-plus-circle me-2"></i>Add a video
+      <i class="bi bi-plus-circle me-2"></i>{% trans "Add a video" %}
     </div>
     <div class="card-body">
       <form method="post" action="{% url 'courses:video_resources' %}">
         {% csrf_token %}
         <div class="row g-3">
           <div class="col-md-6">
-            <label for="id_title" class="form-label">Title</label>
+            <label for="id_title" class="form-label">{% trans "Title" %}</label>
             {{ form.title }}
             {% if form.title.errors %}<div class="form-text text-danger">{{ form.title.errors.0 }}</div>{% endif %}
           </div>
           <div class="col-md-6">
-            <label for="id_url" class="form-label">Video URL (e.g. YouTube)</label>
+            <label for="id_url" class="form-label">{% trans "Video URL (e.g. YouTube)" %}</label>
             {{ form.url }}
             {% if form.url.errors %}<div class="form-text text-danger">{{ form.url.errors.0 }}</div>{% endif %}
           </div>
           <div class="col-12">
-            <label for="id_description" class="form-label">Description (optional)</label>
+            <label for="id_description" class="form-label">{% trans "Description (optional)" %}</label>
             {{ form.description }}
           </div>
           <div class="col-md-6">
-            <label for="id_course" class="form-label">Course (optional)</label>
+            <label for="id_course" class="form-label">{% trans "Course (optional)" %}</label>
             {{ form.course }}
           </div>
           <div class="col-12">
             <button type="submit" class="btn btn-primary">
-              <i class="bi bi-plus-lg me-1"></i>Add video
+              <i class="bi bi-plus-lg me-1"></i>{% trans "Add video" %}
             </button>
           </div>
         </div>
@@ -48,7 +49,7 @@
 
   <div class="card border-0 shadow-sm">
     <div class="card-header bg-white border-0 fw-semibold">
-      <i class="bi bi-collection-play me-2"></i>Video resources
+      <i class="bi bi-collection-play me-2"></i>{% trans "Video resources" %}
     </div>
     <div class="card-body p-0">
       {% if videos %}
@@ -70,7 +71,7 @@
               {% else %}
               <div class="p-4 text-center bg-light">
                 <a href="{{ video.url }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-danger">
-                  <i class="bi bi-box-arrow-up-right me-1"></i>Open video
+                  <i class="bi bi-box-arrow-up-right me-1"></i>{% trans "Open video" %}
                 </a>
               </div>
               {% endif %}
@@ -79,13 +80,13 @@
                 {% if video.course %}
                 <span class="badge bg-secondary mb-2">#{{ video.course.id }} {{ video.course.title }}</span>
                 {% else %}
-                <span class="badge bg-light text-dark mb-2">Global</span>
+                <span class="badge bg-light text-dark mb-2">{% trans "Global" %}</span>
                 {% endif %}
                 {% if video.description %}
                 <p class="text-muted small mb-2">{{ video.description }}</p>
                 {% endif %}
                 <a href="{{ video.url }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-danger btn-sm">
-                  <i class="bi bi-youtube me-1"></i>Watch on YouTube
+                  <i class="bi bi-youtube me-1"></i>{% trans "Watch on YouTube" %}
                 </a>
               </div>
             </div>
@@ -96,7 +97,7 @@
       {% else %}
       <div class="p-4 text-center text-muted">
         <i class="bi bi-camera-video-off display-6"></i>
-        <p class="mb-0 mt-2">No videos yet.{% if form %} Use the form above to add a YouTube or video link.{% endif %}</p>
+        <p class="mb-0 mt-2">{% trans "No videos yet." %}{% if form %} {% trans "Use the form above to add a YouTube or video link." %}{% endif %}</p>
       </div>
       {% endif %}
     </div>

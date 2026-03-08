@@ -16,13 +16,20 @@ staticfiles/
 secrets/
 credentials/
 
-# Office / documents (exclude from repo)
+# Office / documents (exclude from repo — do not push)
 *.doc
 *.docx
 *.pdf
 
+# Images: exclude all except necessary course images in static
 *.png
+*.jpg
+*.jpeg
+!static/course_images/
+!static/course_images/*.png
+!static/course_images/*.jpg
+!static/course_images/*.jpeg
 
-# Markdown except README.md
+# Markdown: only README.md is pushed; other .md (docs, etc.) are not
 *.md
 !README.md

@@ -1,0 +1,1692 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: StudySphere\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-07 23:30+0000\n"
+"PO-Revision-Date: 2026-03-07 23:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: German\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: accounts/models.py:8 templates/accounts/profile.html:64
+#: templates/accounts/search_results.html:55
+#: templates/courses/course_detail.html:134
+#: templates/courses/course_detail.html:234
+msgid "Student"
+msgstr "Studierender"
+
+#: accounts/models.py:9 templates/accounts/profile.html:62
+#: templates/accounts/search_results.html:53
+#: templates/accounts/search_results.html:84
+#: templates/courses/my_courses.html:49
+msgid "Teacher"
+msgstr "Lehrer"
+
+#: accounts/models.py:18 templates/base.html:134
+msgid "Available"
+msgstr "Verfügbar"
+
+#: accounts/models.py:19 templates/base.html:135
+msgid "Online"
+msgstr "Online"
+
+#: accounts/models.py:20
+msgid "Busy"
+msgstr "Beschäftigt"
+
+#: accounts/models.py:21 templates/base.html:136
+msgid "Away"
+msgstr "Abwesend"
+
+#: accounts/models.py:22 templates/base.html:137
+msgid "Offline"
+msgstr "Offline"
+
+#: accounts/models.py:31
+msgid "Never"
+msgstr "Nie"
+
+#: accounts/models.py:32
+msgid "1 hour"
+msgstr "1 Stunde"
+
+#: accounts/models.py:33
+msgid "5 hours"
+msgstr "5 Stunden"
+
+#: accounts/models.py:34
+msgid "Today"
+msgstr "Heute"
+
+#: accounts/models.py:35
+msgid "This week"
+msgstr "Diese Woche"
+
+#: accounts/models.py:82 templates/base.html:98 templates/base.html:172
+msgid "Light"
+msgstr "Hell"
+
+#: accounts/models.py:83 templates/base.html:99 templates/base.html:173
+msgid "Dark"
+msgstr "Dunkel"
+
+#: accounts/models.py:84 templates/base.html:100 templates/base.html:174
+msgid "System"
+msgstr "System"
+
+#: accounts/models.py:91 templates/base.html:52
+msgid "English"
+msgstr "Englisch"
+
+#: accounts/models.py:92 templates/base.html:53
+msgid "German"
+msgstr "Deutsch"
+
+#: accounts/models.py:93 templates/base.html:54 templates/base.html:62
+msgid "Other"
+msgstr "Sonstige"
+
+#: accounts/views.py:225
+msgid "Language saved. The interface will use your selected language."
+msgstr "Sprache gespeichert. Die Oberfläche verwendet Ihre gewählte Sprache."
+
+#: accounts/views.py:279
+msgid "Invalid language choice."
+msgstr "Ungültige Sprachauswahl."
+
+#: accounts/views.py:284
+msgid "Language updated."
+msgstr "Sprache aktualisiert."
+
+#: templates/accounts/contact.html:4 templates/accounts/contact.html:10
+#: templates/accounts/settings.html:42 templates/base.html:219
+msgid "Privacy Policy"
+msgstr "Datenschutz"
+
+#: templates/accounts/contact.html:4 templates/base.html:83
+#: templates/base.html:221
+msgid "Contact"
+msgstr "Kontakt"
+
+#: templates/accounts/contact.html:4 templates/accounts/login.html:4
+#: templates/accounts/password_reset_form.html:4
+#: templates/accounts/profile.html:5 templates/accounts/register.html:4
+#: templates/accounts/search_results.html:4 templates/accounts/settings.html:4
+#: templates/accounts/settings.html:15 templates/base.html:8
+#: templates/base.html:35 templates/base.html:211
+#: templates/calendar_app/calendar.html:4
+#: templates/calendar_app/event_form.html:4 templates/chat/lobby.html:4
+#: templates/chat/room.html:4 templates/courses/course_detail.html:5
+#: templates/courses/course_list.html:4 templates/courses/my_courses.html:4
+#: templates/courses/video_resources.html:5 templates/home.html:5
+#: templates/home.html:569 templates/notifications/notification_list.html:4
+msgid "StudySphere"
+msgstr "StudySphere"
+
+#: templates/accounts/contact.html:11
+msgid "StudySphere and EU data protection"
+msgstr "StudySphere und EU-Datenschutz"
+
+#: templates/accounts/contact.html:14
+msgid "We follow EU data protection and privacy law. In line with that:"
+msgstr "Wir halten uns an EU-Datenschutz- und Datenschutzrecht. Dementsprechend:"
+
+#: templates/accounts/contact.html:16
+msgid ""
+"We do not collect additional information beyond what is needed for your "
+"account and your use of courses and features."
+msgstr "Wir erfassen keine zusätzlichen Daten über das für Ihr Konto und die Nutzung von Kursen und Funktionen Nötige hinaus."
+
+#: templates/accounts/contact.html:17
+msgid ""
+"We do not sell or share your data with third parties for their marketing or "
+"other purposes."
+msgstr "Wir verkaufen oder teilen Ihre Daten nicht mit Dritten zu deren Marketing oder anderen Zwecken."
+
+#: templates/accounts/contact.html:18
+msgid ""
+"Your information is not used for advertising profiling or passed to "
+"advertisers."
+msgstr "Ihre Daten werden nicht für Werbeprofiling genutzt oder an Werbetreibende weitergegeben."
+
+#: templates/accounts/contact.html:19
+msgid ""
+"Your activity on the platform is used only to provide the services you use "
+"(such as feeds and learning features), not for marketing or third-party "
+"purposes."
+msgstr "Ihre Aktivität auf der Plattform wird nur zur Bereitstellung der von Ihnen genutzten Dienste (z. B. Feeds und Lernfunktionen) verwendet, nicht für Marketing oder Drittzwecke."
+
+#: templates/accounts/contact.html:21
+msgid ""
+"For the full policy and contact details, see the sections below. If you have "
+"questions about your data, <a "
+"href=\"mailto:support@studysphere.app\">contact us</a>."
+msgstr "Die vollständige Richtlinie und Kontaktdaten finden Sie in den Abschnitten unten. Bei Fragen zu Ihren Daten <a href=\"mailto:support@studysphere.app\">kontaktieren Sie uns</a>."
+
+#: templates/accounts/contact.html:30
+msgid "Location"
+msgstr "Standort"
+
+#: templates/accounts/contact.html:48 templates/calendar_app/calendar.html:56
+msgid "Send us a message"
+msgstr "Nachricht an uns senden"
+
+#: templates/accounts/contact.html:54 templates/calendar_app/calendar.html:62
+msgid "Your Name"
+msgstr "Ihr Name"
+
+#: templates/accounts/contact.html:59 templates/calendar_app/calendar.html:66
+msgid "Your Email"
+msgstr "Ihre E-Mail"
+
+#: templates/accounts/contact.html:64 templates/calendar_app/calendar.html:70
+msgid "Message"
+msgstr "Nachricht"
+
+#: templates/accounts/contact.html:67 templates/calendar_app/calendar.html:71
+msgid "How can we help?"
+msgstr "Wie können wir helfen?"
+
+#: templates/accounts/contact.html:69 templates/calendar_app/calendar.html:73
+msgid "Send Message"
+msgstr "Nachricht senden"
+
+#: templates/accounts/contact.html:80
+msgid "Support info"
+msgstr "Support-Info"
+
+#: templates/accounts/contact.html:83
+msgid "Email"
+msgstr "E-Mail"
+
+#: templates/accounts/contact.html:84
+msgid "Hours"
+msgstr "Öffnungszeiten"
+
+#: templates/accounts/contact.html:84
+msgid "Mon–Fri, 9:00–17:00"
+msgstr "Mo–Fr, 9:00–17:00"
+
+#: templates/accounts/contact.html:85
+msgid "We aim to respond to all messages within 24 hours."
+msgstr "Wir bemühen uns, alle Nachrichten innerhalb von 24 Stunden zu beantworten."
+
+#: templates/accounts/contact.html:92
+msgid "Help & live support"
+msgstr "Hilfe & Live-Support"
+
+#: templates/accounts/contact.html:96
+msgid "FAQ / Help centre"
+msgstr "FAQ / Hilfecenter"
+
+#: templates/accounts/contact.html:97
+msgid "API Documentation"
+msgstr "API-Dokumentation"
+
+#: templates/accounts/contact.html:100
+msgid "Open live support chat"
+msgstr "Live-Support-Chat öffnen"
+
+#: templates/accounts/login.html:4 templates/base.html:178
+msgid "Sign In"
+msgstr "Anmelden"
+
+#: templates/accounts/login.html:11 templates/accounts/register.html:11
+msgid "Back to home"
+msgstr "Zurück zur Startseite"
+
+#: templates/accounts/login.html:17
+msgid "Log in to your account"
+msgstr "Melden Sie sich bei Ihrem Konto an"
+
+#: templates/accounts/login.html:18
+msgid "Enter your credentials to access StudySphere."
+msgstr "Geben Sie Ihre Anmeldedaten ein, um StudySphere zu nutzen."
+
+#: templates/accounts/login.html:31 templates/accounts/search_results.html:37
+msgid "Username"
+msgstr "Benutzername"
+
+#: templates/accounts/login.html:34
+msgid "Enter your username"
+msgstr "Benutzername eingeben"
+
+#: templates/accounts/login.html:38
+msgid "Password"
+msgstr "Passwort"
+
+#: templates/accounts/login.html:41
+msgid "Enter your password"
+msgstr "Passwort eingeben"
+
+#: templates/accounts/login.html:45
+msgid "Forgot password?"
+msgstr "Passwort vergessen?"
+
+#: templates/accounts/login.html:49 templates/accounts/register.html:95
+msgid "Sign in"
+msgstr "Anmelden"
+
+#: templates/accounts/login.html:54
+msgid "Don't have an account?"
+msgstr "Noch kein Konto?"
+
+#: templates/accounts/login.html:55 templates/accounts/register.html:17
+#: templates/accounts/register.html:88
+msgid "Create account"
+msgstr "Konto erstellen"
+
+#: templates/accounts/password_reset_form.html:4
+#, fuzzy
+#| msgid "Password"
+msgid "Reset Password"
+msgstr "Passwort"
+
+#: templates/accounts/password_reset_form.html:11
+#, fuzzy
+#| msgid "Enter your password"
+msgid "Reset your password"
+msgstr "Passwort eingeben"
+
+#: templates/accounts/password_reset_form.html:14
+msgid ""
+"Enter the email address you used to register. We'll send you a link to set a "
+"new password."
+msgstr "Geben Sie die E-Mail-Adresse ein, mit der Sie sich registriert haben. Wir senden Ihnen einen Link zum Setzen eines neuen Passworts."
+
+#: templates/accounts/password_reset_form.html:18
+msgid "Email address"
+msgstr "E-Mail-Adresse"
+
+#: templates/accounts/password_reset_form.html:24
+msgid "Send reset link"
+msgstr "Link zum Zurücksetzen senden"
+
+#: templates/accounts/password_reset_form.html:28
+msgid "Back to sign in"
+msgstr "Zurück zur Anmeldung"
+
+#: templates/accounts/profile.html:28
+msgid "Profile picture options"
+msgstr "Optionen für Profilbild"
+
+#: templates/accounts/profile.html:34
+msgid "Update your picture"
+msgstr "Bild aktualisieren"
+
+#: templates/accounts/profile.html:40
+msgid "Remove your picture"
+msgstr "Bild entfernen"
+
+#: templates/accounts/profile.html:66 templates/courses/course_detail.html:133
+#: templates/courses/my_courses.html:47
+msgid "Student ID"
+msgstr "Lernenden-ID"
+
+#: templates/accounts/profile.html:82
+msgid "Edit profile (name, bio, etc.)"
+msgstr "Profil bearbeiten (Name, Bio usw.)"
+
+#: templates/accounts/profile.html:92
+msgid "Progress & achievements"
+msgstr "Fortschritt & Erfolge"
+
+#: templates/accounts/profile.html:100
+msgid "Day streak"
+msgstr "Tage-Serie"
+
+#: templates/accounts/profile.html:107 templates/accounts/profile.html:168
+msgid "Certificates"
+msgstr "Zertifikate"
+
+#: templates/accounts/profile.html:112
+#, python-format
+msgid "Longest streak: %(n)s day"
+msgid_plural "Longest streak: %(n)s days"
+msgstr[0] "Längste Serie: %(n)s Tag"
+msgstr[1] "Längste Serie: %(n)s Tage"
+
+#: templates/accounts/profile.html:121 templates/home.html:251
+msgid "Share an Update"
+msgstr "Update teilen"
+
+#: templates/accounts/profile.html:127 templates/home.html:256
+msgid "What's on your mind?"
+msgstr "Was möchten Sie mitteilen?"
+
+#: templates/accounts/profile.html:130 templates/home.html:257
+msgid "Post"
+msgstr "Posten"
+
+#: templates/accounts/profile.html:144 templates/base.html:45
+#: templates/courses/course_list.html:4 templates/courses/course_list.html:8
+#: templates/home.html:268
+msgid "Courses"
+msgstr "Kurse"
+
+#: templates/accounts/profile.html:156 templates/home.html:481
+msgid "Completed"
+msgstr "Abgeschlossen"
+
+#: templates/accounts/profile.html:183
+msgid "Activity timeline"
+msgstr "Aktivitätszeitachse"
+
+#: templates/accounts/profile.html:191 templates/courses/course_detail.html:507
+#: templates/home.html:102 templates/home.html:459
+#: templates/notifications/notification_list.html:41
+msgid "ago"
+msgstr "zuvor"
+
+#: templates/accounts/profile.html:196
+msgid "No status updates yet."
+msgstr "Noch keine Statusaktualisierungen."
+
+#: templates/accounts/profile.html:224
+msgid "Enrolled Courses"
+msgstr "Belegte Kurse"
+
+#: templates/accounts/profile.html:246
+msgid "Courses Created"
+msgstr "Erstellte Kurse"
+
+#: templates/accounts/register.html:4
+#, fuzzy
+#| msgid "Create account"
+msgid "Create Account"
+msgstr "Konto erstellen"
+
+#: templates/accounts/register.html:18
+msgid ""
+"Join StudySphere to access courses and connect with your learning community."
+msgstr "Treten Sie StudySphere bei, um auf Kurse zuzugreifen und sich mit Ihrer Lerncommunity zu verbinden."
+
+#: templates/accounts/register.html:25 templates/accounts/settings.html:115
+#: templates/accounts/settings.html:192
+msgid "Please correct the errors below."
+msgstr "Bitte korrigieren Sie die folgenden Fehler."
+
+#: templates/accounts/register.html:72
+msgid "Choose a username"
+msgstr "Benutzername wählen"
+
+#: templates/accounts/register.html:86
+#: templates/calendar_app/event_form.html:44 templates/chat/room.html:40
+#: templates/courses/course_detail.html:578
+#: templates/courses/course_detail.html:619
+msgid "Cancel"
+msgstr "Abbrechen"
+
+#: templates/accounts/register.html:94
+msgid "Already have an account?"
+msgstr "Bereits ein Konto?"
+
+#: templates/accounts/search_results.html:4
+#: templates/accounts/search_results.html:8
+#: templates/accounts/search_results.html:19
+#: templates/courses/course_list.html:26
+msgid "Search"
+msgstr "Suchen"
+
+#: templates/accounts/search_results.html:14
+msgid "Search anything (courses, users, events)"
+msgstr "Alles durchsuchen (Kurse, Nutzer, Termine)"
+
+#: templates/accounts/search_results.html:15
+msgid "Type a name, course, or event..."
+msgstr "Name, Kurs oder Termin eingeben..."
+
+#: templates/accounts/search_results.html:29
+#, python-format
+msgid "Users matching \"%(q)s\""
+msgstr "Nutzer zu „%(q)s“"
+
+#: templates/accounts/search_results.html:38
+#, fuzzy
+#| msgid "Your Name"
+msgid "Name"
+msgstr "Ihr Name"
+
+#: templates/accounts/search_results.html:39
+msgid "Role"
+msgstr "Rolle"
+
+#: templates/accounts/search_results.html:65
+#, python-format
+msgid "No users found for \"%(q)s\"."
+msgstr "Keine Nutzer zu „%(q)s“ gefunden."
+
+#: templates/accounts/search_results.html:87
+#: templates/courses/course_detail.html:433
+#: templates/courses/course_detail.html:440 templates/home.html:190
+msgid "Open"
+msgstr "Öffnen"
+
+#: templates/accounts/search_results.html:93
+#, python-format
+msgid "No courses found for \"%(q)s\"."
+msgstr "Keine Kurse zu „%(q)s“ gefunden."
+
+#: templates/accounts/search_results.html:101
+#, python-format
+msgid "Events matching \"%(q)s\""
+msgstr "Termine zu „%(q)s“"
+
+#: templates/accounts/search_results.html:111
+#: templates/courses/my_courses.html:48
+msgid "Course"
+msgstr "Kurs"
+
+#: templates/accounts/search_results.html:115 templates/home.html:139
+#: templates/home.html:162 templates/home.html:440
+msgid "View"
+msgstr "Anzeigen"
+
+#: templates/accounts/search_results.html:121
+#, python-format
+msgid "No events found for \"%(q)s\"."
+msgstr "Keine Termine zu „%(q)s“ gefunden."
+
+#: templates/accounts/settings.html:4 templates/accounts/settings.html:14
+#: templates/base.html:159
+msgid "Settings"
+msgstr "Einstellungen"
+
+#: templates/accounts/settings.html:15
+msgid "Manage your account, security, and preferences for"
+msgstr "Verwalten Sie Ihr Konto, Sicherheit und Einstellungen für"
+
+#: templates/accounts/settings.html:27 templates/accounts/settings.html:62
+msgid "General"
+msgstr "Allgemein"
+
+#: templates/accounts/settings.html:30 templates/accounts/settings.html:111
+msgid "Account"
+msgstr "Konto"
+
+#: templates/accounts/settings.html:33 templates/accounts/settings.html:188
+msgid "Security"
+msgstr "Sicherheit"
+
+#: templates/accounts/settings.html:36 templates/accounts/settings.html:247
+msgid "Preferences"
+msgstr "Einstellungen"
+
+#: templates/accounts/settings.html:39 templates/accounts/settings.html:327
+#: templates/accounts/settings.html:341 templates/base.html:50
+#: templates/courses/course_detail.html:117
+#: templates/courses/course_list.html:33
+msgid "Language"
+msgstr "Sprache"
+
+#: templates/accounts/settings.html:45
+msgid "About"
+msgstr "Über uns"
+
+#: templates/accounts/settings.html:71
+msgid "About StudySphere"
+msgstr "Über StudySphere"
+
+#: templates/accounts/settings.html:92
+msgid "Community Principles"
+msgstr "Gemeinschaftsgrundsätze"
+
+#: templates/accounts/settings.html:104
+msgid "Save changes"
+msgstr "Änderungen speichern"
+
+#: templates/accounts/settings.html:335
+msgid "Interface language"
+msgstr "Sprache der Oberfläche"
+
+#: templates/accounts/settings.html:336
+msgid "Select your preferred language for menus and labels."
+msgstr "Wählen Sie Ihre bevorzugte Sprache für Menüs und Beschriftungen."
+
+#: templates/accounts/settings.html:345
+msgid "Save language"
+msgstr "Sprache speichern"
+
+#: templates/base.html:47
+msgid "All Courses"
+msgstr "Alle Kurse"
+
+#: templates/base.html:59
+msgid "Cyber Security"
+msgstr "Cybersicherheit"
+
+#: templates/base.html:60
+msgid "Data Analysis"
+msgstr "Datenanalyse"
+
+#: templates/base.html:61
+msgid "Web Development"
+msgstr "Webentwicklung"
+
+#: templates/base.html:66 templates/courses/my_courses.html:4
+#: templates/courses/my_courses.html:8
+msgid "My Courses"
+msgstr "Meine Kurse"
+
+#: templates/base.html:70 templates/home.html:271
+msgid "My Students"
+msgstr "Meine Lernenden"
+
+#: templates/base.html:74 templates/chat/room.html:4 templates/home.html:270
+msgid "Chat"
+msgstr "Chat"
+
+#: templates/base.html:77 templates/courses/video_resources.html:5
+#: templates/courses/video_resources.html:9
+msgid "Videos"
+msgstr "Videos"
+
+#: templates/base.html:80 templates/calendar_app/calendar.html:4
+#: templates/calendar_app/calendar.html:46
+msgid "Calendar"
+msgstr "Kalender"
+
+#: templates/base.html:98 templates/base.html:172
+msgid "Light mode"
+msgstr "Hellmodus"
+
+#: templates/base.html:99 templates/base.html:173
+msgid "Dark mode"
+msgstr "Dunkelmodus"
+
+#: templates/base.html:100 templates/base.html:174
+msgid "System theme"
+msgstr "Systemdesign"
+
+#: templates/base.html:145
+msgid "Set status message"
+msgstr "Statusnachricht setzen"
+
+#: templates/base.html:152
+msgid "Clear"
+msgstr "Löschen"
+
+#: templates/base.html:153 templates/courses/course_detail.html:620
+msgid "Save"
+msgstr "Speichern"
+
+#: templates/base.html:158
+msgid "Profile"
+msgstr "Profil"
+
+#: templates/base.html:161
+msgid "Logout"
+msgstr "Abmelden"
+
+#: templates/base.html:181
+msgid "Register"
+msgstr "Registrieren"
+
+#: templates/base.html:212
+msgid ""
+"A collaborative learning platform for students and educators to share "
+"knowledge, develop skills, and support academic growth."
+msgstr "Eine kollaborative Lernplattform für Lernende und Lehrende zum Teilen von Wissen, Entwickeln von Fähigkeiten und zur Unterstützung des Lernfortschritts."
+"Eine kollaborative Lernplattform für Lernende und Lehrende, um Wissen zu "
+"teilen, Fähigkeiten zu entwickeln und akademisches Wachstum zu fördern."
+
+#: templates/base.html:216
+#, python-format
+msgid "© %(current_year)s StudySphere. All rights reserved."
+msgstr "© %(current_year)s StudySphere. Alle Rechte vorbehalten."
+
+#: templates/base.html:220
+msgid "Support Center"
+msgstr "Support-Center"
+
+#: templates/base.html:222
+msgid "Community Guidelines"
+msgstr "Community-Richtlinien"
+
+#: templates/calendar_app/calendar.html:8
+msgid "My Calendar"
+msgstr "Mein Kalender"
+
+#: templates/calendar_app/calendar.html:10
+#: templates/calendar_app/event_form.html:4
+msgid "New Event"
+msgstr "Neues Ereignis"
+
+#: templates/calendar_app/calendar.html:19
+msgid "Course Session"
+msgstr "Kurssitzung"
+
+#: templates/calendar_app/calendar.html:20
+msgid "Appointment"
+msgstr "Termin"
+
+#: templates/calendar_app/calendar.html:21
+msgid "Office Hours"
+msgstr "Sprechzeiten"
+
+#: templates/calendar_app/calendar.html:22
+msgid "Deadline"
+msgstr "Frist"
+
+#: templates/calendar_app/calendar.html:27
+msgid "Upcoming events"
+msgstr "Kommende Ereignisse"
+
+#: templates/calendar_app/calendar.html:49
+msgid "Keep track of your sessions, deadlines, and appointments in one place."
+msgstr "Behalten Sie Sitzungen, Fristen und Termine an einem Ort im Blick."
+
+#: templates/calendar_app/calendar.html:50
+msgid "Click on a day to view details, or on an event to open it."
+msgstr "Klicken Sie auf einen Tag für Details oder auf einen Termin zum Öffnen."
+"Klicken Sie auf einen Tag für Details oder auf ein Ereignis zum Öffnen."
+
+#: templates/calendar_app/event_form.html:4
+#: templates/calendar_app/event_form.html:13
+#, fuzzy
+#| msgid "New Event"
+msgid "Edit Event"
+msgstr "Ereignis bearbeiten"
+
+#: templates/calendar_app/event_form.html:13
+#: templates/calendar_app/event_form.html:42
+#, fuzzy
+#| msgid "Create account"
+msgid "Create Event"
+msgstr "Konto erstellen"
+
+#: templates/calendar_app/event_form.html:42
+#, fuzzy
+#| msgid "Save changes"
+msgid "Save Changes"
+msgstr "Änderungen speichern"
+
+#: templates/chat/lobby.html:4 templates/chat/lobby.html:8
+msgid "Chat Rooms"
+msgstr "Chaträume"
+
+#: templates/chat/lobby.html:9
+msgid ""
+"Course rooms: chat with the teacher and other enrolled students. Teachers "
+"can also use the Teachers' room to chat with other teachers."
+msgstr "Kursräume: Chat mit der Lehrkraft und anderen Teilnehmern. Lehrkräfte können auch den Lehrkräfte-Raum nutzen."
+"Kursräume: Chat mit der Lehrkraft und anderen Teilnehmenden. Lehrkräfte "
+"können auch den Lehrkräfte-Raum nutzen."
+
+#: templates/chat/lobby.html:21
+msgid "Teachers' room"
+msgstr "Lehrkräfte-Raum"
+
+#: templates/chat/lobby.html:22
+msgid "Teacher-to-teacher chat"
+msgstr "Chat unter Lehrkräften"
+
+#: templates/chat/lobby.html:28
+msgid "Join Teachers' room"
+msgstr "Lehrkräfte-Raum beitreten"
+
+#: templates/chat/lobby.html:45
+msgid "Course chat room"
+msgstr "Kurs-Chatraum"
+
+#: templates/chat/lobby.html:51
+msgid "Join Chat"
+msgstr "Chat beitreten"
+
+#: templates/chat/lobby.html:62
+msgid "No chat rooms available. Enrol in a course to join its chat room."
+msgstr "Keine Chaträume verfügbar. Melden Sie sich für einen Kurs an, um seinem Chat beizutreten."
+"Keine Chaträume. Melden Sie sich für einen Kurs an, um dem Chat beizutreten."
+
+#: templates/chat/lobby.html:63
+msgid "Browse Courses"
+msgstr "Kurse durchsuchen"
+
+#: templates/chat/room.html:20
+#, fuzzy
+#| msgid "Back to home"
+msgid "Back to Lobby"
+msgstr "Zurück zur Lobby"
+
+#: templates/chat/room.html:32
+msgid "Connecting to chat..."
+msgstr "Verbinde mit Chat..."
+
+#: templates/chat/room.html:38
+msgid "Replying to"
+msgstr "Antwort an"
+
+#: templates/chat/room.html:45
+msgid "Insert emoji"
+msgstr "Emoji einfügen"
+
+#: templates/chat/room.html:51
+msgid "Attach file"
+msgstr "Datei anhängen"
+
+#: templates/chat/room.html:55 templates/home.html:541
+msgid "More"
+msgstr "Mehr"
+
+#: templates/chat/room.html:77
+msgid "Type your message..."
+msgstr "Nachricht eingeben..."
+
+#: templates/chat/room.html:79
+msgid "Send"
+msgstr "Senden"
+
+#: templates/courses/course_detail.html:13
+#: templates/courses/course_detail.html:30
+msgid "Back to Courses"
+msgstr "Zurück zu den Kursen"
+
+#: templates/courses/course_detail.html:17
+#: templates/courses/course_detail.html:26
+msgid "Back to My Courses"
+msgstr "Zurück zu Meine Kurse"
+
+#: templates/courses/course_detail.html:21
+msgid "Back to My Students"
+msgstr "Zurück zu Meine Lernenden"
+
+#: templates/courses/course_detail.html:39
+#: templates/courses/course_list.html:63
+msgid "Course ID"
+msgstr "Kurs-ID"
+
+#: templates/courses/course_detail.html:57
+msgid "No ratings yet"
+msgstr "Noch keine Bewertungen"
+
+#: templates/courses/course_detail.html:64
+msgid "Edit Course"
+msgstr "Kurs bearbeiten"
+
+#: templates/courses/course_detail.html:69
+msgid "Pending approval"
+msgstr "Wartet auf Freigabe"
+
+#: templates/courses/course_detail.html:73
+msgid "Re-apply to enrol"
+msgstr "Erneut zur Anmeldung beantragen"
+
+#: templates/courses/course_detail.html:76
+msgid "Enrolment blocked"
+msgstr "Anmeldung gesperrt"
+
+#: templates/courses/course_detail.html:82
+msgid "Enrol"
+msgstr "Anmelden"
+
+#: templates/courses/course_detail.html:92
+msgid "Description"
+msgstr "Beschreibung"
+
+#: templates/courses/course_detail.html:126
+#, fuzzy
+#| msgid "Student"
+msgid "Students"
+msgstr "Studierender"
+
+#: templates/courses/course_detail.html:135
+#: templates/courses/my_courses.html:50
+msgid "Enrolled date"
+msgstr "Anmeldedatum"
+
+#: templates/courses/course_detail.html:136
+#: templates/courses/my_courses.html:51
+msgid "Status"
+msgstr "Status"
+
+#: templates/courses/course_detail.html:137
+#: templates/courses/course_detail.html:139
+msgid "Action"
+msgstr "Aktion"
+
+#: templates/courses/course_detail.html:138
+#: templates/courses/course_detail.html:236
+#: templates/courses/my_courses.html:52
+msgid "Certificate"
+msgstr "Zertifikat"
+
+#: templates/courses/course_detail.html:157
+#: templates/courses/course_detail.html:170
+#: templates/courses/course_detail.html:261
+#: templates/courses/my_courses.html:72
+msgid "Pending"
+msgstr "Ausstehend"
+
+#: templates/courses/course_detail.html:159
+#: templates/courses/my_courses.html:74
+msgid "Rejected"
+msgstr "Abgelehnt"
+
+#: templates/courses/course_detail.html:161
+#: templates/courses/my_courses.html:76
+msgid "Blocked"
+msgstr "Gesperrt"
+
+#: templates/courses/course_detail.html:163
+#: templates/courses/my_courses.html:78
+msgid "Active"
+msgstr "Aktiv"
+
+#: templates/courses/course_detail.html:171
+#: templates/courses/course_detail.html:248
+msgid "Approved"
+msgstr "Genehmigt"
+
+#: templates/courses/course_detail.html:172
+#, fuzzy
+#| msgid "Rejected"
+msgid "Reject"
+msgstr "Abgelehnt"
+
+#: templates/courses/course_detail.html:173
+#, fuzzy
+#| msgid "Blocked"
+msgid "Block"
+msgstr "Gesperrt"
+
+#: templates/courses/course_detail.html:179
+#: templates/courses/course_detail.html:195
+#: templates/courses/course_detail.html:252
+msgid "Issued"
+msgstr "Ausgestellt"
+
+#: templates/courses/course_detail.html:181
+#: templates/courses/course_detail.html:196
+#: templates/courses/course_detail.html:257
+msgid "Revoked"
+msgstr "Widerrufen"
+
+#: templates/courses/course_detail.html:183
+#: templates/courses/course_detail.html:197
+#: templates/courses/course_detail.html:259
+msgid "Expired"
+msgstr "Abgelaufen"
+
+#: templates/courses/course_detail.html:185
+#: templates/courses/course_detail.html:194
+#, fuzzy
+#| msgid "Pending approval"
+msgid "Pending validation"
+msgstr "Wartet auf Freigabe"
+
+#: templates/courses/course_detail.html:193
+msgid "Select status…"
+msgstr "Status wählen…"
+
+#: templates/courses/course_detail.html:201
+#: templates/courses/course_detail.html:272
+#, fuzzy
+#| msgid "Certificate"
+msgid "Download certificate"
+msgstr "Zertifikat"
+
+#: templates/courses/course_detail.html:202
+#: templates/courses/course_detail.html:273
+#: templates/courses/course_detail.html:360
+#: templates/courses/course_detail.html:365
+#: templates/courses/course_detail.html:436
+#: templates/courses/course_detail.html:443
+#, fuzzy
+#| msgid "Download to PC"
+msgid "Download"
+msgstr "Auf PC herunterladen"
+
+#: templates/courses/course_detail.html:212
+msgid ""
+"No students yet. When students enrol, they will appear here with their "
+"status and certificate actions."
+msgstr "Noch keine Teilnehmer. Sobald sich Teilnehmer anmelden, erscheinen sie hier mit Status und Zertifikatsaktionen."
+
+#: templates/courses/course_detail.html:224
+#, fuzzy
+#| msgid "Certificates earned"
+msgid "Certificate Generator"
+msgstr "Erworbene Zertifikate"
+
+#: templates/courses/course_detail.html:228
+msgid ""
+"Generate a certificate for each approved student. It will be saved and shown "
+"automatically on the student's side (course page and My Certificates). You "
+"can then export it as PDF to your computer. Certificates are stored in "
+"Supabase and include an authentic QR code for verification."
+msgstr ""
+"Erstellen Sie für jeden genehmigten Teilnehmer ein Zertifikat. Es wird "
+"automatisch gespeichert und den Teilnehmern angezeigt (Kursseite und Meine "
+"Zertifikate). Anschließend können Sie es als PDF auf Ihren Rechner exportieren. "
+"Zertifikate werden in Supabase gespeichert und enthalten einen verifizierbaren "
+"QR-Code."
+
+#: templates/courses/course_detail.html:235
+msgid "Enrolment"
+msgstr "Einschreibung"
+
+#: templates/courses/course_detail.html:237
+msgid "Actions"
+msgstr "Aktionen"
+
+#: templates/courses/course_detail.html:269
+#: templates/courses/course_detail.html:571
+#, fuzzy
+#| msgid "Certificate"
+msgid "Generate Certificate"
+msgstr "Zertifikat"
+
+#: templates/courses/course_detail.html:280
+msgid ""
+"No approved enrolments. Approve students first, then generate certificates "
+"here."
+msgstr "Keine genehmigten Anmeldungen. Genehmigen Sie zuerst Teilnehmer, dann können Sie hier Zertifikate erstellen."
+
+#: templates/courses/course_detail.html:291
+msgid "Upload Material"
+msgstr "Material hochladen"
+
+#: templates/courses/course_detail.html:297
+#: templates/courses/course_detail.html:402
+#: templates/courses/video_resources.html:22
+msgid "Title"
+msgstr "Titel"
+
+#: templates/courses/course_detail.html:301
+#: templates/courses/course_detail.html:406
+msgid "File"
+msgstr "Datei"
+
+#: templates/courses/course_detail.html:305
+msgid "Upload"
+msgstr "Hochladen"
+
+#: templates/courses/course_detail.html:314
+#, fuzzy
+#| msgid "Courses Created"
+msgid "Course Materials"
+msgstr "Erstellte Kurse"
+
+#: templates/courses/course_detail.html:326
+#: templates/courses/course_detail.html:425
+msgid "by"
+msgstr "von"
+
+#: templates/courses/course_detail.html:328
+msgid "Uploaded"
+msgstr "Hochgeladen"
+
+#: templates/courses/course_detail.html:333
+msgid "Published"
+msgstr "Veröffentlicht"
+
+#: templates/courses/course_detail.html:335
+msgid "on"
+msgstr "am"
+
+#: templates/courses/course_detail.html:338
+#, fuzzy
+#| msgid "Finished"
+msgid "Unpublished"
+msgstr "Beendet"
+
+#: templates/courses/course_detail.html:356
+#: templates/courses/video_resources.html:89
+msgid "Watch on YouTube"
+msgstr "Auf YouTube ansehen"
+
+#: templates/courses/course_detail.html:368
+#: templates/courses/course_detail.html:446
+#, fuzzy
+#| msgid "Profile"
+msgid "No file"
+msgstr "Profil"
+
+#: templates/courses/course_detail.html:372
+#: templates/courses/course_detail.html:450
+#: templates/courses/course_detail.html:497
+msgid "Edit"
+msgstr "Bearbeiten"
+
+#: templates/courses/course_detail.html:376
+#, fuzzy
+#| msgid "English"
+msgid "Unpublish"
+msgstr "Englisch"
+
+#: templates/courses/course_detail.html:378
+msgid "Publish"
+msgstr "Veröffentlichen"
+
+#: templates/courses/course_detail.html:387
+#, fuzzy
+#| msgid "No status updates yet."
+msgid "No materials uploaded yet."
+msgstr "Noch keine Statusaktualisierungen."
+
+#: templates/courses/course_detail.html:395
+msgid "Student submissions"
+msgstr "Abgaben der Teilnehmer"
+
+#: templates/courses/course_detail.html:410
+msgid "Submit work"
+msgstr "Abgabe einreichen"
+
+#: templates/courses/course_detail.html:427
+msgid "Submitted"
+msgstr "Eingereicht"
+
+#: templates/courses/course_detail.html:432
+#: templates/courses/course_detail.html:439
+msgid "Open in new tab"
+msgstr "In neuem Tab öffnen"
+
+#: templates/courses/course_detail.html:435
+#: templates/courses/course_detail.html:442
+#, fuzzy
+#| msgid "Download to PC"
+msgid "Download file"
+msgstr "Auf PC herunterladen"
+
+#: templates/courses/course_detail.html:460
+msgid "No student submissions yet."
+msgstr "Noch keine Abgaben von Teilnehmern."
+
+#: templates/courses/course_detail.html:462
+msgid "You have not submitted any work yet."
+msgstr "Sie haben noch keine Abgabe eingereicht."
+
+#: templates/courses/course_detail.html:473
+msgid "Feedback & Reviews"
+msgstr "Feedback & Bewertungen"
+
+#: templates/courses/course_detail.html:500
+msgid "Delete your feedback? You can leave a new one afterwards."
+msgstr "Ihr Feedback löschen? Sie können anschließend ein neues abgeben."
+
+#: templates/courses/course_detail.html:503
+msgid "Delete"
+msgstr "Löschen"
+
+#: templates/courses/course_detail.html:516
+#, fuzzy
+#| msgid "from feedback"
+msgid "No feedback yet."
+msgstr "aus Feedback"
+
+#: templates/courses/course_detail.html:525
+#, fuzzy
+#| msgid "Certificate"
+msgid "Your certificate"
+msgstr "Zertifikat"
+
+#: templates/courses/course_detail.html:528
+#, fuzzy
+#| msgid ""
+#| "Certificates appear here once your teacher has generated them. Download "
+#| "to your PC, save to cloud, or share the link with friends."
+msgid ""
+"A certificate has been issued for this course. Download it to your device, "
+"save to your cloud, or share the link with friends."
+msgstr "Für diesen Kurs wurde ein Zertifikat ausgestellt. Laden Sie es auf Ihr Gerät, speichern Sie es in der Cloud oder teilen Sie den Link."
+"Zertifikate erscheinen hier, sobald Ihre Lehrkraft sie erstellt hat. Auf PC "
+"herunterladen, in der Cloud speichern oder Link teilen."
+
+#: templates/courses/course_detail.html:531
+#: templates/courses/my_courses.html:26 templates/home.html:485
+msgid "Download to PC"
+msgstr "Auf PC herunterladen"
+
+#: templates/courses/course_detail.html:542
+#, fuzzy
+#| msgid "Update your picture"
+msgid "Update your feedback"
+msgstr "Bild aktualisieren"
+
+#: templates/courses/course_detail.html:542
+msgid "Leave Feedback"
+msgstr "Feedback geben"
+
+#: templates/courses/course_detail.html:548
+msgid "Rating"
+msgstr "Bewertung"
+
+#: templates/courses/course_detail.html:552
+msgid "Comment"
+msgstr "Kommentar"
+
+#: templates/courses/course_detail.html:556
+#, fuzzy
+#| msgid "from feedback"
+msgid "Update feedback"
+msgstr "aus Feedback"
+
+#: templates/courses/course_detail.html:556
+#, fuzzy
+#| msgid "from feedback"
+msgid "Submit Feedback"
+msgstr "aus Feedback"
+
+#: templates/courses/course_detail.html:572
+#: templates/courses/course_detail.html:592
+#: templates/courses/course_detail.html:613
+msgid "Close"
+msgstr "Schließen"
+
+#: templates/courses/course_detail.html:575
+msgid ""
+"Do you want to generate the certificate? It will be saved and the student "
+"will see it in their completed courses."
+msgstr "Möchten Sie das Zertifikat erstellen? Es wird gespeichert und der Teilnehmer sieht es bei seinen abgeschlossenen Kursen."
+
+#: templates/courses/course_detail.html:580
+msgid "Yes, generate"
+msgstr "Ja, erstellen"
+
+#: templates/courses/course_detail.html:591
+msgid "Export as PDF"
+msgstr "Als PDF exportieren"
+
+#: templates/courses/course_detail.html:595
+msgid ""
+"Certificate has been generated and saved. Do you want to export the "
+"certificate as PDF to your computer?"
+msgstr "Das Zertifikat wurde erstellt und gespeichert. Möchten Sie es als PDF auf Ihren Rechner exportieren?"
+
+#: templates/courses/course_detail.html:598
+msgid "No"
+msgstr "Nein"
+
+#: templates/courses/course_detail.html:600
+msgid "Yes, save to PC"
+msgstr "Ja, auf PC speichern"
+
+#: templates/courses/course_detail.html:612
+msgid "Confirm"
+msgstr "Bestätigen"
+
+#: templates/courses/course_detail.html:616
+msgid "Save this change?"
+msgstr "Diese Änderung speichern?"
+
+#: templates/courses/course_list.html:11
+msgid "Create Courses"
+msgstr "Kurse erstellen"
+
+#: templates/courses/course_list.html:22
+msgid "Search courses..."
+msgstr "Kurse suchen..."
+
+#: templates/courses/course_list.html:36
+msgid "Category"
+msgstr "Kategorie"
+
+#: templates/courses/course_list.html:38
+msgid "Show all"
+msgstr "Alle anzeigen"
+
+#: templates/courses/course_list.html:82
+msgid "View Course"
+msgstr "Kurs anzeigen"
+
+#: templates/courses/course_list.html:94
+msgid "Previous"
+msgstr "Zurück"
+
+#: templates/courses/course_list.html:108
+msgid "Next"
+msgstr "Weiter"
+
+#: templates/courses/course_list.html:112
+#, python-format
+msgid "Page %(p)s of %(total)s"
+msgstr "Seite %(p)s von %(total)s"
+
+#: templates/courses/course_list.html:118
+msgid "No courses found."
+msgstr "Keine Kurse gefunden."
+
+#: templates/courses/my_courses.html:15
+msgid "My Certificates"
+msgstr "Meine Zertifikate"
+
+#: templates/courses/my_courses.html:18
+msgid ""
+"Certificates appear here once your teacher has generated them. Download to "
+"your PC, save to cloud, or share the link with friends."
+msgstr ""
+"Zertifikate erscheinen hier, sobald Ihre Lehrkraft sie erstellt hat. Auf PC "
+"herunterladen, in der Cloud speichern oder Link teilen."
+
+#: templates/courses/my_courses.html:39
+msgid "My course requests"
+msgstr "Meine Kursanfragen"
+
+#: templates/courses/video_resources.html:10
+msgid ""
+"Course-related video material. Teachers can add YouTube or other video links "
+"here."
+msgstr "Kursbezogene Videomaterialien. Lehrkräfte können hier YouTube- oder andere Videolinks hinzufügen."
+
+#: templates/courses/video_resources.html:15
+msgid "Add a video"
+msgstr "Video hinzufügen"
+
+#: templates/courses/video_resources.html:27
+msgid "Video URL (e.g. YouTube)"
+msgstr "Video-URL (z. B. YouTube)"
+
+#: templates/courses/video_resources.html:32
+msgid "Description (optional)"
+msgstr "Beschreibung (optional)"
+
+#: templates/courses/video_resources.html:36
+msgid "Course (optional)"
+msgstr "Kurs (optional)"
+
+#: templates/courses/video_resources.html:41
+msgid "Add video"
+msgstr "Video hinzufügen"
+
+#: templates/courses/video_resources.html:52
+msgid "Video resources"
+msgstr "Videomaterialien"
+
+#: templates/courses/video_resources.html:74
+msgid "Open video"
+msgstr "Video öffnen"
+
+#: templates/courses/video_resources.html:83
+msgid "Global"
+msgstr "Global"
+
+#: templates/courses/video_resources.html:100
+#, fuzzy
+#| msgid "No courses yet."
+msgid "No videos yet."
+msgstr "Noch keine Videos."
+
+#: templates/courses/video_resources.html:100
+msgid "Use the form above to add a YouTube or video link."
+msgstr "Nutzen Sie das Formular oben, um einen YouTube- oder Videolink hinzuzufügen."
+
+#: templates/home.html:5
+msgid "Dashboard"
+msgstr "Übersicht"
+
+#: templates/home.html:5
+msgid "Home"
+msgstr "Startseite"
+
+#: templates/home.html:16 templates/home.html:284
+msgid "Good Morning"
+msgstr "Guten Morgen"
+
+#: templates/home.html:16 templates/home.html:284
+msgid "Good Afternoon"
+msgstr "Guten Tag"
+
+#: templates/home.html:16 templates/home.html:284
+msgid "Good Evening"
+msgstr "Guten Abend"
+
+#: templates/home.html:18
+msgid "Here's an overview of your class performance."
+msgstr "Hier ist eine Übersicht über die Leistung Ihrer Klasse."
+
+#: templates/home.html:26
+msgid "Total Students"
+msgstr "Lernende gesamt"
+
+#: templates/home.html:40 templates/home.html:340
+msgid "Active Courses"
+msgstr "Aktive Kurse"
+
+#: templates/home.html:54
+msgid "Completions This Week"
+msgstr "Abschlüsse diese Woche"
+
+#: templates/home.html:68
+msgid "Pending Approval"
+msgstr "Wartet auf Freigabe"
+
+#: templates/home.html:89
+msgid "Recent Student Activity"
+msgstr "Letzte Aktivität der Lernenden"
+
+#: templates/home.html:110
+msgid "No recent activity yet."
+msgstr "Noch keine aktuelle Aktivität."
+
+#: templates/home.html:118
+msgid "Engagement Stats"
+msgstr "Aktivitätsstatistik"
+
+#: templates/home.html:121
+msgid "Weekly overview — time series"
+msgstr "Wochenübersicht — Zeitreihe"
+
+#: templates/home.html:127
+msgid "Avg. rating"
+msgstr "Durchschn. Bewertung"
+
+#: templates/home.html:129
+msgid "from feedback"
+msgstr "aus Feedback"
+
+#: templates/home.html:132
+msgid "Certificates issued"
+msgstr "Zertifikate ausgestellt"
+
+#: templates/home.html:134
+msgid "all time"
+msgstr "insgesamt"
+
+#: templates/home.html:137
+msgid "Messages waiting"
+msgstr "Wartende Nachrichten"
+
+#: templates/home.html:151
+msgid "Pending Approvals"
+msgstr "Ausstehende Freigaben"
+
+#: templates/home.html:159
+msgid "— enrolment in"
+msgstr "— Anmeldung in"
+
+#: templates/home.html:168
+msgid "No pending approvals."
+msgstr "Keine ausstehenden Freigaben."
+
+#: templates/home.html:176
+msgid "Courses Overview"
+msgstr "Kursübersicht"
+
+#: templates/home.html:189
+#, python-format
+msgid "%(n)s student"
+msgid_plural "%(n)s students"
+msgstr[0] "%(n)s Lernende/r"
+msgstr[1] "%(n)s Lernende"
+
+#: templates/home.html:195
+msgid "No courses yet."
+msgstr "Noch keine Kurse."
+
+#: templates/home.html:195
+msgid "Create a course"
+msgstr "Kurs erstellen"
+
+#: templates/home.html:206
+msgid "Students Completed This Week"
+msgstr "Diese Woche abgeschlossen (Lernende)"
+
+#: templates/home.html:209
+msgid "Certificates issued by course (last 7 days)"
+msgstr "Zertifikate pro Kurs (letzte 7 Tage)"
+
+#: templates/home.html:220
+msgid "Unknown course"
+msgstr "Unbekannter Kurs"
+
+#: templates/home.html:220
+msgid "student"
+msgid_plural "students"
+msgstr[0] "Lernende/r"
+msgstr[1] "Lernende"
+
+#: templates/home.html:225
+#, python-format
+msgid "Total: <strong>%(n)s</strong> certificate this week."
+msgid_plural "Total: <strong>%(n)s</strong> certificates this week."
+msgstr[0] "Gesamt: <strong>%(n)s</strong> Zertifikat diese Woche."
+msgstr[1] "Gesamt: <strong>%(n)s</strong> Zertifikate diese Woche."
+
+#: templates/home.html:227
+msgid "No certificates issued in the past 7 days."
+msgstr "In den letzten 7 Tagen keine Zertifikate ausgestellt."
+
+#: templates/home.html:237
+msgid "Messages Waiting"
+msgstr "Wartende Nachrichten"
+
+#: templates/home.html:240
+#, python-format
+msgid "You have <strong>%(n)s</strong> unread notification."
+msgid_plural "You have <strong>%(n)s</strong> unread notifications."
+msgstr[0] "Sie haben <strong>%(n)s</strong> ungelesene Benachrichtigung."
+msgstr[1] "Sie haben <strong>%(n)s</strong> ungelesene Benachrichtigungen."
+
+#: templates/home.html:241
+msgid "View notifications"
+msgstr "Benachrichtigungen anzeigen"
+
+#: templates/home.html:265
+msgid "Quick Links"
+msgstr "Schnellzugriff"
+
+#: templates/home.html:269
+msgid "Create Course"
+msgstr "Kurs erstellen"
+
+#: templates/home.html:286
+msgid "Here's an overview of your learning journey."
+msgstr "Hier ist eine Übersicht über Ihren Lernfortschritt."
+
+#: templates/home.html:299
+msgid "Study streak"
+msgstr "Lernserie"
+
+#: templates/home.html:301
+msgid "You studied today — keep it up!"
+msgstr "Sie haben heute gelernt — weiter so!"
+
+#: templates/home.html:301
+#, python-format
+msgid "Longest: %(n)s day"
+msgid_plural "Longest: %(n)s days"
+msgstr[0] "Längste: %(n)s Tag"
+msgstr[1] "Längste: %(n)s Tage"
+
+#: templates/home.html:301
+msgid "Study today to start a streak"
+msgstr "Lernen Sie heute, um eine Serie zu starten"
+
+#: templates/home.html:313
+msgid "Certificates earned"
+msgstr "Erworbene Zertifikate"
+
+#: templates/home.html:315
+#, python-format
+msgid "%(n)s course completed"
+msgid_plural "%(n)s courses completed"
+msgstr[0] "%(n)s Kurs abgeschlossen"
+msgstr[1] "%(n)s Kurse abgeschlossen"
+
+#: templates/home.html:327
+msgid "Progress"
+msgstr "Fortschritt"
+
+#: templates/home.html:328
+msgid "active"
+msgstr "aktiv"
+
+#: templates/home.html:329
+msgid "completed"
+msgstr "abgeschlossen"
+
+#: templates/home.html:329
+msgid "Keep going!"
+msgstr "Weiter so!"
+
+#: templates/home.html:354
+msgid "Completed Courses"
+msgstr "Abgeschlossene Kurse"
+
+#: templates/home.html:368
+msgid "Certificates Earned"
+msgstr "Erworbene Zertifikate"
+
+#: templates/home.html:382
+msgid "Unread Notifications"
+msgstr "Ungelesene Benachrichtigungen"
+
+#: templates/home.html:399
+msgid "Progress Overview"
+msgstr "Fortschrittsübersicht"
+
+#: templates/home.html:414
+msgid "Instructor"
+msgstr "Lehrkraft"
+
+#: templates/home.html:416
+msgid "Continue"
+msgstr "Weiter"
+
+#: templates/home.html:421
+msgid "No courses in progress yet."
+msgstr "Noch keine Kurse in Bearbeitung."
+
+#: templates/home.html:421
+msgid "Browse courses"
+msgstr "Kurse durchsuchen"
+
+#: templates/home.html:421
+msgid "to get started."
+msgstr "um zu starten."
+
+#: templates/home.html:429
+msgid "Upcoming Deadlines"
+msgstr "Kommende Fristen"
+
+#: templates/home.html:438
+msgid "Ends"
+msgstr "Endet"
+
+#: templates/home.html:445
+msgid "No upcoming deadlines."
+msgstr "Keine kommenden Fristen."
+
+#: templates/home.html:451 templates/notifications/notification_list.html:4
+#: templates/notifications/notification_list.html:13
+msgid "Notifications"
+msgstr "Benachrichtigungen"
+
+#: templates/home.html:463
+msgid "View all notifications"
+msgstr "Alle Benachrichtigungen anzeigen"
+
+#: templates/home.html:465
+msgid "You're all caught up."
+msgstr "Sie sind auf dem neuesten Stand."
+
+#: templates/home.html:476
+msgid "Latest Achievement"
+msgstr "Letzter Erfolg"
+
+#: templates/home.html:482
+msgid "Finished"
+msgstr "Beendet"
+
+#: templates/home.html:490
+msgid "Once you complete a course, your latest certificate will appear here."
+msgstr "Nach Abschluss eines Kurses erscheint hier Ihr neuestes Zertifikat."
+
+#: templates/home.html:498
+msgid "Activity Heatmap"
+msgstr "Aktivitäts-Heatmap"
+
+#: templates/home.html:499
+msgid "Monthly activity"
+msgstr "Monatliche Aktivität"
+
+#: templates/home.html:531
+#, python-format
+msgid "%(n)s contribution in the last year"
+msgid_plural "%(n)s contributions in the last year"
+msgstr[0] "%(n)s Beitrag im letzten Jahr"
+msgstr[1] "%(n)s Beiträge im letzten Jahr"
+
+#: templates/home.html:533
+msgid "Less"
+msgstr "Weniger"
+
+#: templates/home.html:547
+msgid "Start learning and your monthly activity will appear here."
+msgstr "Beginnen Sie zu lernen, dann erscheint hier Ihre monatliche Aktivität."
+
+#: templates/home.html:569
+msgid "Welcome to"
+msgstr "Willkommen bei"
+
+#: templates/home.html:571
+msgid ""
+"A modern eLearning platform where students and teachers connect, learn, and "
+"grow together."
+msgstr "Eine moderne E-Learning-Plattform, auf der Lernende und Lehrende sich verbinden, lernen und gemeinsam wachsen."
+"Eine moderne E-Learning-Plattform, auf der Lernende und Lehrende sich "
+"verbinden, gemeinsam lernen und wachsen."
+
+#: templates/home.html:574
+msgid "Get Started"
+msgstr "Jetzt starten"
+
+#: templates/home.html:584
+msgid "Learn"
+msgstr "Lernen"
+
+#: templates/home.html:585
+msgid ""
+"Enrol in courses, access materials, and track your progress at your own pace."
+msgstr "Melden Sie sich für Kurse an, greifen Sie auf Materialien zu und verfolgen Sie Ihren Fortschritt in Ihrem eigenen Tempo."
+"Melden Sie sich für Kurse an, greifen Sie auf Materialien zu und verfolgen "
+"Sie Ihren Fortschritt in Ihrem eigenen Tempo."
+
+#: templates/home.html:593
+msgid "Teach"
+msgstr "Lehren"
+
+#: templates/home.html:594
+msgid ""
+"Create and manage courses, upload materials, and engage with your students."
+msgstr "Kurse erstellen und verwalten, Materialien hochladen und mit Ihren Teilnehmern in Kontakt treten."
+"Erstellen und verwalten Sie Kurse, laden Sie Materialien hoch und tauschen "
+"Sie sich mit Ihren Lernenden aus."
+
+#: templates/home.html:602
+msgid "Connect"
+msgstr "Vernetzen"
+
+#: templates/home.html:603
+msgid ""
+"Chat in real time, share status updates, and build a learning community."
+msgstr "Echtzeit-Chat, Statusupdates teilen und eine Lerncommunity aufbauen."
+"Chatten Sie in Echtzeit, teilen Sie Statusaktualisierungen und bauen Sie "
+"eine Lerncommunity auf."
+
+#: templates/notifications/notification_list.html:18
+msgid "Mark All as Read"
+msgstr "Alle als gelesen markieren"
+
+#: templates/notifications/notification_list.html:44
+msgid "Click to view"
+msgstr "Zum Ansehen klicken"
+
+#: templates/notifications/notification_list.html:52
+msgid "Mark Read"
+msgstr "Als gelesen markieren"
+
+#: templates/notifications/notification_list.html:62
+#, fuzzy
+#| msgid "Notifications"
+msgid "No notifications yet."
+msgstr "Benachrichtigungen"

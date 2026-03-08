@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
+{% load i18n %}
 
-{% block title %}Notifications — StudySphere{% endblock %}
+{% block title %}{% trans "Notifications" %} — {% trans "StudySphere" %}{% endblock %}
 
 {% block content %}
 <style>
@@ -9,12 +10,12 @@
 </style>
 <div class="mt-3">
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="fw-bold mb-0"><i class="bi bi-bell me-2"></i>Notifications</h2>
+    <h2 class="fw-bold mb-0"><i class="bi bi-bell me-2"></i>{% trans "Notifications" %}</h2>
     {% if notifications %}
     <form method="post" action="{% url 'notifications:mark_all_read' %}">
       {% csrf_token %}
       <button type="submit" class="btn btn-outline-primary btn-sm">
-        <i class="bi bi-check-all me-1"></i>Mark All as Read
+        <i class="bi bi-check-all me-1"></i>{% trans "Mark All as Read" %}
       </button>
     </form>
     {% endif %}
@@ -37,10 +38,10 @@
               {{ notification.message }}
             </p>
             <small class="text-muted">
-              <i class="bi bi-clock me-1"></i>{{ notification.created_at|timesince }} ago
+              <i class="bi bi-clock me-1"></i>{{ notification.created_at|timesince }} {% trans "ago" %}
             </small>
             {% if notification.link_url %}
-              <span class="d-block small mt-1 text-primary"><i class="bi bi-box-arrow-up-right me-1"></i>Click to view</span>
+              <span class="d-block small mt-1 text-primary"><i class="bi bi-box-arrow-up-right me-1"></i>{% trans "Click to view" %}</span>
             {% endif %}
           </div>
         </a>
@@ -48,7 +49,7 @@
         <form method="post" action="{% url 'notifications:mark_read' notification.id %}" class="mb-0" onclick="event.stopPropagation();">
           {% csrf_token %}
           <button type="submit" class="btn btn-outline-secondary btn-sm">
-            <i class="bi bi-check me-1"></i>Mark Read
+            <i class="bi bi-check me-1"></i>{% trans "Mark Read" %}
           </button>
         </form>
         {% endif %}
@@ -58,7 +59,7 @@
   {% else %}
   <div class="text-center py-5">
     <i class="bi bi-bell-slash fs-1 text-muted"></i>
-    <p class="text-muted mt-2 mb-0">No notifications yet.</p>
+    <p class="text-muted mt-2 mb-0">{% trans "No notifications yet." %}</p>
   </div>
   {% endif %}
 </div>

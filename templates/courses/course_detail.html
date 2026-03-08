@@ -1,7 +1,8 @@
 {% extends 'base.html' %}
 {% load courses_extras %}
+{% load i18n %}
 
-{% block title %}{{ course.title }} — StudySphere{% endblock %}
+{% block title %}{{ course.title }} — {% trans "StudySphere" %}{% endblock %}
 
 {% block content %}
 <div class="mt-3">
@@ -9,33 +10,33 @@
   <div class="mb-2">
     {% if back_from == 'courses' %}
       <a href="{% url 'courses:course_list' %}" class="btn btn-outline-secondary btn-sm">
-        <i class="bi bi-arrow-left me-1"></i>Back to Courses
+        <i class="bi bi-arrow-left me-1"></i>{% trans "Back to Courses" %}
       </a>
     {% elif back_from == 'my-courses' %}
       <a href="{% url 'courses:my_courses' %}" class="btn btn-outline-secondary btn-sm">
-        <i class="bi bi-arrow-left me-1"></i>Back to My Courses
+        <i class="bi bi-arrow-left me-1"></i>{% trans "Back to My Courses" %}
       </a>
     {% elif back_from == 'my-students' and is_teacher %}
       <a href="{% url 'accounts:my_students' %}" class="btn btn-outline-secondary btn-sm">
-        <i class="bi bi-arrow-left me-1"></i>Back to My Students
+        <i class="bi bi-arrow-left me-1"></i>{% trans "Back to My Students" %}
       </a>
     {% else %}
       {% if is_teacher or user.is_authenticated and user.is_student %}
         <a href="{% url 'courses:my_courses' %}" class="btn btn-outline-secondary btn-sm">
-          <i class="bi bi-arrow-left me-1"></i>Back to My Courses
+          <i class="bi bi-arrow-left me-1"></i>{% trans "Back to My Courses" %}
         </a>
       {% else %}
         <a href="{% url 'courses:course_list' %}" class="btn btn-outline-secondary btn-sm">
-          <i class="bi bi-arrow-left me-1"></i>Back to Courses
+          <i class="bi bi-arrow-left me-1"></i>{% trans "Back to Courses" %}
         </a>
       {% endif %}
     {% endif %}
   </div>
 
-  <div class="d-flex justify-content-between align-items-start mb-4">
-    <div>
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-stretch align-items-md-start gap-3 mb-4">
+    <div class="min-w-0">
       <h2 class="fw-bold mb-1">{{ course.title }}</h2>
-      <p class="text-muted small mb-1">Course ID: #{{ course.id }}</p>
+      <p class="text-muted small mb-1">{% trans "Course ID" %}: #{{ course.id }}</p>
       <p class="text-muted mb-1">
         <i class="bi bi-person me-1"></i>
         <a href="{% url 'accounts:profile' course.teacher.username %}" class="text-decoration-none">
@@ -53,32 +54,32 @@
           {% endfor %}
           <span class="text-muted ms-1">({{ course.avg_rating|floatformat:1 }})</span>
         {% else %}
-          <span class="text-muted">No ratings yet</span>
+          <span class="text-muted">{% trans "No ratings yet" %}</span>
         {% endif %}
       </div>
     </div>
-    <div>
+    <div class="flex-shrink-0">
       {% if is_teacher %}
         <a href="{% url 'courses:course_edit' course.id %}" class="btn btn-outline-secondary">
-          <i class="bi bi-pencil me-1"></i>Edit Course
+          <i class="bi bi-pencil me-1"></i>{% trans "Edit Course" %}
         </a>
       {% elif user.is_authenticated and user.is_student %}
         {% if enrolment %}
           {% if enrolment.status == 'PENDING' %}
-            <span class="badge bg-warning text-dark">Pending approval</span>
+            <span class="badge bg-warning text-dark">{% trans "Pending approval" %}</span>
           {% elif enrolment.status == 'REJECTED' %}
             <form method="post" action="{% url 'courses:enrol' course.id %}" class="d-inline">
               {% csrf_token %}
-              <button type="submit" class="btn btn-outline-success btn-sm">Re-apply to enrol</button>
+              <button type="submit" class="btn btn-outline-success btn-sm">{% trans "Re-apply to enrol" %}</button>
             </form>
           {% elif not is_enrolled %}
-            <span class="badge bg-secondary">Enrolment blocked</span>
+            <span class="badge bg-secondary">{% trans "Enrolment blocked" %}</span>
           {% endif %}
         {% else %}
           <form method="post" action="{% url 'courses:enrol' course.id %}">
             {% csrf_token %}
             <button type="submit" class="btn btn-success">
-              <i class="bi bi-plus-circle me-1"></i>Enrol
+              <i class="bi bi-plus-circle me-1"></i>{% trans "Enrol" %}
             </button>
           </form>
         {% endif %}
@@ -88,7 +89,7 @@
 
   <div class="card shadow-sm border-0 mb-4">
     <div class="card-body">
-      <h5 class="fw-semibold mb-3">Description</h5>
+      <h5 class="fw-semibold mb-3">{% trans "Description" %}</h5>
       {% if course.hero_image_url %}
         <div class="mb-3 text-center">
           <img src="{{ course.hero_image_url }}" alt="{{ course.title }} image" class="img-fluid rounded">
@@ -113,7 +114,7 @@
           <span><i class="bi bi-clock me-1"></i>{{ course.duration_hours }} hours</span>
         {% endif %}
         {% if course.language %}
-          <span><i class="bi bi-translate me-1"></i>Language: {{ course.get_language_display }}</span>
+          <span><i class="bi bi-translate me-1"></i>{% trans "Language" %}: {{ course.get_language_display }}</span>
         {% endif %}
       </div>
     </div>
@@ -122,20 +123,20 @@
   {% if is_teacher %}
   <div class="card shadow-sm border-0 mb-4">
     <div class="card-header bg-white fw-semibold">
-      <i class="bi bi-people me-2"></i>Students
+      <i class="bi bi-people me-2"></i>{% trans "Students" %}
     </div>
     <div class="card-body p-0">
       <div class="table-responsive">
         <table class="table table-hover mb-0">
           <thead class="table-light">
             <tr>
-              <th>Student ID</th>
-              <th>Student</th>
-              <th>Enrolled date</th>
-              <th>Status</th>
-              <th>Action</th>
-              <th>Certificate</th>
-              <th>Action</th>
+              <th>{% trans "Student ID" %}</th>
+              <th>{% trans "Student" %}</th>
+              <th>{% trans "Enrolled date" %}</th>
+              <th>{% trans "Status" %}</th>
+              <th>{% trans "Action" %}</th>
+              <th>{% trans "Certificate" %}</th>
+              <th>{% trans "Action" %}</th>
             </tr>
           </thead>
           <tbody>
@@ -153,35 +154,35 @@
               <td>{{ enrolment.enrolled_at|date:"d M Y" }}</td>
               <td>
                 {% if enrolment.status == 'PENDING' %}
-                  <span class="badge bg-warning text-dark">Pending</span>
+                  <span class="badge bg-warning text-dark">{% trans "Pending" %}</span>
                 {% elif enrolment.status == 'REJECTED' %}
-                  <span class="badge bg-secondary">Rejected</span>
+                  <span class="badge bg-secondary">{% trans "Rejected" %}</span>
                 {% elif enrolment.blocked %}
-                  <span class="badge bg-danger">Blocked</span>
+                  <span class="badge bg-danger">{% trans "Blocked" %}</span>
                 {% else %}
-                  <span class="badge bg-success">Active</span>
+                  <span class="badge bg-success">{% trans "Active" %}</span>
                 {% endif %}
               </td>
               <td>
                 <form method="post" action="{% url 'courses:set_enrolment_status' course.id enrolment.student.id %}" class="action-status-form">
                   {% csrf_token %}
                   <select name="status" class="form-select form-select-sm action-status-select" style="width: auto; min-width: 8rem;">
-                    <option value="PENDING" {% if enrolment.status == 'PENDING' %}selected{% endif %}>Pending</option>
-                    <option value="APPROVED" {% if enrolment.status == 'APPROVED' and not enrolment.blocked %}selected{% endif %}>Approved</option>
-                    <option value="REJECTED" {% if enrolment.status == 'REJECTED' %}selected{% endif %}>Reject</option>
-                    <option value="BLOCK" {% if enrolment.blocked %}selected{% endif %}>Block</option>
+                    <option value="PENDING" {% if enrolment.status == 'PENDING' %}selected{% endif %}>{% trans "Pending" %}</option>
+                    <option value="APPROVED" {% if enrolment.status == 'APPROVED' and not enrolment.blocked %}selected{% endif %}>{% trans "Approved" %}</option>
+                    <option value="REJECTED" {% if enrolment.status == 'REJECTED' %}selected{% endif %}>{% trans "Reject" %}</option>
+                    <option value="BLOCK" {% if enrolment.blocked %}selected{% endif %}>{% trans "Block" %}</option>
                   </select>
                 </form>
               </td>
               <td>
                 {% if enrolment.certificate_status == 'ISSUED' %}
-                  <span class="badge bg-success">Issued</span>
+                  <span class="badge bg-success">{% trans "Issued" %}</span>
                 {% elif enrolment.certificate_status == 'REVOKED' %}
-                  <span class="badge bg-danger">Revoked</span>
+                  <span class="badge bg-danger">{% trans "Revoked" %}</span>
                 {% elif enrolment.certificate_status == 'EXPIRED' %}
-                  <span class="badge bg-secondary">Expired</span>
+                  <span class="badge bg-secondary">{% trans "Expired" %}</span>
                 {% else %}
-                  <span class="badge bg-warning text-dark">Pending validation</span>
+                  <span class="badge bg-warning text-dark">{% trans "Pending validation" %}</span>
                 {% endif %}
               </td>
               <td>
@@ -189,16 +190,16 @@
                   <form method="post" action="{% url 'courses:set_certificate_action' course.id enrolment.student.id %}" class="certificate-action-form">
                     {% csrf_token %}
                     <select name="certificate_action" class="form-select form-select-sm certificate-action-select" style="width: auto; min-width: 10rem;">
-                      <option value="">Select status…</option>
-                      <option value="pending" {% if not enrolment.certificate_status or enrolment.certificate_status != 'ISSUED' and enrolment.certificate_status != 'REVOKED' and enrolment.certificate_status != 'EXPIRED' %}selected{% endif %}>Pending validation</option>
-                      <option value="issued" {% if enrolment.certificate_status == 'ISSUED' %}selected{% endif %}>Issued</option>
-                      <option value="revoked" {% if enrolment.certificate_status == 'REVOKED' %}selected{% endif %}>Revoked</option>
-                      <option value="expired" {% if enrolment.certificate_status == 'EXPIRED' %}selected{% endif %}>Expired</option>
+                      <option value="">{% trans "Select status…" %}</option>
+                      <option value="pending" {% if not enrolment.certificate_status or enrolment.certificate_status != 'ISSUED' and enrolment.certificate_status != 'REVOKED' and enrolment.certificate_status != 'EXPIRED' %}selected{% endif %}>{% trans "Pending validation" %}</option>
+                      <option value="issued" {% if enrolment.certificate_status == 'ISSUED' %}selected{% endif %}>{% trans "Issued" %}</option>
+                      <option value="revoked" {% if enrolment.certificate_status == 'REVOKED' %}selected{% endif %}>{% trans "Revoked" %}</option>
+                      <option value="expired" {% if enrolment.certificate_status == 'EXPIRED' %}selected{% endif %}>{% trans "Expired" %}</option>
                     </select>
                   </form>
                   {% if enrolment.certificate_status == 'ISSUED' %}
-                    <a href="{% url 'courses:download_certificate' enrolment.id %}" class="btn btn-outline-secondary btn-sm ms-1" title="Download certificate">
-                      <i class="bi bi-download me-1"></i>Download
+                    <a href="{% url 'courses:download_certificate' enrolment.id %}" class="btn btn-outline-secondary btn-sm ms-1" title="{% trans 'Download certificate' %}">
+                      <i class="bi bi-download me-1"></i>{% trans "Download" %}
                     </a>
                   {% endif %}
                 </div>
@@ -208,7 +209,7 @@
             {% else %}
             <tr>
               <td colspan="7" class="text-center text-muted py-4">
-                No students yet. When students enrol, they will appear here with their status and certificate actions.
+                {% trans "No students yet. When students enrol, they will appear here with their status and certificate actions." %}
               </td>
             </tr>
             {% endif %}
@@ -220,20 +221,20 @@
 
   <div class="card shadow-sm border-0 mb-4">
     <div class="card-header bg-white fw-semibold">
-      <i class="bi bi-file-earmark-pdf me-2"></i>Certificate Generator
+      <i class="bi bi-file-earmark-pdf me-2"></i>{% trans "Certificate Generator" %}
     </div>
     <div class="card-body">
       <p class="text-muted small mb-3">
-        Generate a certificate for each approved student. It will be saved and shown automatically on the student’s side (course page and My Certificates). You can then export it as PDF to your computer. Certificates are stored in Supabase and include an authentic QR code for verification.
+        {% trans "Generate a certificate for each approved student. It will be saved and shown automatically on the student's side (course page and My Certificates). You can then export it as PDF to your computer. Certificates are stored in Supabase and include an authentic QR code for verification." %}
       </p>
       <div class="table-responsive">
         <table class="table table-sm table-hover mb-0">
           <thead class="table-light">
             <tr>
-              <th>Student</th>
-              <th>Enrolment</th>
-              <th>Certificate</th>
-              <th class="text-end">Actions</th>
+              <th>{% trans "Student" %}</th>
+              <th>{% trans "Enrolment" %}</th>
+              <th>{% trans "Certificate" %}</th>
+              <th class="text-end">{% trans "Actions" %}</th>
             </tr>
           </thead>
           <tbody>
@@ -244,20 +245,20 @@
                 {% if enrolment.student.student_id %}<br><small class="text-muted">{{ enrolment.student.student_id }}</small>{% endif %}
               </td>
               <td>
-                <span class="badge bg-success">Approved</span>
+                <span class="badge bg-success">{% trans "Approved" %}</span>
               </td>
               <td>
                 {% if enrolment.certificate_status == 'ISSUED' %}
-                  <span class="badge bg-success">Issued</span>
+                  <span class="badge bg-success">{% trans "Issued" %}</span>
                   {% if enrolment.certificate %}
                     <br><small class="text-muted">CERT-{{ enrolment.certificate.id|stringformat:"06d" }}</small>
                   {% endif %}
                 {% elif enrolment.certificate_status == 'REVOKED' %}
-                  <span class="badge bg-danger">Revoked</span>
+                  <span class="badge bg-danger">{% trans "Revoked" %}</span>
                 {% elif enrolment.certificate_status == 'EXPIRED' %}
-                  <span class="badge bg-secondary">Expired</span>
+                  <span class="badge bg-secondary">{% trans "Expired" %}</span>
                 {% else %}
-                  <span class="badge bg-warning text-dark">Pending</span>
+                  <span class="badge bg-warning text-dark">{% trans "Pending" %}</span>
                 {% endif %}
               </td>
               <td class="text-end">
@@ -265,18 +266,18 @@
                         data-course-id="{{ course.id }}"
                         data-student-id="{{ enrolment.student.id }}"
                         data-student-name="{{ enrolment.student.get_full_name|default:enrolment.student.username }}">
-                  <i class="bi bi-award me-1"></i>Generate Certificate
+                  <i class="bi bi-award me-1"></i>{% trans "Generate Certificate" %}
                 </button>
                 {% if enrolment.certificate_status == 'ISSUED' %}
-                  <a href="{% url 'courses:download_certificate' enrolment.id %}" class="btn btn-outline-secondary btn-sm ms-1" title="Download certificate">
-                    <i class="bi bi-download me-1"></i>Download
+                  <a href="{% url 'courses:download_certificate' enrolment.id %}" class="btn btn-outline-secondary btn-sm ms-1" title="{% trans 'Download certificate' %}">
+                    <i class="bi bi-download me-1"></i>{% trans "Download" %}
                   </a>
                 {% endif %}
               </td>
             </tr>
             {% empty %}
             <tr>
-              <td colspan="4" class="text-center text-muted py-3">No approved enrolments. Approve students first, then generate certificates here.</td>
+              <td colspan="4" class="text-center text-muted py-3">{% trans "No approved enrolments. Approve students first, then generate certificates here." %}</td>
             </tr>
             {% endfor %}
           </tbody>
@@ -287,21 +288,21 @@
 
   <div class="card shadow-sm border-0 mb-4">
     <div class="card-header bg-white fw-semibold">
-      <i class="bi bi-cloud-upload me-2"></i>Upload Material
+      <i class="bi bi-cloud-upload me-2"></i>{% trans "Upload Material" %}
     </div>
     <div class="card-body">
       <form method="post" action="{% url 'courses:upload_material' course.id %}" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="mb-3">
-          <label for="id_title" class="form-label fw-semibold">Title</label>
+          <label for="id_title" class="form-label fw-semibold">{% trans "Title" %}</label>
           <input type="text" name="title" id="id_title" class="form-control" required>
         </div>
         <div class="mb-3">
-          <label for="id_file" class="form-label fw-semibold">File</label>
+          <label for="id_file" class="form-label fw-semibold">{% trans "File" %}</label>
           <input type="file" name="file" id="id_file" class="form-control" required>
         </div>
         <button type="submit" class="btn btn-primary">
-          <i class="bi bi-upload me-1"></i>Upload
+          <i class="bi bi-upload me-1"></i>{% trans "Upload" %}
         </button>
       </form>
     </div>
@@ -310,7 +311,7 @@
 
   <div class="card shadow-sm border-0 mb-4">
     <div class="card-header bg-white fw-semibold">
-      <i class="bi bi-folder me-2"></i>Course Materials
+      <i class="bi bi-folder me-2"></i>{% trans "Course Materials" %}
     </div>
     <div class="card-body">
       {% if materials %}
@@ -322,19 +323,19 @@
             <span class="fw-semibold">{{ material.title }}</span>
             <small class="text-muted ms-2">
               {% if material.author %}
-                by {{ material.author.get_full_name|default:material.author.username }}
+                {% trans "by" %} {{ material.author.get_full_name|default:material.author.username }}
               {% endif %}
-              · Uploaded {{ material.uploaded_at|date:"d M Y" }}
+              · {% trans "Uploaded" %} {{ material.uploaded_at|date:"d M Y" }}
             </small>
             {% if is_teacher %}
               <div class="small mt-1">
                 {% if material.published %}
-                  <span class="badge bg-success me-1">Published</span>
+                  <span class="badge bg-success me-1">{% trans "Published" %}</span>
                   {% if material.published_at %}
-                    <span class="text-muted">on {{ material.published_at|date:"d M Y" }}</span>
+                    <span class="text-muted">{% trans "on" %} {{ material.published_at|date:"d M Y" }}</span>
                   {% endif %}
                 {% else %}
-                  <span class="badge bg-secondary">Unpublished</span>
+                  <span class="badge bg-secondary">{% trans "Unpublished" %}</span>
                 {% endif %}
               </div>
             {% endif %}
@@ -352,30 +353,29 @@
                   ></iframe>
                 </div>
                 <a href="{{ material.material_url }}" class="btn btn-outline-primary btn-sm" target="_blank" rel="noopener noreferrer">
-                  <i class="bi bi-box-arrow-up-right me-1"></i>Watch on YouTube
+                  <i class="bi bi-box-arrow-up-right me-1"></i>{% trans "Watch on YouTube" %}
                 </a>
               {% else %}
                 <a href="{{ material.material_url }}" class="btn btn-outline-primary btn-sm" target="_blank" rel="noopener noreferrer">
-                  <i class="bi bi-download me-1"></i>Download
+                  <i class="bi bi-download me-1"></i>{% trans "Download" %}
                 </a>
               {% endif %}
             {% elif material.file %}
               <a href="{{ material.file.url }}" class="btn btn-outline-primary btn-sm" download>
-                <i class="bi bi-download me-1"></i>Download
+                <i class="bi bi-download me-1"></i>{% trans "Download" %}
               </a>
             {% else %}
-              <span class="text-muted small">No file</span>
+              <span class="text-muted small">{% trans "No file" %}</span>
             {% endif %}
             {% if is_teacher %}
               <a href="{% url 'courses:edit_material' course.id material.id %}" class="btn btn-outline-secondary btn-sm">
-                <i class="bi bi-pencil-square me-1"></i>Edit
-              </a>
+                <i class="bi bi-pencil-square me-1"></i>{% trans "Edit" %}</a>
               <form method="post" action="{% url 'courses:toggle_material_publish' course.id material.id %}">
                 {% csrf_token %}
                 {% if material.published %}
-                  <button type="submit" class="btn btn-outline-warning btn-sm">Unpublish</button>
+                  <button type="submit" class="btn btn-outline-warning btn-sm">{% trans "Unpublish" %}</button>
                 {% else %}
-                  <button type="submit" class="btn btn-outline-success btn-sm">Publish</button>
+                  <button type="submit" class="btn btn-outline-success btn-sm">{% trans "Publish" %}</button>
                 {% endif %}
               </form>
             {% endif %}
@@ -384,7 +384,7 @@
         {% endfor %}
       </div>
       {% else %}
-      <p class="text-muted mb-0">No materials uploaded yet.</p>
+      <p class="text-muted mb-0">{% trans "No materials uploaded yet." %}</p>
       {% endif %}
     </div>
   </div>
@@ -392,22 +392,22 @@
   {% if is_teacher or user.is_authenticated and user.is_student %}
   <div class="card shadow-sm border-0 mb-4">
     <div class="card-header bg-white fw-semibold">
-      <i class="bi bi-journal-check me-2"></i>Student submissions
+      <i class="bi bi-journal-check me-2"></i>{% trans "Student submissions" %}
     </div>
     <div class="card-body">
       {% if show_submission_form %}
       <form method="post" action="{% url 'courses:submit_work' course.id %}" enctype="multipart/form-data" class="mb-3">
         {% csrf_token %}
         <div class="mb-3">
-          <label for="id_submission_title" class="form-label fw-semibold">Title</label>
+          <label for="id_submission_title" class="form-label fw-semibold">{% trans "Title" %}</label>
           <input type="text" name="title" id="id_submission_title" class="form-control" required>
         </div>
         <div class="mb-3">
-          <label for="id_submission_file" class="form-label fw-semibold">File</label>
+          <label for="id_submission_file" class="form-label fw-semibold">{% trans "File" %}</label>
           <input type="file" name="file" id="id_submission_file" class="form-control" required>
         </div>
         <button type="submit" class="btn btn-primary">
-          <i class="bi bi-upload me-1"></i>Submit work
+          <i class="bi bi-upload me-1"></i>{% trans "Submit work" %}
         </button>
       </form>
       {% endif %}
@@ -422,32 +422,32 @@
             <span class="fw-semibold">{{ s.title }}</span>
             <small class="text-muted ms-2">
               {% if is_teacher %}
-                by {{ s.student.get_full_name|default:s.student.username }} ·
+                {% trans "by" %} {{ s.student.get_full_name|default:s.student.username }} ·
               {% endif %}
-              Submitted {{ s.uploaded_at|date:"d M Y H:i" }}
+              {% trans "Submitted" %} {{ s.uploaded_at|date:"d M Y H:i" }}
             </small>
           </div>
           <div class="d-flex align-items-center gap-2">
             {% if s.file_url %}
-              <a href="{{ s.file_url }}" class="btn btn-outline-primary btn-sm" target="_blank" title="Open in new tab">
-                <i class="bi bi-box-arrow-up-right me-1"></i>Open
+              <a href="{{ s.file_url }}" class="btn btn-outline-primary btn-sm" target="_blank" title="{% trans 'Open in new tab' %}">
+                <i class="bi bi-box-arrow-up-right me-1"></i>{% trans "Open" %}
               </a>
-              <a href="{{ s.file_url }}" class="btn btn-outline-primary btn-sm" download title="Download file">
-                <i class="bi bi-download me-1"></i>Download
+              <a href="{{ s.file_url }}" class="btn btn-outline-primary btn-sm" download title="{% trans 'Download file' %}">
+                <i class="bi bi-download me-1"></i>{% trans "Download" %}
               </a>
             {% elif s.file %}
-              <a href="{{ s.file.url }}" class="btn btn-outline-primary btn-sm" target="_blank" title="Open in new tab">
-                <i class="bi bi-box-arrow-up-right me-1"></i>Open
+              <a href="{{ s.file.url }}" class="btn btn-outline-primary btn-sm" target="_blank" title="{% trans 'Open in new tab' %}">
+                <i class="bi bi-box-arrow-up-right me-1"></i>{% trans "Open" %}
               </a>
-              <a href="{{ s.file.url }}" class="btn btn-outline-primary btn-sm" download title="Download file">
-                <i class="bi bi-download me-1"></i>Download
+              <a href="{{ s.file.url }}" class="btn btn-outline-primary btn-sm" download title="{% trans 'Download file' %}">
+                <i class="bi bi-download me-1"></i>{% trans "Download" %}
               </a>
             {% else %}
-              <span class="text-muted small">No file</span>
+              <span class="text-muted small">{% trans "No file" %}</span>
             {% endif %}
             {% if not is_teacher and s.student_id == user.id %}
               <a href="{% url 'courses:edit_submission' course.id s.id %}" class="btn btn-outline-secondary btn-sm">
-                Edit
+                {% trans "Edit" %}
               </a>
             {% endif %}
           </div>
@@ -457,9 +457,9 @@
       {% else %}
       <p class="text-muted mb-0">
         {% if is_teacher %}
-          No student submissions yet.
+          {% trans "No student submissions yet." %}
         {% else %}
-          You have not submitted any work yet.
+          {% trans "You have not submitted any work yet." %}
         {% endif %}
       </p>
       {% endif %}
@@ -470,7 +470,7 @@
 
   <div class="card shadow-sm border-0 mb-4">
     <div class="card-header bg-white fw-semibold">
-      <i class="bi bi-chat-square-text me-2"></i>Feedback &amp; Reviews
+      <i class="bi bi-chat-square-text me-2"></i>{% trans "Feedback & Reviews" %}
     </div>
     <div class="card-body">
       {% if feedback_list %}
@@ -494,17 +494,17 @@
             <div class="d-flex align-items-center gap-2">
               {% if user == fb.student %}
               <a href="{% url 'courses:edit_feedback' course.id fb.id %}" class="btn btn-outline-secondary btn-sm">
-                <i class="bi bi-pencil me-1"></i>Edit
+                <i class="bi bi-pencil me-1"></i>{% trans "Edit" %}
               </a>
               <form method="post" action="{% url 'courses:delete_feedback' course.id fb.id %}" class="mb-0 d-inline"
-                    onsubmit="return confirm('Delete your feedback? You can leave a new one afterwards.');">
+                    onsubmit="return confirm('{% trans "Delete your feedback? You can leave a new one afterwards." %}');">
                 {% csrf_token %}
                 <button type="submit" class="btn btn-outline-danger btn-sm">
-                  <i class="bi bi-trash me-1"></i>Delete
+                  <i class="bi bi-trash me-1"></i>{% trans "Delete" %}
                 </button>
               </form>
               {% endif %}
-              <small class="text-muted">{{ fb.created_at|timesince }} ago</small>
+              <small class="text-muted">{{ fb.created_at|timesince }} {% trans "ago" %}</small>
             </div>
           </div>
           {% if fb.comment %}
@@ -513,7 +513,7 @@
         </div>
         {% endfor %}
       {% else %}
-        <p class="text-muted mb-0">No feedback yet.</p>
+        <p class="text-muted mb-0">{% trans "No feedback yet." %}</p>
       {% endif %}
     </div>
   </div>
@@ -522,13 +522,13 @@
   {% url 'courses:download_certificate' enrolment.id as course_cert_url %}
   <div class="card shadow-sm border-0 mb-4 border-success border-2">
     <div class="card-header bg-success bg-opacity-25 fw-semibold">
-      <i class="bi bi-award me-2"></i>Your certificate
+      <i class="bi bi-award me-2"></i>{% trans "Your certificate" %}
     </div>
     <div class="card-body">
-      <p class="text-muted mb-2">A certificate has been issued for this course. Download it to your device, save to your cloud, or share the link with friends.</p>
+      <p class="text-muted mb-2">{% trans "A certificate has been issued for this course. Download it to your device, save to your cloud, or share the link with friends." %}</p>
       <div class="d-flex flex-wrap gap-2 align-items-center">
         <a href="{{ course_cert_url }}" class="btn btn-success cert-download-link">
-          <i class="bi bi-download me-1"></i>Download to PC
+          <i class="bi bi-download me-1"></i>{% trans "Download to PC" %}
         </a>
         {% include "includes/certificate_share_dropdown.html" with cert_url=course_cert_url btn_class="btn-outline-success" %}
       </div>
@@ -539,21 +539,21 @@
   {% if is_enrolled %}
   <div class="card shadow-sm border-0 mb-4">
     <div class="card-header bg-white fw-semibold">
-      <i class="bi bi-pencil me-2"></i>{% if user_feedback %}Update your feedback{% else %}Leave Feedback{% endif %}
+      <i class="bi bi-pencil me-2"></i>{% if user_feedback %}{% trans "Update your feedback" %}{% else %}{% trans "Leave Feedback" %}{% endif %}
     </div>
     <div class="card-body">
       <form method="post" action="{% url 'courses:leave_feedback' course.id %}">
         {% csrf_token %}
         <div class="mb-3">
-          <label for="id_rating" class="form-label fw-semibold">Rating</label>
+          <label for="id_rating" class="form-label fw-semibold">{% trans "Rating" %}</label>
           {{ feedback_form.rating }}
         </div>
         <div class="mb-3">
-          <label for="id_comment" class="form-label fw-semibold">Comment</label>
+          <label for="id_comment" class="form-label fw-semibold">{% trans "Comment" %}</label>
           {{ feedback_form.comment }}
         </div>
         <button type="submit" class="btn btn-primary">
-          <i class="bi bi-check-lg me-1"></i>{% if user_feedback %}Update feedback{% else %}Submit Feedback{% endif %}
+          <i class="bi bi-check-lg me-1"></i>{% if user_feedback %}{% trans "Update feedback" %}{% else %}{% trans "Submit Feedback" %}{% endif %}
         </button>
       </form>
     </div>
@@ -568,16 +568,16 @@
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="generateCertConfirmLabel">Generate Certificate</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <h5 class="modal-title" id="generateCertConfirmLabel">{% trans "Generate Certificate" %}</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% trans 'Close' %}"></button>
         </div>
         <div class="modal-body" id="generateCertConfirmBody">
-          Do you want to generate the certificate? It will be saved and the student will see it in their completed courses.
+          {% trans "Do you want to generate the certificate? It will be saved and the student will see it in their completed courses." %}
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{% trans "Cancel" %}</button>
           <button type="button" class="btn btn-primary" id="generateCertConfirmYes">
-            <i class="bi bi-check-lg me-1"></i>Yes, generate
+            <i class="bi bi-check-lg me-1"></i>{% trans "Yes, generate" %}
           </button>
         </div>
       </div>
@@ -588,16 +588,16 @@
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exportPdfLabel">Export as PDF</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <h5 class="modal-title" id="exportPdfLabel">{% trans "Export as PDF" %}</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% trans 'Close' %}"></button>
         </div>
         <div class="modal-body">
-          Certificate has been generated and saved. Do you want to export the certificate as PDF to your computer?
+          {% trans "Certificate has been generated and saved. Do you want to export the certificate as PDF to your computer?" %}
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">No</button>
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{% trans "No" %}</button>
           <button type="button" class="btn btn-success" id="exportPdfYes">
-            <i class="bi bi-download me-1"></i>Yes, save to PC
+            <i class="bi bi-download me-1"></i>{% trans "Yes, save to PC" %}
           </button>
         </div>
       </div>
@@ -609,15 +609,15 @@
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="confirmModalLabel">Confirm</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <h5 class="modal-title" id="confirmModalLabel">{% trans "Confirm" %}</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% trans 'Close' %}"></button>
         </div>
         <div class="modal-body" id="confirmModalBody">
-          Save this change?
+          {% trans "Save this change?" %}
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-primary" id="confirmModalSave">Save</button>
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{% trans "Cancel" %}</button>
+          <button type="button" class="btn btn-primary" id="confirmModalSave">{% trans "Save" %}</button>
         </div>
       </div>
     </div>

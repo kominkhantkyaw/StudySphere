@@ -16,6 +16,12 @@ urlpatterns = [
     path('search/', views.search_users, name='search_users'),
     path('my-students/', views.my_students, name='my_students'),
     path('set-presence/', views.set_presence, name='set_presence'),
+    path('set-theme/', views.set_theme, name='set_theme'),
+    path('set-language/', views.set_language, name='set_language'),
+    path('settings/security/2fa/setup/', views.two_factor_setup, name='two_factor_setup'),
+    path('settings/security/2fa/verify-setup/', views.two_factor_verify_setup, name='two_factor_verify_setup'),
+    path('settings/security/2fa/disable/', views.two_factor_disable, name='two_factor_disable'),
+    path('login/2fa/', views.two_factor_verify, name='two_factor_verify'),
 
     # Password reset (via email link)
     path(

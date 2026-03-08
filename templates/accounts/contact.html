@@ -1,13 +1,33 @@
 {% extends 'base.html' %}
+{% load i18n %}
 
-{% block title %}Contact — StudySphere{% endblock %}
+{% block title %}{% if active_tab == 'privacy' %}{% trans "Privacy Policy" %} — {% endif %}{% trans "Contact" %} — {% trans "StudySphere" %}{% endblock %}
 
 {% block content %}
+{% if active_tab == 'privacy' %}
+<div class="card shadow-sm border-0 mb-4">
+  <div class="card-header bg-primary text-white">
+    <h1 class="h5 mb-0 fw-semibold"><i class="bi bi-shield-lock me-2"></i>{% trans "Privacy Policy" %}</h1>
+    <p class="small mb-0 mt-1 opacity-90">{% trans "StudySphere and EU data protection" %}</p>
+  </div>
+  <div class="card-body p-4">
+    <p class="fw-semibold">{% trans "We follow EU data protection and privacy law. In line with that:" %}</p>
+    <ul class="mb-4">
+      <li>{% trans "We do not collect additional information beyond what is needed for your account and your use of courses and features." %}</li>
+      <li>{% trans "We do not sell or share your data with third parties for their marketing or other purposes." %}</li>
+      <li>{% trans "Your information is not used for advertising profiling or passed to advertisers." %}</li>
+      <li>{% trans "Your activity on the platform is used only to provide the services you use (such as feeds and learning features), not for marketing or third-party purposes." %}</li>
+    </ul>
+    <p class="text-muted small mb-0">{% blocktrans %}For the full policy and contact details, see the sections below. If you have questions about your data, <a href="mailto:support@studysphere.app">contact us</a>.{% endblocktrans %}</p>
+  </div>
+</div>
+{% endif %}
+
 <div class="row g-4 mt-2">
   <div class="col-md-6">
     <div class="card shadow-sm border-0">
       <div class="card-header bg-white fw-semibold">
-        <i class="bi bi-geo-alt me-2"></i>Location
+        <i class="bi bi-geo-alt me-2"></i>{% trans "Location" %}
       </div>
       <div class="card-body p-0">
         <div style="height: 260px;">
@@ -25,28 +45,28 @@
   <div class="col-md-6">
     <div class="card shadow-sm border-0 mb-3">
       <div class="card-header bg-white fw-semibold">
-        <i class="bi bi-envelope me-2"></i>Send us a message
+        <i class="bi bi-envelope me-2"></i>{% trans "Send us a message" %}
       </div>
       <div class="card-body">
         <form method="post" action="{% url 'calendar_app:contact_support' %}">
           {% csrf_token %}
           <div class="mb-2">
-            <label class="form-label small mb-1" for="contact-name-main">Your Name</label>
+            <label class="form-label small mb-1" for="contact-name-main">{% trans "Your Name" %}</label>
             <input type="text" id="contact-name-main" name="name" class="form-control form-control-sm"
                    value="{{ user.get_full_name|default:user.username }}">
           </div>
           <div class="mb-2">
-            <label class="form-label small mb-1" for="contact-email-main">Your Email</label>
+            <label class="form-label small mb-1" for="contact-email-main">{% trans "Your Email" %}</label>
             <input type="email" id="contact-email-main" name="email" class="form-control form-control-sm"
                    value="{{ user.email }}">
           </div>
           <div class="mb-3">
-            <label class="form-label small mb-1" for="contact-message-main">Message</label>
+            <label class="form-label small mb-1" for="contact-message-main">{% trans "Message" %}</label>
             <textarea id="contact-message-main" name="message" rows="4"
                       class="form-control form-control-sm"
-                      placeholder="How can we help?"></textarea>
+                      placeholder="{% trans 'How can we help?' %}"></textarea>
           </div>
-          <button type="submit" class="btn btn-primary btn-sm w-100">Send Message</button>
+          <button type="submit" class="btn btn-primary btn-sm w-100">{% trans "Send Message" %}</button>
         </form>
       </div>
     </div>
@@ -57,31 +77,30 @@
   <div class="col-md-6">
     <div class="card shadow-sm border-0">
       <div class="card-header bg-white fw-semibold">
-        <i class="bi bi-info-circle me-2"></i>Support info
+        <i class="bi bi-info-circle me-2"></i>{% trans "Support info" %}
       </div>
       <div class="card-body small">
-        <p class="mb-1"><strong>Email:</strong> <a href="mailto:support@studysphere.app">support@studysphere.app</a></p>
-        <p class="mb-1"><strong>Hours:</strong> Mon–Fri, 9:00–17:00</p>
-        <p class="mb-0 text-muted">We aim to respond to all messages within 24 hours.</p>
+        <p class="mb-1"><strong>{% trans "Email" %}:</strong> <a href="mailto:support@studysphere.app">support@studysphere.app</a></p>
+        <p class="mb-1"><strong>{% trans "Hours" %}:</strong> {% trans "Mon–Fri, 9:00–17:00" %}</p>
+        <p class="mb-0 text-muted">{% trans "We aim to respond to all messages within 24 hours." %}</p>
       </div>
     </div>
   </div>
   <div class="col-md-6">
     <div class="card shadow-sm border-0 h-100">
       <div class="card-header bg-white fw-semibold">
-        <i class="bi bi-question-circle me-2"></i>Help &amp; live support
+        <i class="bi bi-question-circle me-2"></i>{% trans "Help & live support" %}
       </div>
       <div class="card-body small">
         <ul class="list-unstyled mb-3">
-          <li class="mb-1"><a href="#" class="text-decoration-none">FAQ / Help centre</a></li>
-          <li class="mb-1"><a href="#" class="text-decoration-none">API Documentation</a></li>
+          <li class="mb-1"><a href="#" class="text-decoration-none">{% trans "FAQ / Help centre" %}</a></li>
+          <li class="mb-1"><a href="#" class="text-decoration-none">{% trans "API Documentation" %}</a></li>
         </ul>
         <a href="{% url 'chat:chat_lobby' %}" class="btn btn-outline-primary btn-sm w-100">
-          <i class="bi bi-chat-dots me-1"></i>Open live support chat
+          <i class="bi bi-chat-dots me-1"></i>{% trans "Open live support chat" %}
         </a>
       </div>
     </div>
   </div>
 </div>
 {% endblock %}
-

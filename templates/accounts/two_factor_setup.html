@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block title %}Enable Two-Factor Authentication — StudySphere{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center py-4">
+  <div class="col-12 col-sm-10 col-md-7 col-lg-6">
+    <nav aria-label="Breadcrumb" class="mb-3">
+      <a href="{% url 'accounts:settings' %}?tab=security" class="auth-back-link text-muted text-decoration-none small">
+        <i class="bi bi-arrow-left me-1" aria-hidden="true"></i>Back to Security settings
+      </a>
+    </nav>
+
+    <div class="card shadow-sm border-0 overflow-hidden">
+      <div class="card-header bg-primary text-white py-3 px-4">
+        <h1 class="h4 mb-0 fw-semibold"><i class="bi bi-shield-lock me-2" aria-hidden="true"></i>Enable Two-Factor Authentication</h1>
+        <p class="small mb-0 mt-1 opacity-90">Use an authenticator app on your phone or device for an extra layer of security.</p>
+      </div>
+      <div class="card-body p-4">
+        <p class="mb-4">Scan the QR code below with your authenticator app (e.g. Google Authenticator, Microsoft Authenticator, Authy, or any TOTP app). If you can’t scan it, enter the secret key manually.</p>
+
+        {% if qr_data_url %}
+        <div class="text-center mb-4">
+          <img src="{{ qr_data_url }}" alt="QR code for authenticator app" class="img-fluid border rounded p-2 bg-white" style="max-width: 220px;">
+        </div>
+        {% endif %}
+
+        {% if secret_base32 %}
+        <div class="mb-4">
+          <label class="form-label small fw-semibold text-muted">Manual entry secret (if you can’t scan the QR code)</label>
+          <div class="input-group">
+            <input type="text" class="form-control font-monospace" value="{{ secret_base32 }}" id="totp-secret" readonly aria-label="TOTP secret key">
+            <button type="button" class="btn btn-outline-secondary" id="copy-secret-btn" title="Copy secret">
+              <i class="bi bi-clipboard" aria-hidden="true"></i>
+            </button>
+          </div>
+        </div>
+        {% endif %}
+
+        <p class="mb-3">After adding the account, enter the 6-digit code from your app below to confirm and enable 2FA.</p>
+
+        <form method="post" action="{% url 'accounts:two_factor_verify_setup' %}" class="needs-validation" novalidate>
+          {% csrf_token %}
+          <div class="mb-3">
+            <label for="id_token" class="form-label fw-semibold">Verification code <span class="text-danger">*</span></label>
+            <input type="text" name="token" id="id_token" class="form-control form-control-lg text-center font-monospace" placeholder="000000" maxlength="8" pattern="[0-9\s]*" inputmode="numeric" autocomplete="one-time-code" required autofocus aria-describedby="token-help">
+            <div id="token-help" class="form-text">Enter the 6-digit code shown in your authenticator app.</div>
+          </div>
+          <div class="d-flex gap-2 flex-wrap">
+            <button type="submit" class="btn btn-primary">
+              <i class="bi bi-check-circle me-1" aria-hidden="true"></i>Verify and enable 2FA
+            </button>
+            <a href="{% url 'accounts:settings' %}?tab=security" class="btn btn-outline-secondary">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+(function() {
+  var btn = document.getElementById('copy-secret-btn');
+  var input = document.getElementById('totp-secret');
+  if (btn && input) {
+    btn.addEventListener('click', function() {
+      input.select();
+      try {
+        document.execCommand('copy');
+        btn.querySelector('i').className = 'bi bi-check';
+        btn.title = 'Copied!';
+        setTimeout(function() {
+          btn.querySelector('i').className = 'bi bi-clipboard';
+          btn.title = 'Copy secret';
+        }, 2000);
+      } catch (e) {}
+    });
+  }
+})();
+</script>
+{% endblock %}

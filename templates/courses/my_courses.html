@@ -1,20 +1,21 @@
 {% extends 'base.html' %}
+{% load i18n %}
 
-{% block title %}My Courses — StudySphere{% endblock %}
+{% block title %}{% trans "My Courses" %} — {% trans "StudySphere" %}{% endblock %}
 
 {% block content %}
 <div class="mt-3">
-  <h2 class="fw-bold mb-4"><i class="bi bi-journal-bookmark me-2"></i>My Courses</h2>
+  <h2 class="fw-bold mb-4"><i class="bi bi-journal-bookmark me-2"></i>{% trans "My Courses" %}</h2>
 
   {% if user.is_student %}
   {# Status: Pending until teacher approves (then Active); Certificate: Not issued until teacher issues (then Download). #}
   {% if enrolments_with_certificate %}
   <div class="card shadow-sm border-0 mb-4 border-success border-2">
     <div class="card-header bg-success bg-opacity-25 fw-semibold">
-      <i class="bi bi-award me-2"></i>My Certificates
+      <i class="bi bi-award me-2"></i>{% trans "My Certificates" %}
     </div>
     <div class="card-body p-0">
-      <p class="px-3 pt-2 mb-0 small text-muted">Certificates appear here once your teacher has generated them. Download to your PC, save to cloud, or share the link with friends.</p>
+      <p class="px-3 pt-2 mb-0 small text-muted">{% trans "Certificates appear here once your teacher has generated them. Download to your PC, save to cloud, or share the link with friends." %}</p>
       <ul class="list-group list-group-flush">
         {% for enrolment in enrolments_with_certificate %}
         {% url 'courses:download_certificate' enrolment.id as enrol_cert_url %}
@@ -22,7 +23,7 @@
           <span class="fw-semibold">#{{ enrolment.course.id }} — {{ enrolment.course.title }}</span>
           <div class="d-flex align-items-center gap-1">
             <a href="{{ enrol_cert_url }}" class="btn btn-success btn-sm">
-              <i class="bi bi-download me-1"></i>Download to PC
+              <i class="bi bi-download me-1"></i>{% trans "Download to PC" %}
             </a>
             {% include "includes/certificate_share_dropdown.html" with cert_url=enrol_cert_url btn_class="btn-outline-success" %}
           </div>
@@ -35,7 +36,7 @@
 
   <div class="card shadow-sm border-0">
     <div class="card-header bg-white fw-semibold">
-      <i class="bi bi-book me-2"></i>My course requests
+      <i class="bi bi-book me-2"></i>{% trans "My course requests" %}
     </div>
     <div class="card-body p-0">
       {% if all_my_enrolments %}
@@ -43,12 +44,12 @@
         <table class="table table-hover mb-0">
           <thead class="table-light">
             <tr>
-              <th>Student ID</th>
-              <th>Course</th>
-              <th>Teacher</th>
-              <th>Enrolled date</th>
-              <th>Status</th>
-              <th>Certificate</th>
+              <th>{% trans "Student ID" %}</th>
+              <th>{% trans "Course" %}</th>
+              <th>{% trans "Teacher" %}</th>
+              <th>{% trans "Enrolled date" %}</th>
+              <th>{% trans "Status" %}</th>
+              <th>{% trans "Certificate" %}</th>
             </tr>
           </thead>
           <tbody>
@@ -68,13 +69,13 @@
               <td>{{ enrolment.enrolled_at|date:"d M Y" }}</td>
               <td>
                 {% if enrolment.status == 'PENDING' %}
-                  <span class="badge bg-warning text-dark">Pending</span>
+                  <span class="badge bg-warning text-dark">{% trans "Pending" %}</span>
                 {% elif enrolment.status == 'REJECTED' %}
-                  <span class="badge bg-secondary">Rejected</span>
+                  <span class="badge bg-secondary">{% trans "Rejected" %}</span>
                 {% elif enrolment.blocked %}
-                  <span class="badge bg-danger">Blocked</span>
+                  <span class="badge bg-danger">{% trans "Blocked" %}</span>
                 {% else %}
-                  <span class="badge bg-success">Active</span>
+                  <span class="badge bg-success">{% trans "Active" %}</span>
                 {% endif %}
               </td>
               <td>
@@ -105,8 +106,8 @@
   {% endif %}
 
   {% if user.is_teacher %}
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <ul class="nav nav-pills small">
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-stretch align-items-md-center gap-2 mb-3">
+    <ul class="nav nav-pills small flex-wrap">
       <li class="nav-item">
         <a href="?tab=all" class="nav-link {% if courses_tab|default:'all' == 'all' %}active{% endif %}">All</a>
       </li>
@@ -123,7 +124,7 @@
         <a href="?tab=archive" class="nav-link {% if courses_tab == 'archive' %}active{% endif %}">Archive</a>
       </li>
     </ul>
-    <a href="{% url 'courses:course_create' %}" class="btn btn-success btn-sm">
+    <a href="{% url 'courses:course_create' %}" class="btn btn-success btn-sm align-self-md-center">
       <i class="bi bi-plus-circle me-1"></i>Create Course
     </a>
   </div>

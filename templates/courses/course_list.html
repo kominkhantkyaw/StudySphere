@@ -1,13 +1,14 @@
 {% extends 'base.html' %}
+{% load i18n %}
 
-{% block title %}Courses — StudySphere{% endblock %}
+{% block title %}{% trans "Courses" %} — {% trans "StudySphere" %}{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4 mt-3">
-  <h2 class="fw-bold mb-0"><i class="bi bi-collection me-2"></i>Courses</h2>
+<div class="d-flex flex-column flex-sm-row justify-content-between align-items-stretch align-items-sm-center gap-3 mb-4 mt-3">
+  <h2 class="fw-bold mb-0"><i class="bi bi-collection me-2"></i>{% trans "Courses" %}</h2>
   {% if user.is_teacher %}
-  <a href="{% url 'courses:course_create' %}" class="btn btn-success">
-    <i class="bi bi-plus-circle me-1"></i>Create Courses
+  <a href="{% url 'courses:course_create' %}" class="btn btn-success flex-sm-shrink-0">
+    <i class="bi bi-plus-circle me-1"></i>{% trans "Create Courses" %}
   </a>
   {% endif %}
 </div>
@@ -16,19 +17,25 @@
   <div class="card-body">
     <form method="get" class="row g-2 align-items-end">
       <input type="hidden" name="category" value="{{ category|default:'' }}">
+      <input type="hidden" name="language" value="{{ language|default:'' }}">
       <div class="col-md-10">
-        <input type="text" name="q" class="form-control" placeholder="Search courses..." value="{{ q|default:'' }}">
+        <input type="text" name="q" class="form-control" placeholder="{% trans 'Search courses...' %}" value="{{ q|default:'' }}">
       </div>
       <div class="col-md-2">
         <button type="submit" class="btn btn-primary w-100">
-          <i class="bi bi-search me-1"></i>Search
+          <i class="bi bi-search me-1"></i>{% trans "Search" %}
         </button>
       </div>
     </form>
-    {% if category_label %}
+    {% if category_label or language_label %}
     <p class="mb-0 mt-2 small text-muted">
-      Category: <span class="badge bg-primary">{{ category_label }}</span>
-      <a href="{% url 'courses:course_list' %}{% if q %}?q={{ q|urlencode }}{% endif %}" class="ms-2 small">Show all</a>
+      {% if language_label %}
+      {% trans "Language" %}: <span class="badge bg-info">{{ language_label }}</span>
+      {% endif %}
+      {% if category_label %}
+      {% if language_label %} · {% endif %}{% trans "Category" %}: <span class="badge bg-primary">{{ category_label }}</span>
+      {% endif %}
+      <a href="{% url 'courses:course_list' %}{% if q %}?q={{ q|urlencode }}{% endif %}" class="ms-2 small">{% trans "Show all" %}</a>
     </p>
     {% endif %}
   </div>
@@ -53,7 +60,7 @@
           <i class="bi bi-person me-1"></i>{{ course.teacher.get_full_name|default:course.teacher.username }}
         </h6>
         <h5 class="card-title fw-bold mb-1">{{ course.title }}</h5>
-        <p class="text-muted small mb-2">Course ID: #{{ course.id }}</p>
+        <p class="text-muted small mb-2">{% trans "Course ID" %}: #{{ course.id }}</p>
         <p class="card-text text-muted small flex-grow-1">{{ course.description|striptags|truncatechars:110 }}</p>
         <div class="mt-2 small text-muted d-flex flex-wrap gap-2">
           {% if course.duration_hours %}
@@ -72,7 +79,7 @@
       </div>
       <div class="card-footer bg-transparent border-0 pb-3 px-3">
         <a href="{% url 'courses:course_detail' course.id %}?from=courses" class="btn btn-outline-primary w-100">
-          View Course <i class="bi bi-arrow-right ms-1"></i>
+          {% trans "View Course" %} <i class="bi bi-arrow-right ms-1"></i>
         </a>
       </div>
     </div>
@@ -84,7 +91,7 @@
   <ul class="pagination justify-content-center flex-wrap">
     {% if page_obj.has_previous %}
     <li class="page-item">
-      <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if q %}&amp;q={{ q|urlencode }}{% endif %}{% if category %}&amp;category={{ category|urlencode }}{% endif %}">Previous</a>
+      <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if q %}&amp;q={{ q|urlencode }}{% endif %}{% if category %}&amp;category={{ category|urlencode }}{% endif %}">{% trans "Previous" %}</a>
     </li>
     {% endif %}
     {% for num in page_obj.paginator.page_range %}
@@ -98,17 +105,17 @@
     {% endfor %}
     {% if page_obj.has_next %}
     <li class="page-item">
-      <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if q %}&amp;q={{ q|urlencode }}{% endif %}{% if category %}&amp;category={{ category|urlencode }}{% endif %}">Next</a>
+      <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if q %}&amp;q={{ q|urlencode }}{% endif %}{% if category %}&amp;category={{ category|urlencode }}{% endif %}">{% trans "Next" %}</a>
     </li>
     {% endif %}
   </ul>
-  <p class="text-center small text-muted">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</p>
+  <p class="text-center small text-muted">{% blocktrans with p=page_obj.number total=page_obj.paginator.num_pages %}Page {{ p }} of {{ total }}{% endblocktrans %}</p>
 </nav>
 {% endif %}
 {% else %}
 <div class="text-center py-5">
   <i class="bi bi-journal-x fs-1 text-muted"></i>
-  <p class="text-muted mt-2">No courses found.</p>
+  <p class="text-muted mt-2">{% trans "No courses found." %}</p>
 </div>
 {% endif %}
 {% endblock %}

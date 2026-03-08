@@ -66,11 +66,12 @@ class UserProfileForm(forms.ModelForm):
 class GeneralSettingsForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ['preferred_language', 'theme_mode', 'notify_email', 'notify_in_app', 'share_activity']
+        fields = ['preferred_language', 'theme_mode', 'notify_email', 'notify_in_app', 'subscribe_course_updates', 'share_activity']
         widgets = {
             'preferred_language': forms.Select(attrs={'class': 'form-select'}),
             'theme_mode': forms.Select(attrs={'class': 'form-select'}),
             'notify_email': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'notify_in_app': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'subscribe_course_updates': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'share_activity': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }

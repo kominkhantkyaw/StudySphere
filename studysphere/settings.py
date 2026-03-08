@@ -40,8 +40,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'drf_yasg',
     'corsheaders',
     'channels',
+    'django_otp',
+    'django_otp.plugins.otp_totp',
     'accounts',
     'courses',
     'social',
@@ -59,6 +62,10 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'accounts.otp_session_fix.OTPSessionFixMiddleware',  # fix legacy int in otp_device_id
+    'django_otp.middleware.OTPMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
+    'accounts.middleware.UserLanguageMiddleware',  # override with user.preferred_language (EN/DE) after LocaleMiddleware
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -76,7 +83,9 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'accounts.context_processors.messages_as_list',  # override: messages as list for safe iteration
                 'notifications.context_processors.unread_notification_count',
+                'accounts.context_processors.theme_mode',
             ],
         },
     },
@@ -85,7 +94,17 @@ TEMPLATES = [
 WSGI_APPLICATION = 'studysphere.wsgi.application'
 ASGI_APPLICATION = 'studysphere.asgi.application'
 
-if os.environ.get('DB_HOST'):
+# Use SQLite if USE_SQLITE is set (e.g. for local dev when Supabase IP allow list blocks you)
+# or if DB_HOST is not set. Otherwise use PostgreSQL (Supabase).
+_use_sqlite = os.environ.get('USE_SQLITE', '').lower() in ('1', 'true', 'yes')
+if _use_sqlite or not os.environ.get('DB_HOST'):
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+else:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
@@ -97,13 +116,6 @@ if os.environ.get('DB_HOST'):
             'OPTIONS': {
                 'sslmode': 'require',
             },
-        }
-    }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
 
@@ -129,6 +141,13 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 LANGUAGE_CODE = 'en-gb'
+
+LANGUAGES = [
+    ('en', 'English'),
+    ('de', 'German'),
+]
+
+LOCALE_PATHS = [BASE_DIR / 'locale']
 
 TIME_ZONE = 'UTC'
 
@@ -204,3 +223,6 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
 }
+
+# Two-Factor Authentication (authenticator app / TOTP)
+OTP_TOTP_ISSUER = 'StudySphere'

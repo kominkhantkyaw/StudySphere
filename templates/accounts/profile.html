@@ -1,7 +1,8 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load i18n %}
 
-{% block title %}{{ profile_user.username }} — StudySphere{% endblock %}
+{% block title %}{{ profile_user.username }} — {% trans "StudySphere" %}{% endblock %}
 
 {% block content %}
 <div class="row g-4 mt-2">
@@ -24,19 +25,19 @@
                     id="avatar-menu-toggle"
                     data-bs-toggle="dropdown"
                     aria-expanded="false"
-                    title="Profile picture options">
+                    title="{% trans 'Profile picture options' %}">
               <i class="bi bi-camera"></i>
             </button>
             <ul class="dropdown-menu dropdown-menu-end shadow-sm">
               <li>
                 <button class="dropdown-item" type="button" id="avatar-menu-update">
-                  <i class="bi bi-arrow-repeat me-1"></i>Update your picture
+                  <i class="bi bi-arrow-repeat me-1"></i>{% trans "Update your picture" %}
                 </button>
               </li>
               {% if profile_user.photo %}
               <li>
                 <button class="dropdown-item text-danger" type="button" id="avatar-menu-remove">
-                  <i class="bi bi-trash me-1"></i>Remove your picture
+                  <i class="bi bi-trash me-1"></i>{% trans "Remove your picture" %}
                 </button>
               </li>
               {% endif %}
@@ -58,11 +59,11 @@
         <p class="text-muted mb-1">@{{ profile_user.username }}</p>
 
         {% if profile_user.is_teacher %}
-          <span class="badge bg-success px-3 py-1 mb-2"><i class="bi bi-easel me-1"></i>Teacher</span>
+          <span class="badge bg-success px-3 py-1 mb-2"><i class="bi bi-easel me-1"></i>{% trans "Teacher" %}</span>
         {% else %}
-          <span class="badge bg-primary px-3 py-1 mb-2"><i class="bi bi-mortarboard me-1"></i>Student</span>
+          <span class="badge bg-primary px-3 py-1 mb-2"><i class="bi bi-mortarboard me-1"></i>{% trans "Student" %}</span>
           {% if profile_user.student_id %}
-          <p class="text-muted small mb-1">Student ID: <strong>{{ profile_user.student_id }}</strong></p>
+          <p class="text-muted small mb-1">{% trans "Student ID" %}: <strong>{{ profile_user.student_id }}</strong></p>
           {% endif %}
         {% endif %}
 
@@ -78,7 +79,7 @@
         {% if user == profile_user %}
         <div class="mt-3">
           <a href="{% url 'accounts:settings' %}?tab=profile" class="btn btn-outline-secondary btn-sm">
-            <i class="bi bi-gear me-1"></i>Edit profile (name, bio, etc.)
+            <i class="bi bi-gear me-1"></i>{% trans "Edit profile (name, bio, etc.)" %}
           </a>
         </div>
         {% endif %}
@@ -88,7 +89,7 @@
     {% if profile_user.is_student and study_streak is not None %}
     <div class="card shadow-sm border-0 mt-4">
       <div class="card-header profile-header-progress border-0 py-2 fw-semibold">
-        <i class="bi bi-trophy me-2"></i>Progress & achievements
+        <i class="bi bi-trophy me-2"></i>{% trans "Progress & achievements" %}
       </div>
       <div class="card-body py-3">
         <div class="profile-gamification">
@@ -96,19 +97,19 @@
             <div class="icon-wrap"><i class="bi bi-fire"></i></div>
             <div>
               <div class="value">{{ study_streak.current_streak|default:0 }}</div>
-              <div class="label">Day streak</div>
+              <div class="label">{% trans "Day streak" %}</div>
             </div>
           </div>
           <div class="profile-gamification-item certs">
             <div class="icon-wrap"><i class="bi bi-award"></i></div>
             <div>
               <div class="value">{{ learning_stats.certificates|default:0 }}</div>
-              <div class="label">Certificates</div>
+              <div class="label">{% trans "Certificates" %}</div>
             </div>
           </div>
         </div>
         {% if study_streak.longest_streak %}
-        <small class="text-muted mt-2 d-block">Longest streak: {{ study_streak.longest_streak }} day{{ study_streak.longest_streak|pluralize }}</small>
+        <small class="text-muted mt-2 d-block">{% blocktrans count n=study_streak.longest_streak %}Longest streak: {{ n }} day{% plural %}Longest streak: {{ n }} days{% endblocktrans %}</small>
         {% endif %}
       </div>
     </div>
@@ -117,16 +118,16 @@
     {% if user == profile_user and user.is_student %}
     <div class="card shadow-sm border-0 mt-4">
       <div class="card-header profile-header-share fw-semibold border-0">
-        <i class="bi bi-pencil-square me-2"></i>Share an Update
+        <i class="bi bi-pencil-square me-2"></i>{% trans "Share an Update" %}
       </div>
       <div class="card-body">
         <form method="post" action="{% url 'social:post_status' %}">
           {% csrf_token %}
           <div class="mb-3">
-            <textarea name="content" class="form-control" rows="3" placeholder="What's on your mind?"></textarea>
+            <textarea name="content" class="form-control" rows="3" placeholder='{% trans "What's on your mind?" %}'></textarea>
           </div>
           <button type="submit" class="btn btn-primary btn-sm">
-            <i class="bi bi-send me-1"></i>Post
+            <i class="bi bi-send me-1"></i>{% trans "Post" %}
           </button>
         </form>
       </div>
@@ -140,7 +141,7 @@
     <div class="row g-3 mb-3">
       <div class="col-4">
         <div class="border rounded-3 bg-light p-3 h-100">
-          <p class="text-muted small mb-1 text-uppercase">Courses</p>
+          <p class="text-muted small mb-1 text-uppercase">{% trans "Courses" %}</p>
           <div class="d-flex justify-content-between align-items-baseline mb-1">
             <h4 class="fw-bold mb-0">{{ learning_stats.courses_total|default:0 }}</h4>
             <span class="badge bg-primary bg-opacity-25 text-primary fw-semibold">{% if learning_stats.courses_total %}100%{% else %}0%{% endif %}</span>
@@ -152,7 +153,7 @@
       </div>
       <div class="col-4">
         <div class="border rounded-3 bg-light p-3 h-100">
-          <p class="text-muted small mb-1 text-uppercase">Completed</p>
+          <p class="text-muted small mb-1 text-uppercase">{% trans "Completed" %}</p>
           <div class="d-flex justify-content-between align-items-baseline mb-1">
             <h4 class="fw-bold mb-0">{{ learning_stats.courses_completed|default:0 }}</h4>
             <span class="badge bg-success bg-opacity-25 text-success fw-semibold">{{ learning_stats.pct_completed|default:0 }}%</span>
@@ -164,7 +165,7 @@
       </div>
       <div class="col-4">
         <div class="border rounded-3 bg-light p-3 h-100">
-          <p class="text-muted small mb-1 text-uppercase">Certificates</p>
+          <p class="text-muted small mb-1 text-uppercase">{% trans "Certificates" %}</p>
           <div class="d-flex justify-content-between align-items-baseline mb-1">
             <h4 class="fw-bold mb-0">{{ learning_stats.certificates|default:0 }}</h4>
             <span class="badge bg-info bg-opacity-25 text-info fw-semibold">{{ learning_stats.pct_certificates|default:0 }}%</span>
@@ -179,7 +180,7 @@
 
     <div class="card shadow-sm border-0 mb-3">
       <div class="card-header profile-header-activity fw-semibold border-0">
-        <i class="bi bi-activity me-2"></i>Activity timeline
+        <i class="bi bi-activity me-2"></i>{% trans "Activity timeline" %}
       </div>
       <div class="card-body">
         {% if status_updates %}
@@ -187,12 +188,12 @@
           <div class="d-flex mb-3 pb-3 {% if not forloop.last %}border-bottom{% endif %}">
             <div>
               <p class="mb-1">{{ status.content }}</p>
-              <small class="text-muted"><i class="bi bi-clock me-1"></i>{{ status.created_at|timesince }} ago</small>
+              <small class="text-muted"><i class="bi bi-clock me-1"></i>{{ status.created_at|timesince }} {% trans "ago" %}</small>
             </div>
           </div>
           {% endfor %}
         {% else %}
-          <p class="text-muted mb-0">No status updates yet.</p>
+          <p class="text-muted mb-0">{% trans "No status updates yet." %}</p>
         {% endif %}
       </div>
     </div>
@@ -220,7 +221,7 @@
     {% if profile_user.is_student %}
     <div class="card shadow-sm border-0">
       <div class="card-header profile-header-enrolled fw-semibold border-0">
-        <i class="bi bi-book me-2"></i>Enrolled Courses
+        <i class="bi bi-book me-2"></i>{% trans "Enrolled Courses" %}
       </div>
       <div class="card-body">
         {% if enrolled_courses %}
@@ -242,7 +243,7 @@
     {% if profile_user.is_teacher %}
     <div class="card shadow-sm border-0">
       <div class="card-header profile-header-courses-created fw-semibold border-0">
-        <i class="bi bi-journal-richtext me-2"></i>Courses Created
+        <i class="bi bi-journal-richtext me-2"></i>{% trans "Courses Created" %}
       </div>
       <div class="card-body">
         {% if taught_courses %}

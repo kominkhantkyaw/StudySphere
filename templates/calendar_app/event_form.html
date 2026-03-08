@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
+{% load i18n %}
 
-{% block title %}{% if editing %}Edit Event{% else %}New Event{% endif %} — StudySphere{% endblock %}
+{% block title %}{% if editing %}{% trans "Edit Event" %}{% else %}{% trans "New Event" %}{% endif %} — {% trans "StudySphere" %}{% endblock %}
 
 {% block content %}
 <div class="row justify-content-center">
@@ -9,7 +10,7 @@
       <div class="card-body">
         <h3 class="card-title mb-4">
           <i class="bi bi-{% if editing %}pencil-square{% else %}calendar-plus{% endif %} me-2"></i>
-          {% if editing %}Edit Event{% else %}Create Event{% endif %}
+          {% if editing %}{% trans "Edit Event" %}{% else %}{% trans "Create Event" %}{% endif %}
         </h3>
 
         {% if form.non_field_errors %}
@@ -38,9 +39,9 @@
           {% endfor %}
           <div class="d-flex gap-2">
             <button type="submit" class="btn btn-primary">
-              <i class="bi bi-check-lg me-1"></i>{% if editing %}Save Changes{% else %}Create Event{% endif %}
+              <i class="bi bi-check-lg me-1"></i>{% if editing %}{% trans "Save Changes" %}{% else %}{% trans "Create Event" %}{% endif %}
             </button>
-            <a href="{% url 'calendar_app:calendar' %}" class="btn btn-outline-secondary">Cancel</a>
+            <a href="{% url 'calendar_app:calendar' %}" class="btn btn-outline-secondary">{% trans "Cancel" %}</a>
           </div>
         </form>
       </div>

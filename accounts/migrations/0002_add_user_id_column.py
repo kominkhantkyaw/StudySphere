@@ -1,12 +1,16 @@
 # Migration to fix accounts_user table missing 'id' column
 # (e.g. when table was created outside Django or schema is out of sync)
+# PostgreSQL-only: SQLite tables are created by Django with id already.
 
 from django.db import migrations
 
 
 def add_id_column_if_missing(apps, schema_editor):
-    """Add id BIGSERIAL PRIMARY KEY to accounts_user if the column does not exist."""
+    """Add id BIGSERIAL PRIMARY KEY to accounts_user if the column does not exist (PostgreSQL only)."""
     from django.db import connection
+    if connection.vendor != 'postgresql':
+        # SQLite etc. already have id from 0001_initial; skip.
+        return
     with connection.cursor() as cursor:
         cursor.execute("""
             SELECT 1 FROM information_schema.columns

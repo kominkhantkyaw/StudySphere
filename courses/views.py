@@ -25,20 +25,26 @@ def course_list(request):
     courses = Course.objects.annotate(avg_rating=Avg('feedback__rating')).order_by('-created_at')
     q = request.GET.get('q', '').strip()
     category = request.GET.get('category', '').strip()
+    language = request.GET.get('language', '').strip().upper()
     if q:
         courses = courses.filter(Q(title__icontains=q))
     if category:
         courses = courses.filter(category=category)
+    if language and language in dict(Course.LANGUAGE_CHOICES):
+        courses = courses.filter(language=language)
     paginator = Paginator(courses, 9)
     page_number = request.GET.get('page', 1)
     page_obj = paginator.get_page(page_number)
     category_label = dict(Course.CATEGORY_CHOICES).get(category, category) if category else ''
+    language_label = dict(Course.LANGUAGE_CHOICES).get(language, language) if language else ''
     return render(request, 'courses/course_list.html', {
         'courses': page_obj,
         'page_obj': page_obj,
         'q': q,
         'category': category,
         'category_label': category_label,
+        'language': language,
+        'language_label': language_label,
     })
 
 
