@@ -21,7 +21,7 @@ credentials/
 *.docx
 *.pdf
 
-# Images: exclude all except necessary course images in static
+# Images: exclude all except course images and example images for StudySphere
 *.png
 *.jpg
 *.jpeg
@@ -29,6 +29,10 @@ credentials/
 !static/course_images/*.png
 !static/course_images/*.jpg
 !static/course_images/*.jpeg
+!images/
+!images/*.png
+!images/*.jpg
+!images/*.jpeg
 
 # Markdown: only README.md is pushed; other .md (docs, etc.) are not
 *.md
