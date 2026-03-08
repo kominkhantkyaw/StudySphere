@@ -175,7 +175,9 @@ StudySphere/
 
 ## Deployment (brief)
 
-Set `DEBUG=False`, `ALLOWED_HOSTS`, `CSRF_TRUSTED_ORIGINS`; use PostgreSQL and optionally Supabase; run `collectstatic`, `migrate`; serve with an ASGI server (e.g. Daphne) for WebSocket chat.
+StudySphere is deployed using **GitHub** (source), **Supabase** (PostgreSQL), **DigitalOcean** (app server), and **Namecheap** (domain). The production server (Ubuntu) clones the repo, runs a Python venv with `requirements.txt`, executes migrations and `collectstatic`, and serves the app with **Gunicorn** behind **Nginx** (reverse proxy and static files). The domain points to the Droplet via DNS; **HTTPS** is provided with Let's Encrypt. Live site: [https://studysphere.app](https://studysphere.app).
+
+For local or custom deploy: set `DEBUG=False`, `ALLOWED_HOSTS`, `CSRF_TRUSTED_ORIGINS`; use PostgreSQL (e.g. Supabase); run `collectstatic`, `migrate`; serve with Gunicorn or an ASGI server (e.g. Daphne) for WebSocket chat.
 
 ---
 
