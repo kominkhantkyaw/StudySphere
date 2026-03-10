@@ -83,8 +83,8 @@ Visit [http://127.0.0.1:8000](http://127.0.0.1:8000).
 ```sh
 python manage.py run_tests
 ```
-
-Or: `python manage.py test -v 2`. With PostgreSQL use `--keepdb`. Stop the runserver before running tests. **54 unit tests** (accounts, courses, chat, notifications, social). *(Code criterion 6: Unit testing is included.)* See `docs/Unit_test.md` for process and coverage.
+Or: `python manage.py test -v 2`. 
+With PostgreSQL use `--keepdb`. Stop the runserver before running tests. **54 unit tests** (accounts, courses, chat, notifications, social). *(Code criterion 6: Unit testing is included.)* See `docs/Unit_test.md` for process and coverage.
 
 ---
 
@@ -125,7 +125,6 @@ Or: `python manage.py test -v 2`. With PostgreSQL use `--keepdb`. Stop the runse
 | `docs/DATA_SCHEMA.md` | Database schema and ER diagram |
 | `docs/USER_FLOW_DIAGRAMS.md` | User flows (registration, login, enrolment, chat, etc.) |
 | `docs/Unit_test.md` | Unit testing process and coverage |
-| `docs/DEMO_NARRATION.md` | Demo narration script |
 | `.env.example` | Example environment variables |
 
 ---
