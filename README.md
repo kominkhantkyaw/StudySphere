@@ -6,8 +6,6 @@ StudySphere is a role-based eLearning platform for course management, learning d
 
 **Domain:** [studysphere.app](https://studysphere.app)
 
-**What to push:** Only `README.md` and functional source code (Python, templates, static CSS/JS, etc.). Necessary course images can go in `static/course_images/` (see `.gitignore`). Do not push: PDF, Word (`.doc`/`.docx`), other `.md` files, or images outside `static/course_images/`.
-
 ---
 
 ## Run info 
